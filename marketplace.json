@@ -1,0 +1,31 @@
+{
+  "name": "personal-configs-plugins",
+  "owner": {
+    "name": "PersonalConfigs",
+    "email": "[email protected]"
+  },
+  "plugins": [
+    {
+      "name": "git-flow-helper",
+      "description": "Enhanced git workflow commands and agents for branch management, commit conventions, and PR workflows",
+      "version": "1.0.0",
+      "author": {
+        "name": "PersonalConfigs",
+        "email": "[email protected]"
+      },
+      "keywords": ["git", "workflow", "productivity", "branch-management"],
+      "source": "./plugins/git-flow-helper"
+    },
+    {
+      "name": "code-snippets",
+      "description": "Save, organize, and quickly insert code snippets with template variables",
+      "version": "1.0.0",
+      "author": {
+        "name": "PersonalConfigs",
+        "email": "[email protected]"
+      },
+      "keywords": ["snippets", "templates", "productivity", "code-generation"],
+      "source": "./plugins/code-snippets"
+    }
+  ]
+}

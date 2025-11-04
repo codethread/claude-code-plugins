@@ -1,0 +1,10 @@
+{
+  "name": "code-snippets",
+  "description": "Save, organize, and quickly insert code snippets with template variables",
+  "version": "1.0.0",
+  "author": {
+    "name": "PersonalConfigs",
+    "email": "[email protected]"
+  },
+  "keywords": ["snippets", "templates", "productivity", "code-generation"]
+}
