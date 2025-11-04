@@ -1,0 +1,140 @@
+{
+  "name": "personal-configs-plugins",
+  "owner": {
+    "name": "PersonalConfigs",
+    "email": "[email protected]"
+  },
+  "plugins": [
+    {
+      "name": "spec-dev",
+      "description": "Multi-agent spec-driven development workflow with code review. Use /prime-spec for complex features, /prime-tech for technical design, /prime-build for implementation, or /prime-simple for quick features. Flow: requirements → specification → implementation → code review → QA verification.",
+      "version": "1.0.0",
+      "author": {
+        "name": "codethread"
+      },
+      "keywords": [
+        "specification",
+        "requirements",
+        "multi-agent",
+        "workflow",
+        "TDD",
+        "code-review",
+        "QA",
+        "architecture"
+      ],
+      "category": "development-workflow",
+      "source": "./plugins/spec-dev"
+    },
+    {
+      "name": "mcp-builder",
+      "description": "Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).",
+      "version": "1.0.0",
+      "author": {
+        "name": "codethread"
+      },
+      "keywords": [
+        "MCP",
+        "Model Context Protocol",
+        "server",
+        "tools",
+        "integration",
+        "API",
+        "Python",
+        "TypeScript"
+      ],
+      "category": "development-tools",
+      "source": "./plugins/mcp-builder"
+    },
+    {
+      "name": "skill-creator",
+      "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.",
+      "version": "1.0.0",
+      "author": {
+        "name": "codethread"
+      },
+      "keywords": [
+        "skill",
+        "creation",
+        "development",
+        "workflow",
+        "tools",
+        "integration"
+      ],
+      "category": "development-tools",
+      "source": "./plugins/skill-creator"
+    },
+    {
+      "name": "pdf",
+      "description": "Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents, and handling forms. When Claude needs to fill in a PDF form or programmatically process, generate, or analyze PDF documents at scale.",
+      "version": "1.0.0",
+      "author": {
+        "name": "codethread"
+      },
+      "keywords": [
+        "PDF",
+        "document",
+        "extraction",
+        "manipulation",
+        "forms",
+        "merge",
+        "split"
+      ],
+      "category": "document-processing",
+      "source": "./plugins/document-skills/pdf"
+    },
+    {
+      "name": "xlsx",
+      "description": "Comprehensive spreadsheet creation, editing, and analysis with support for formulas, formatting, data analysis, and visualization. When Claude needs to work with spreadsheets (.xlsx, .xlsm, .csv, .tsv, etc) for creating new spreadsheets, analyzing data, modifying existing spreadsheets, or recalculating formulas.",
+      "version": "1.0.0",
+      "author": {
+        "name": "codethread"
+      },
+      "keywords": [
+        "Excel",
+        "spreadsheet",
+        "XLSX",
+        "formulas",
+        "data analysis",
+        "visualization"
+      ],
+      "category": "document-processing",
+      "source": "./plugins/document-skills/xlsx"
+    },
+    {
+      "name": "pptx",
+      "description": "Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for creating new presentations, modifying or editing content, working with layouts, or adding comments and speaker notes.",
+      "version": "1.0.0",
+      "author": {
+        "name": "codethread"
+      },
+      "keywords": [
+        "PowerPoint",
+        "presentation",
+        "PPTX",
+        "slides",
+        "layouts",
+        "design"
+      ],
+      "category": "document-processing",
+      "source": "./plugins/document-skills/pptx"
+    },
+    {
+      "name": "docx",
+      "description": "Comprehensive document creation, editing, and analysis with support for tracked changes, comments, formatting preservation, and text extraction. When Claude needs to work with professional documents (.docx files) for creating new documents, modifying content, working with tracked changes, or adding comments.",
+      "version": "1.0.0",
+      "author": {
+        "name": "codethread"
+      },
+      "keywords": [
+        "Word",
+        "document",
+        "DOCX",
+        "tracked changes",
+        "comments",
+        "formatting"
+      ],
+      "category": "document-processing",
+      "source": "./plugins/document-skills/docx"
+    }
+  ]
+}

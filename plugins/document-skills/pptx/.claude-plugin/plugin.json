@@ -1,0 +1,16 @@
+{
+  "name": "pptx",
+  "description": "Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for creating new presentations, modifying or editing content, working with layouts, or adding comments and speaker notes.",
+  "version": "1.0.0",
+  "author": {
+    "name": "codethread"
+  },
+  "keywords": [
+    "PowerPoint",
+    "presentation",
+    "PPTX",
+    "slides",
+    "layouts",
+    "design"
+  ]
+}

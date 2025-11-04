@@ -1,0 +1,16 @@
+{
+  "name": "xlsx",
+  "description": "Comprehensive spreadsheet creation, editing, and analysis with support for formulas, formatting, data analysis, and visualization. When Claude needs to work with spreadsheets (.xlsx, .xlsm, .csv, .tsv, etc) for creating new spreadsheets, analyzing data, modifying existing spreadsheets, or recalculating formulas.",
+  "version": "1.0.0",
+  "author": {
+    "name": "codethread"
+  },
+  "keywords": [
+    "Excel",
+    "spreadsheet",
+    "XLSX",
+    "formulas",
+    "data analysis",
+    "visualization"
+  ]
+}

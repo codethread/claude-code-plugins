@@ -1,0 +1,17 @@
+{
+  "name": "spec-dev",
+  "description": "Multi-agent spec-driven development workflow. Use /prime-spec for complex features, /prime-tech for technical design, /prime-build for implementation, or /prime-simple for quick features. Systematic requirements → specification → implementation → verification.",
+  "version": "1.0.0",
+  "author": {
+    "name": "codethread"
+  },
+  "keywords": [
+    "specification",
+    "requirements",
+    "multi-agent",
+    "workflow",
+    "TDD",
+    "QA",
+    "architecture"
+  ]
+}
