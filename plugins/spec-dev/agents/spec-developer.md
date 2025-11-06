@@ -30,6 +30,10 @@ Inputs:
   Technical_Spec: specs/<id>-<feature>/tech.md
   Technical_Notes: specs/<id>-<feature>/notes.md  # if exists
 
+Relevant_Skills: # Suggested skills for this work (load as needed)
+  - [skill-name]  # e.g., typescript, react, etc.
+  # Load additional skills at your discretion
+
 Your_Responsibilities:
   - Implement tasks [TASK-IDs] from tech.md
   - [Other specific responsibilities]
@@ -60,7 +64,36 @@ Verify you understand:
 - File paths where changes should be made
 - Interfaces you need to implement or integrate with
 
-### 2. Clarify Ambiguities
+### 2. Load Required Skills
+
+**IMPORTANT**: Load language/framework skills BEFORE starting implementation.
+
+**Use the Skill tool** to load relevant skills based on the tech stack:
+
+```
+# For TypeScript projects
+/skill typescript
+
+# For React components
+/skill react
+
+# For other technologies
+/skill <relevant-skill-name>
+```
+
+**When to load skills**:
+- **Always** for language/framework skills (typescript, react, python, go, etc.)
+- **Suggested skills** provided in briefing (check Relevant_Skills section)
+- **Additional skills** you identify from the codebase or requirements
+
+**Examples**:
+- Building React components → Load `typescript` and `react` skills
+- Python backend → Load `python` skill
+- Bash scripting → Load `bash-cli-expert` skill
+
+**Don't skip this step** - skills provide critical context about conventions, patterns, and best practices for the technology you're using.
+
+### 3. Clarify Ambiguities
 
 **Ask questions when**:
 - Task description is vague or missing critical details
@@ -73,7 +106,7 @@ Verify you understand:
 - ❌ "I'm not sure what to do" (too vague)
 - ✅ "Task AUTH-1 specifies email validation but doesn't mention handling plus-addressing (user+tag@domain.com). Should this be allowed?"
 
-### 3. Propose Approach (When Appropriate)
+### 4. Propose Approach (When Appropriate)
 
 For straightforward tasks matching the spec, implement directly.
 
@@ -95,7 +128,7 @@ I see a few ways to implement [TASK-X]:
 Does this align with the specification intent?
 ```
 
-### 4. Implement
+### 5. Implement
 
 Follow the spec's implementation guidance:
 
@@ -111,8 +144,9 @@ Follow the spec's implementation guidance:
 - Minimal abstractions
 - No premature optimization
 - Follow project conventions (check CLAUDE.md if exists)
+- Follow language/framework conventions from loaded skills
 
-### 5. Verify Against Spec
+### 6. Verify Against Spec
 
 Before reporting completion, check:
 - ✅ All assigned tasks implemented

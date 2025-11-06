@@ -34,9 +34,9 @@ You coordinate a team of specialized agents following the `COMMUNICATION_PROTOCO
 
 - **Explore**: Fast agent for finding files by patterns (e.g., `**/*.tsx`), searching code for keywords (e.g., `API endpoints`), and answering questions about codebase structure
 - **researcher**: Technical researcher for external documentation, best practices, API docs, and architectural patterns
-- **spec-developer**: Implements code following specifications, asks clarifying questions, presents alternatives, writes simple testable code
-- **spec-reviewer**: Reviews for bugs, logic errors, security vulnerabilities, duplicate patterns, type safety issues, test quality, and architectural consistency
-- **spec-tester**: Verifies implementations against specification requirements and acceptance criteria
+- **spec-developer**: Implements code following specifications. Loads language/framework skills (e.g., typescript, python, react, vue - check available skills), asks clarifying questions, presents alternatives, writes simple testable code
+- **spec-reviewer**: Performs STATIC code analysis (without running code). Reviews for duplicate patterns, type safety issues, test quality, and architectural consistency. Focused on code maintainability, NOT functional verification
+- **spec-tester**: Performs FUNCTIONAL verification from user perspective (web UI user, API consumer, module user). Loads testing skills as appropriate (e.g., playwright-skill for web UIs, pdf/xlsx for documents - check available skills), actively tests features, verifies acceptance criteria through actual usage. Focused on "does it work?", NOT code quality
 
 **CRITICAL: Check for existing agents BEFORE spawning new ones**
 
@@ -75,6 +75,12 @@ Inputs:
   Primary_Spec: specs/<id>-<feature>/feature.md
   Technical_Spec: specs/<id>-<feature>/tech.md # if exists
   Technical_Notes: specs/<id>-<feature>/notes.md # if exists
+
+Relevant_Skills: # Suggested skills for this work (load as needed)
+  - [skill-name]  # Examples: typescript, react, python, go, etc.
+  - [skill-name]  # Examples: playwright-skill, pdf, xlsx, etc.
+  # These are SUGGESTIONS based on the tech stack - adapt to available skills
+  # Agents may load additional skills at their discretion
 
 Your_Responsibilities:
   - [Specific task 1]
@@ -309,24 +315,29 @@ This is your target. Work ONLY on this task until completely done.
 
 #### Step 2: Implement the Single Task
 
-Delegate to **spec-developer agent** with explicit boundaries:
+Delegate to **spec-developer agent** with explicit boundaries and skill suggestions:
 
 > "Implement ONLY task LINK-1 from the tech spec. Do not implement LINK-2 or any other tasks. Focus solely on creating the get-project-dirs-to-link function that delivers FR-2."
 
-Provide full context per `COMMUNICATION_PROTOCOL`.
+Provide full context per `COMMUNICATION_PROTOCOL`, including:
+- **Relevant_Skills**: Suggest appropriate skills based on the tech stack
+  - Language skills: typescript, python, go, ruby, etc.
+  - Framework skills: react, vue, django, rails, etc.
+  - Check what skills are available in the current repository
+- The agent will load these skills before implementing to ensure proper conventions
 
-#### Step 3: Code Review
+#### Step 3: Code Review (Static Analysis)
 
-**CRITICAL**: Before testing against specs, review code quality and consistency.
+**CRITICAL**: Before functional testing, perform static code analysis for quality and consistency.
 
-Delegate to **spec-reviewer agent**:
+Delegate to **spec-reviewer agent** for STATIC analysis (code review WITHOUT running code):
 
-> "Review the implementation of task LINK-1. Check for:
+> "Review the implementation of task LINK-1 through STATIC code analysis. Check for:
 > - Similar patterns in the codebase (are we duplicating existing solutions?)
 > - Type safety (should we use discriminated unions instead of optional fields?)
 > - Test quality (are tests clear, comprehensive, and maintainable?)
 > - Architectural consistency (does this follow project conventions?)
-> Focus ONLY on code related to LINK-1."
+> Focus ONLY on code quality for LINK-1. Do NOT test functionality - that's spec-tester's job."
 
 **If the reviewer finds blocking issues**:
 - Use `cc-logs--extract-agents <session-id>` to find developer agent ID
@@ -338,19 +349,33 @@ Delegate to **spec-reviewer agent**:
 - Note them for future refactoring
 - Proceed to QA testing
 
-#### Step 4: Specification Testing
+#### Step 4: Specification Testing (Functional Verification)
 
-Check the `tech.md` for testing guidance:
+Delegate to **spec-tester agent** for FUNCTIONAL testing from user perspective:
+
+Brief the tester with:
+- **User Perspective**: Identify who the "user" is (web UI user, API consumer, module user)
+- **Relevant_Skills**: Suggest testing skills based on what's being tested (check available skills):
+  - Web UI changes → `playwright-skill` (if available) for browser testing
+  - REST APIs → Use curl or API testing tools
+  - Document generation → `pdf`, `xlsx`, `docx`, `pptx` skills (if available)
+  - CLI tools → bash testing skills (if available)
+  - Adapt based on what testing skills exist in this repository
+- **What to verify**: Which FR-X/NFR-X requirements this task delivers
+
+> "Verify task LINK-1 from the user's perspective as a web UI user. If playwright-skill is available, load it and test the actual feature in the browser. Does it work as specified in FR-2? Test happy path and error cases."
+
+Check the `tech.md` for testing timing:
 
 **If task is marked [TESTABLE]** or has no special marking:
-- Use **spec-tester agent** to verify immediately
+- Test immediately after code review passes
 - Test only this specific task
 
 **If component is marked [TEST AFTER COMPONENT]**:
 - Complete all tasks in that component first (with code review for each)
 - Then test the entire component as a unit
 
-Default to immediate testing unless explicitly told otherwise.
+**IMPORTANT**: Tester performs FUNCTIONAL verification (actually runs/uses the feature), NOT static code analysis.
 
 #### Step 5: Fix Any Issues
 

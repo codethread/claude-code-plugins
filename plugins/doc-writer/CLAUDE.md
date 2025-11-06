@@ -1,0 +1,422 @@
+# Doc Writer Plugin - Maintainer Documentation
+
+This document is for developers maintaining or modifying the `doc-writer` plugin. For end-user documentation, see [README.md](./README.md).
+
+## Plugin Architecture
+
+The `doc-writer` plugin provides Claude Code with comprehensive documentation writing knowledge through a skill-based approach. The plugin synthesizes research from exemplary documentation projects and authoritative style guides into actionable patterns.
+
+### Design Principles
+
+1. **Research-based:** All guidance is grounded in analysis of real-world excellent documentation
+2. **Framework-driven:** Uses the Diátaxis framework for documentation organization
+3. **Pattern catalog:** Provides specific, reusable patterns rather than abstract advice
+4. **Progressive complexity:** Scaffolds from simple to advanced approaches
+5. **Quality-focused:** Includes checklists and anti-patterns to avoid
+
+## Directory Structure
+
+```
+plugins/doc-writer/
+├── README.md                           # End-user documentation
+├── CLAUDE.md                          # This file - maintainer documentation
+└── skills/
+    └── writing-documentation/
+        ├── SKILL.md                   # Main skill file loaded by Claude
+        └── references/
+            ├── exemplary-projects.md  # Analysis of 8 well-documented projects
+            └── best-practices.md      # Synthesis of style guides
+```
+
+### Component Responsibilities
+
+#### `SKILL.md`
+**Purpose:** Main operational context loaded into Claude's session
+
+**Contains:**
+- Core documentation philosophy and principles
+- Diátaxis framework breakdown (tutorials, how-tos, reference, explanations)
+- Voice, tone, and style guidelines
+- Structural patterns and templates
+- Code example standards
+- Quality checklists
+- Anti-patterns to avoid
+- Decision guides
+
+**Design note:** This file is comprehensive (~500 lines) to be self-contained. It references but doesn't duplicate the research files.
+
+#### `references/exemplary-projects.md`
+**Purpose:** Document analysis of projects known for excellent documentation
+
+**Contains:**
+- Framework documentation analysis (React, Rust, Django, Vue)
+- Developer tools analysis (Stripe, Twilio, Slack, Vercel)
+- Universal success patterns identified across projects
+- Common anti-patterns to avoid
+- Specific examples with URLs
+
+**Design note:** Organized by project type for easy reference and updates.
+
+#### `references/best-practices.md`
+**Purpose:** Synthesis of authoritative style guides and frameworks
+
+**Contains:**
+- Diátaxis framework details
+- Google Developer Documentation Style Guide patterns
+- Write the Docs community practices
+- Microsoft Writing Style Guide principles
+- Cross-source consensus patterns
+- Documentation maturity model
+
+**Design note:** Structured by topic (voice/tone, organization, code examples, etc.) for quick lookup.
+
+## How the Plugin Works
+
+### Skill Loading Flow
+
+1. User executes: `/skill writing-documentation`
+2. Claude loads `skills/writing-documentation/SKILL.md` into context
+3. Skill provides operational instructions for writing documentation
+4. Reference files are available but not loaded (reduces token usage)
+5. Claude applies patterns when user requests documentation
+
+### Knowledge Organization
+
+**Three-tier structure:**
+
+```
+SKILL.md (Active Context)
+    ↓ references
+    ├── exemplary-projects.md (Research evidence)
+    └── best-practices.md (Authoritative guidelines)
+```
+
+**Why this structure:**
+- Skill file is comprehensive enough to use standalone
+- Reference files provide evidence and deeper context
+- Maintainers can update references without changing skill logic
+- Token-efficient: only skill loaded, references available if needed
+
+## Common Maintenance Tasks
+
+### Updating Research
+
+**When to update:**
+- New exemplary project emerges (e.g., Next.js improves docs significantly)
+- Existing project changes documentation approach
+- New style guide published or updated
+- User feedback identifies gaps
+
+**How to update:**
+
+1. Add new research to appropriate reference file:
+   ```bash
+   # Edit the reference file
+   code plugins/doc-writer/skills/writing-documentation/references/exemplary-projects.md
+
+   # Add new project analysis following existing pattern
+   ```
+
+2. Update `SKILL.md` if new patterns emerge:
+   ```bash
+   # Edit the skill file
+   code plugins/doc-writer/skills/writing-documentation/SKILL.md
+
+   # Add new pattern to relevant section
+   ```
+
+3. Test the changes:
+   ```bash
+   # Reload the skill in a Claude session
+   /skill writing-documentation
+
+   # Ask Claude to apply the new pattern
+   ```
+
+### Adding New Documentation Types
+
+The Diátaxis framework covers four main types (tutorial, how-to, reference, explanation). If you need to add a new type:
+
+1. **Identify the need:** Is it truly distinct from the four types?
+2. **Research examples:** Find excellent examples of this new type
+3. **Define characteristics:** What makes it unique?
+4. **Create template:** Add structure template to `SKILL.md`
+5. **Update decision guide:** Help users choose when to use it
+
+**Example: Adding "Troubleshooting Guide" as distinct type:**
+
+```markdown
+### 5. Troubleshooting Guide (Problem-solving oriented)
+**Purpose:** Help users diagnose and fix specific problems
+**Characteristics:**
+- Symptom-based organization
+- Decision trees or flowcharts
+- Common problems → solutions mapping
+...
+```
+
+### Improving Templates
+
+Templates in `SKILL.md` provide structure for different documentation types. To improve:
+
+1. **Identify template to improve:**
+   - Tutorial template
+   - How-to guide template
+   - Reference template
+   - Explanation template
+
+2. **Analyze real examples:**
+   - Find 3-5 excellent examples of this type
+   - Identify what makes them work
+   - Extract common structural elements
+
+3. **Update template in `SKILL.md`:**
+   ```markdown
+   **Structure:**
+   [Updated structure with new insights]
+   ```
+
+4. **Test with real use cases:**
+   - Load skill and ask Claude to generate documentation
+   - Verify template produces high-quality output
+
+### Adding New Style Guidelines
+
+If a new authoritative style guide emerges (e.g., "Rust Documentation Standards v2"):
+
+1. **Research the guide:**
+   - Read the guide thoroughly
+   - Identify novel recommendations
+   - Compare with existing guidelines
+
+2. **Update `references/best-practices.md`:**
+   ```markdown
+   ### 5. Rust Documentation Standards
+   **Source:** [URL]
+   **Authority:** [Why it matters]
+   **Key Recommendations:**
+   - ...
+   ```
+
+3. **Update cross-source patterns:**
+   - If new guide confirms existing patterns, note it
+   - If new patterns emerge, add to "Universal Standards" section
+
+4. **Update `SKILL.md` if needed:**
+   - Only if new patterns should be actively applied
+   - Integrate into relevant sections
+
+## Architecture Rationale
+
+### Why Skill-Based Approach?
+
+**Considered alternatives:**
+- **Commands:** Too narrow; documentation writing is broad
+- **Agents:** Overkill; no complex coordination needed
+- **Skills:** ✓ Provides comprehensive context that persists in session
+
+**Decision:** Skill-based because documentation writing benefits from:
+- Persistent context throughout session
+- Comprehensive guidelines always available
+- Flexibility to apply patterns across different doc types
+- User control over when expertise is active
+
+### Why Three-Tier Knowledge Structure?
+
+**Skill + References split:**
+- **Skill:** Actionable patterns Claude can apply immediately
+- **References:** Evidence and deeper context for maintainers and curious users
+- **Benefit:** Reduces token usage while maintaining quality
+
+**Why separate exemplary-projects.md and best-practices.md:**
+- **Different purposes:** Examples vs. authoritative guidelines
+- **Different update cycles:** Projects change; style guides are stable
+- **Different audiences:** References serve slightly different needs
+- **Maintainability:** Easier to update one or the other independently
+
+### Why Diátaxis Framework?
+
+**Considered alternatives:**
+- Custom framework
+- No framework (ad-hoc)
+- Information Mapping
+- DITA
+
+**Decision:** Diátaxis because:
+- Widely adopted (Python, Ubuntu, Gatsby, etc.)
+- Simple four-type model is easy to understand
+- Addresses most documentation needs
+- Strong community support
+- Well-documented framework itself
+
+## Testing the Plugin
+
+### Manual Testing Checklist
+
+When making significant changes:
+
+- [ ] **Skill loads successfully:**
+  ```
+  /skill writing-documentation
+  ```
+
+- [ ] **Tutorial generation works:**
+  ```
+  Create a tutorial for building a REST API with Express
+  ```
+
+- [ ] **How-to guide generation works:**
+  ```
+  Write a how-to guide for deploying to Vercel
+  ```
+
+- [ ] **Reference documentation works:**
+  ```
+  Document this API function: [paste code]
+  ```
+
+- [ ] **README generation works:**
+  ```
+  Write a README for a library that validates emails
+  ```
+
+- [ ] **Style guidelines applied:**
+  - Active voice used
+  - Present tense used
+  - Code examples include expected output
+  - Prerequisites stated
+
+- [ ] **Quality patterns present:**
+  - Examples before explanations
+  - Progressive complexity
+  - Error documentation included
+
+### Validation Against Research
+
+Periodically validate skill output against exemplary projects:
+
+1. **Generate documentation with skill**
+2. **Compare to React/Stripe/Django docs**
+3. **Check for pattern alignment:**
+   - Structure matches best practices
+   - Examples are high quality
+   - Tone is appropriate
+   - Navigation is clear
+
+### User Feedback Integration
+
+**When receiving feedback:**
+
+1. **Categorize the issue:**
+   - Missing pattern (add to skill)
+   - Incorrect pattern (fix in skill)
+   - Outdated research (update references)
+   - Documentation clarity (improve CLAUDE.md or README.md)
+
+2. **Trace to source:**
+   - Which section of SKILL.md is involved?
+   - Is research in references accurate?
+   - Is template structure the issue?
+
+3. **Make targeted fix:**
+   - Update specific section
+   - Test the change
+   - Document in git commit
+
+## Common Pitfalls to Avoid
+
+### For Maintainers
+
+**Don't:**
+- ❌ Add every new documentation project to references (curate quality over quantity)
+- ❌ Override Diátaxis framework without strong rationale
+- ❌ Make SKILL.md too long (already comprehensive; avoid bloat)
+- ❌ Duplicate content between skill and references
+- ❌ Remove research citations (preserves credibility)
+
+**Do:**
+- ✅ Keep skill actionable and pattern-focused
+- ✅ Update references when landscape changes significantly
+- ✅ Test changes with real documentation tasks
+- ✅ Maintain clear separation: user docs (README) vs. maintainer docs (CLAUDE.md)
+- ✅ Document architectural decisions
+
+### For Skill Content
+
+**Don't:**
+- ❌ Prescribe overly rigid rules (context matters)
+- ❌ Include examples without context
+- ❌ Assume one-size-fits-all approaches
+- ❌ Neglect accessibility guidelines
+
+**Do:**
+- ✅ Provide decision frameworks (when to use X vs. Y)
+- ✅ Include anti-patterns (what to avoid)
+- ✅ Show progressive complexity
+- ✅ Offer templates that adapt to context
+
+## Version History and Changelog
+
+When making significant changes:
+
+1. **Update version in `marketplace.json`:**
+   ```json
+   {
+     "name": "doc-writer",
+     "version": "1.1.0",  // Increment appropriately
+     ...
+   }
+   ```
+
+2. **Document changes in git commit:**
+   ```
+   doc-writer: Add support for troubleshooting guides
+
+   - Added troubleshooting guide template to SKILL.md
+   - Updated decision guide to include troubleshooting
+   - Added examples from Vercel and Stripe docs
+   ```
+
+3. **Consider updating README.md:**
+   - If new features are user-facing
+   - Keep examples current
+
+## Related Documentation
+
+- **Repository root CLAUDE.md:** Overall plugin architecture and standards
+- **skill-creator plugin:** For creating new skills (this plugin is an example)
+- **spec-dev plugin:** Related workflow for specification writing
+
+## Questions and Support
+
+For questions about maintaining this plugin:
+1. Review this CLAUDE.md thoroughly
+2. Check the repository root CLAUDE.md for general plugin patterns
+3. Examine the skill-creator plugin for skill development guidance
+4. Review git history for context on past changes
+
+## Future Enhancement Ideas
+
+Potential improvements for future versions:
+
+1. **Interactive examples generator:**
+   - Command to generate CodeSandbox/StackBlitz links
+   - Automate "try it" sections
+
+2. **Documentation audit command:**
+   - Analyze existing docs against patterns
+   - Generate improvement suggestions
+
+3. **Template library expansion:**
+   - Additional templates for specific doc types
+   - Framework-specific templates (React, Vue, etc.)
+
+4. **Multi-language support:**
+   - Patterns for non-English documentation
+   - Localization best practices
+
+5. **Accessibility checker:**
+   - Validate alt text, contrast, heading hierarchy
+   - Automated accessibility scoring
+
+**Note:** Implement these only if user demand emerges and research supports their value.

@@ -152,11 +152,143 @@ allowed-tools: Bash(bash:*)
 ```
 
 This pattern ensures:
+
 - Arguments are clearly defined once and referenced consistently
 - Bash scripts use the full marketplace plugin path
 - Context from script execution is available throughout the command
 
-## Working with Plugins
+## Plugin Documentation Standards
 
-When working within a specific plugin directory, Claude Code will automatically load the plugin's CLAUDE.md file for context-specific guidance.
+When working with Claude Code plugins (in `plugins/` directory), follow these documentation standards:
 
+### README.md - For End Users
+
+**Audience**: Developers using the plugin (humans, not Claude)
+
+**Purpose**: Explain what the plugin does and how to use it
+
+**Should contain**:
+
+- What the plugin does (high-level overview)
+- How to install it
+- How to use the slash commands with examples
+- What files/structure gets created
+- Example workflows
+- Troubleshooting tips
+- Clear, user-friendly language
+
+**Should NOT contain**:
+
+- Instructions written for Claude Code
+- Internal architecture details for maintainers
+- "You are the architect..." type language
+- Detailed multi-agent coordination protocols
+- Agent resumption technical details
+
+**Example structure**:
+
+```markdown
+# Plugin Name
+
+What it does in one sentence.
+
+## Installation
+
+`/plugin install ...`
+
+## Quick Start
+
+/command example
+
+## What Gets Created
+
+Directory structure diagram
+
+## Commands Reference
+
+List of commands with examples
+
+## Examples
+
+Real-world usage scenarios
+```
+
+### CLAUDE.md - For Plugin Maintainers
+
+**Audience**: Developers maintaining/developing the plugin itself
+
+**Purpose**: Document plugin architecture and how to modify it
+
+**Should contain**:
+
+- Plugin architecture and design principles
+- Directory structure explanation
+- Component responsibilities (commands, skills, agents, scripts)
+- How to add/modify components
+- Common maintenance tasks
+- Testing procedures
+- Architecture rationale
+- Common pitfalls to avoid
+
+**Should NOT contain**:
+
+- How end users should use the plugin (that's in README.md)
+- How Claude Code should use the plugin (that's in commands/skills)
+
+**Example structure**:
+
+```markdown
+# Plugin Name - Maintainer Documentation
+
+For end-user docs, see README.md.
+
+## Plugin Architecture
+
+Design principles
+
+## Directory Structure
+
+Component explanation
+
+## Component Responsibilities
+
+Commands, skills, agents, scripts
+
+## Common Maintenance Tasks
+
+Step-by-step guides
+
+## Architecture Rationale
+
+Why decisions were made
+
+## Common Pitfalls
+
+What to avoid
+```
+
+### Workflow Context Files (Skills, Commands, Agents)
+
+**Purpose**: Provide Claude Code with operational instructions
+
+**Commands** (`commands/*.md`):
+
+- Provide context (script outputs, arguments)
+- Load skills
+- Direct to workflows
+- Keep under 50 lines
+
+**Skills** (`skills/*/SKILL.md`):
+
+- Contain all workflow intelligence
+- Coordinate agents
+- Reference templates and documentation
+- Comprehensive and self-contained
+
+**Agents** (`agents/*.md`):
+
+- Specialized execution instructions
+- Concise descriptions (<50 words)
+- Detailed system prompts in body
+
+**Key principle**: All Claude Code operational context lives in commands/skills/agents, NOT in README.md or CLAUDE.md

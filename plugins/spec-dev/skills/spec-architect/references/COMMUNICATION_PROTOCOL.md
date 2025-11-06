@@ -170,6 +170,13 @@ Inputs:
   Related_Docs:
     - /full/path/to/related.md
 
+Relevant_Skills: # Suggested skills for this work (load as needed)
+  - [skill-name]  # Language: typescript, python, go, ruby, etc.
+  - [skill-name]  # Framework: react, vue, django, rails, etc.
+  - [skill-name]  # Testing: playwright-skill, pdf, xlsx, etc.
+  # These are EXAMPLES - adapt to skills available in the current repository
+  # Agents may load additional skills at their discretion beyond suggestions
+
 Your_Responsibilities:
   - [Specific task 1]
   - [Specific task 2]
@@ -235,6 +242,11 @@ Technical_Spec: specs/001-user-auth/tech.md
 Technical_Notes: specs/001-user-auth/notes.md
 Related_Docs:
   - spec-templates/SPEC_PATTERNS.md
+
+Relevant_Skills:
+- typescript  # Example: Project uses TypeScript
+- react       # Example: Building React components
+# Check available skills in repository and load as needed
 
 Your_Responsibilities:
 
