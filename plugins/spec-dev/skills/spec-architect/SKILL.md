@@ -178,7 +178,7 @@ Use this workflow when creating a new feature from a user briefing.
 
 **Actions**:
 1. **Create Spec Directory**:
-   - Use `scripts/get-next-spec-id.sh` to get next ID
+   - The next spec ID is provided in the command Context
    - Create `specs/<id>-<feature>/` directory
    - Create `feature.md` from `references/SPEC_TEMPLATE.md`
 
@@ -506,10 +506,6 @@ This skill includes comprehensive reference documentation:
 - **writing-specs.md** - Core principles for effective technical specifications
 
 Load these references as needed during the workflow.
-
-## Scripts
-
-- **get-next-spec-id.sh** - Helper script to determine next specification ID number
 
 ---
 
