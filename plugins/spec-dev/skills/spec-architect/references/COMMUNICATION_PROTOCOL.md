@@ -1,14 +1,83 @@
 # Agent Communication Protocol for Claude Code Workflows
 
-This protocol defines the communication standards for multi-agent workflows in Claude Code, specifically designed for the stateless nature of subagent interactions.
+This protocol defines the communication standards for multi-agent workflows in Claude Code, optimized for resumable agent interactions.
 
 ## Why This Protocol Exists
 
-1. **Stateless Architecture**: Subagents operate in single request/response cycles with no ability for follow-up clarification
-2. **Context Isolation**: Each agent invocation starts fresh, requiring complete context transfer upfront
-3. **Precision Requirements**: Ambiguity cannot be resolved through discussion, making initial clarity critical
+1. **Resumable Architecture**: Agents can be resumed to continue previous work, maintaining full context and enabling iterative refinement
+2. **Context Preservation**: Resumed agents retain all prior knowledge, enabling efficient follow-up work without re-gathering information
+3. **Precision Requirements**: Clear initial briefings enable focused work, while resumption allows for clarification and iteration
 4. **Traceability**: Multiple agents working on interconnected tasks need clear reference points for coordination
 5. **Boundary Definition**: Agents must understand both their responsibilities AND explicit non-responsibilities to prevent scope creep
+
+## Agent Resumption Protocol
+
+**CRITICAL: Architects MUST resume agents whenever possible to maintain context and reduce costs.**
+
+### When to Resume Agents
+
+1. **After code review**: Resume the developer agent with reviewer feedback
+2. **After QA testing**: Resume the developer agent with test failures
+3. **For iterative refinement**: Resume any agent to build on their previous work
+4. **For clarification**: Resume an agent to answer follow-up questions about their work
+
+### Benefits of Resumption
+
+- **Cost efficiency**: Avoids re-processing context and re-analyzing codebases
+- **Better outcomes**: Agents maintain full understanding of prior decisions
+- **Faster execution**: No need to re-gather information already collected
+- **Continuity**: Agent can reference specific prior findings and build on them
+
+### How to Find and Resume Agents
+
+1. **Get session ID** from the session start message:
+   ```
+   Initialized agent context session: <session-id>
+   ```
+
+2. **List all agents** in the current session:
+   ```bash
+   cc-logs--extract-agents <session-id>
+   ```
+
+   This outputs agent IDs, models, descriptions, and prompts for all agents spawned in this session.
+
+3. **Resume an agent** using the Task tool with the `resume` parameter:
+   ```
+   Task({
+     resume: "<agent-id>",
+     prompt: "Based on the code review feedback, please fix issues X, Y, and Z"
+   })
+   ```
+
+### Example Workflow
+
+```bash
+# Get session ID (shown at session start)
+# "Initialized agent context session: 9e3db88b-75cb-416b-a0a7-73e4bd0e5a2b"
+
+# List all agents spawned in this session
+cc-logs--extract-agents 9e3db88b-75cb-416b-a0a7-73e4bd0e5a2b
+
+# Output shows:
+# Agent ID: a1b2c3d4
+# Subagent Type: spec-developer
+# Model: sonnet
+# Description: Implement AUTH-1
+# Prompt: Implement ONLY task AUTH-1 from the tech spec...
+#
+# Agent ID: e5f6g7h8
+# Subagent Type: spec-reviewer
+# Model: sonnet
+# Description: Review AUTH-1 implementation
+# Prompt: Review the implementation of task AUTH-1...
+
+# Resume the developer agent with fixes
+Task({
+  resume: "a1b2c3d4",
+  prompt: "The code reviewer found these issues: [list]. Please fix them."
+})
+```
 
 ## File Reference Standard
 
@@ -94,8 +163,10 @@ Context:
   Workflow_Position: "Previous phase: [x] | Your phase: [y] | Next phase: [z]"
 
 Inputs:
-  Primary_Spec: /full/path/to/spec.md
-  Technical_Spec: /full/path/to/spec.tech.md # if exists
+  Spec_Directory: specs/XXX-feature-name/
+  Primary_Spec: specs/XXX-feature-name/feature.md
+  Technical_Spec: specs/XXX-feature-name/tech.md # if exists
+  Technical_Notes: specs/XXX-feature-name/notes.md # if exists
   Related_Docs:
     - /full/path/to/related.md
 
@@ -158,9 +229,12 @@ Role: "You are implementing the authentication service for a user management fea
 Workflow_Position: "Previous phase: technical design | Your phase: implementation | Next phase: QA verification"
 
 Inputs:
-Primary_Spec: specs/001-user-auth.md
-Technical_Spec: specs/001-user-auth.tech.md
-Related_Docs: - [spec-templates/SPEC_PATTERNS.md](SPEC_PATTERNS.md)
+Spec_Directory: specs/001-user-auth/
+Primary_Spec: specs/001-user-auth/feature.md
+Technical_Spec: specs/001-user-auth/tech.md
+Technical_Notes: specs/001-user-auth/notes.md
+Related_Docs:
+  - spec-templates/SPEC_PATTERNS.md
 
 Your_Responsibilities:
 
@@ -190,8 +264,13 @@ Checklist_Items: "Complete and mark done: AUTH-1, AUTH-2, AUTH-3"
 
 ## Protocol Versioning
 
-Protocol Version: 1.0.0
+Protocol Version: 2.0.0
 Last Updated: 2025-01-19
-Compatibility: Claude Code with stateless subagents
+Compatibility: Claude Code with resumable agents (Task tool with `resume` parameter)
 
 Changes to this protocol require updating all prime-\* commands that reference it.
+
+### Version History
+
+- **2.0.0** (2025-01-19): Added agent resumption protocol, folder-based spec structure
+- **1.0.0** (2025-01-19): Initial protocol for multi-agent workflows

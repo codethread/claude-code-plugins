@@ -1,136 +1,189 @@
 # Spec-Driven Development Plugin
 
-A comprehensive multi-agent workflow for systematic software feature development - from requirements gathering through verified implementation.
+A comprehensive skill-based workflow for systematic software feature development - from requirements gathering through verified implementation.
 
 ## Overview
 
-This plugin implements a structured approach to feature development that mirrors real-world software teams, with specialized agents handling different phases of the development lifecycle. It's designed to ensure high-quality implementations through clear specifications, systematic verification, and architectural coherence.
+This plugin provides a **spec-architect skill** and simple commands that enable systematic, multi-agent software development. The skill guides you through exploration, specification creation, technical design, implementation coordination, and quality assurance.
 
 ## What's Included
 
+### Skills
+
+- **`spec-architect`** - Comprehensive skill containing the complete spec-driven development workflow, including:
+  - Exploration and discovery guidance
+  - Specification creation patterns
+  - Technical design methodology
+  - Implementation coordination protocols
+  - Quality assurance standards
+  - Agent communication protocols
+  - All templates and reference documentation
+
 ### Commands
 
-- **`/prime-simple`** - Quick feature development with basic clarification (for simple features)
-- **`/prime-spec`** - Full requirements gathering and specification creation (for complex features)
-- **`/prime-tech`** - Technical design discussion to create implementation blueprint
-- **`/prime-build`** - Coordinate implementation team to build approved specification
-- **`/refine-spec`** - Refine and improve the spec-driven workflow itself
+- **`/build`** - Build a new feature using the BUILD workflow (exploration → spec → design → implementation → QA)
+- **`/iterate`** - Continue work on an existing specification or expand it with new features
 
 ### Agents
 
-- **`tdd-developer`** - Test-driven developer for implementation work
-- **`code-reviewer`** - Elite code reviewer focused on patterns, type safety, test quality, and architectural consistency
-- **`qa-spec-tester`** - QA tester to verify implementations against specifications
+- **`spec-developer`** - Implements code following specifications, asks clarifying questions, presents alternatives, writes simple testable code
+- **`spec-reviewer`** - Reviews for bugs, logic errors, security vulnerabilities, duplicate patterns, type safety issues, test quality, and architectural consistency
+- **`spec-tester`** - Verifies implementations against specification requirements and acceptance criteria
 
-### Documentation
+### Scripts
 
-- **`docs/ways-of-working.md`** - Complete multi-agent architecture and workflow
-- **`docs/specification-template.md`** - Template for feature specifications
-- **`docs/writing-specs.md`** - Guide to writing effective specifications
+- **`get-next-spec-id.sh`** - Helper script to determine next specification ID number
 
-### Spec Templates
+## Quick Start
 
-- **`SPEC_TEMPLATE.md`** - Template for feature specifications
-- **`TECH_SPEC_TEMPLATE.md`** - Template for technical design documents
-- **`SPEC_PATTERNS.md`** - Document structure and naming conventions
-- **`COMMUNICATION_PROTOCOL.md`** - Agent handover and reference standards
-- **`get-next-spec-id.sh`** - Helper script to get next specification ID
+### Building a New Feature
 
-## Workflows
-
-### Simple Features
-
-For straightforward features that don't require extensive planning:
+For new features that need systematic planning and implementation:
 
 ```bash
-/prime-simple Add user email validation to signup form
+/build Add user authentication with OAuth2 support
 ```
 
-This workflow:
-1. Creates a specification for documentation
-2. Implements the feature directly
-3. Tests the implementation
-4. Delivers working code
+The architect will:
+1. **Explore** - Discover existing patterns, research best practices
+2. **Specify** - Create comprehensive specification with acceptance criteria
+3. **Design** - Break down implementation into testable tasks
+4. **Implement** - Coordinate specialized agents to build the feature
+5. **Verify** - Ensure quality through code review and specification testing
 
-### Complex Features - Full Workflow
+### Continuing Existing Work
 
-For complex features requiring careful planning:
-
-#### Phase 1: Requirements & Specification
+To continue work on an existing specification:
 
 ```bash
-/prime-spec Build a user authentication system with OAuth2
+/iterate specs/001-user-authentication/
 ```
 
-The architect agent will:
-- Ask clarifying questions about requirements
-- Use the Explore agent to find existing patterns
-- Use the researcher agent to investigate best practices
-- Create a comprehensive specification in `specs/`
-- Get your approval before proceeding
+The architect will:
+1. Load existing spec files (`feature.md`, `tech.md`, `notes.md`)
+2. Assess current state (completed vs incomplete tasks)
+3. Determine next action and jump to appropriate workflow phase
 
-Output: `specs/001-user-authentication.md` with clear requirements and acceptance criteria
+## The Spec-Architect Skill
 
-#### Phase 2: Technical Design
+The `spec-architect` skill is the core of this plugin. It contains:
 
-```bash
-/prime-tech specs/001-user-authentication.md
+### Workflows
+
+- **BUILD Workflow** - For new features
+  - Phase 1: Exploration and Discovery
+  - Phase 2: Specification Creation
+  - Phase 3: Technical Design
+  - Phase 4: Implementation Coordination
+  - Phase 5: Quality Gates
+
+- **ITERATE Workflow** - For existing specifications
+  - Phase 1: Load and Assess
+  - Phase 2: Execute Appropriate Workflow
+
+### Core Philosophy
+
+- **Clear specifications** before implementation
+- **Specialized expertise** through dedicated agents
+- **Quality verification** at every step (code review before QA)
+- **Architectural coherence** through central coordination
+- **Iterative refinement** through living documentation
+
+### Core Principles
+
+- **Pattern consistency** - Find and reuse existing patterns before creating new ones
+- **Type safety** - Push logic into the type system; use discriminated unions over optional fields
+- **Test quality** - Never remove or weaken tests without justification
+- **Message passing over shared state** - Prefer immutable data and event-driven architectures
+- **Simplicity** - Everything should be as simple as possible, but not simpler
+- **Code review before QA** - Always review code for patterns, types, and test quality before specification testing
+
+## Specification Structure
+
+All specifications follow a directory-based structure:
+
+```
+specs/<numerical-id>-<kebab-cased-feature>/
+├── feature.md      # WHAT needs to be built (FR-X, NFR-X)
+├── notes.md        # Technical discoveries from spike work (optional)
+└── tech.md         # HOW to build it (COMPONENT-N tasks)
 ```
 
-The architect agent will:
-- Break down the feature into implementable tasks
-- Make technology stack decisions
-- Define data flows and component boundaries
-- Create numbered implementation tasks
-- Document trade-offs and rationale
+### Example
 
-Output: `specs/001-user-authentication.tech.md` with detailed implementation plan
-
-#### Phase 3: Implementation
-
-```bash
-/prime-build specs/001-user-authentication.md
 ```
-
-The architect coordinates:
-- tdd-developer implements each task one at a time
-- code-reviewer reviews for patterns, type safety, and test quality
-- qa-spec-tester verifies against acceptance criteria
-- Fixes are made until code review and QA both pass
-- Progress is tracked by updating checkboxes in tech spec
-
-Output: Verified, high-quality code that matches the specification
+specs/001-user-authentication/
+├── feature.md      # Functional and non-functional requirements
+├── notes.md        # OAuth2 research findings and POC results
+└── tech.md         # Implementation tasks with checkboxes
+```
 
 ## Multi-Agent Architecture
 
-```mermaid
-graph TD
-    User[User Request] --> Architect[🏗️ Architect/Prime<br/>Requirements & Design]
-
-    Architect --> Researcher[🔬 Researcher<br/>Best Practices]
-    Architect --> Explore[🗺️ Explore<br/>Code Discovery]
-
-    Architect --> Spec[📋 Specification<br/>specs/YYYY-MM-DD-feature.md]
-
-    Spec --> Dev[👨‍💻 TDD Developer<br/>Implementation]
-    Dev --> Review[🔍 Code Reviewer<br/>Patterns & Quality]
-    Review --> QA[✅ QA Tester<br/>Spec Verification]
-
-    Review --> Dev
-    QA --> Dev
-    QA --> Architect
-
-    Architect --> Commit[Git Commit]
+```
+User Request
+    ↓
+┌─────────────────────────────────────┐
+│  Architect (You)                    │
+│  - Requirements analysis            │
+│  - Task delegation                  │
+│  - Quality oversight                │
+└─────────────────────────────────────┘
+    ↓           ↓           ↓
+┌─────────┐ ┌─────────┐ ┌─────────┐
+│ Explore │ │Research │ │Implement│
+│ Agent   │ │ Agent   │ │  Agent  │
+└─────────┘ └─────────┘ └─────────┘
+                  ↓
+            ┌─────────────┐
+            │Spec Review  │
+            │   Agent     │
+            └─────────────┘
+                  ↓
+            ┌─────────────┐
+            │ Spec Tester │
+            │   Agent     │
+            └─────────────┘
 ```
 
 ### Agent Roles
 
-- **Architect (Prime Agent)** - Technical leadership, requirements analysis, task delegation, quality oversight
+- **Architect (Prime Agent)** - You, coordinating the entire workflow
 - **Explore** - Fast codebase navigation and discovery
 - **Researcher** - External knowledge acquisition and best practices
-- **TDD Developer** - Code implementation following specifications
-- **Code Reviewer** - Reviews for duplicate patterns, type safety, test quality, and architectural consistency
-- **QA Spec Tester** - Verification of implementations against acceptance criteria
+- **Spec Developer** - Code implementation following specifications
+- **Spec Reviewer** - Reviews for duplicate patterns, type safety, test quality, and architectural consistency
+- **Spec Tester** - Verification of implementations against acceptance criteria
+
+## Quality Gates
+
+The spec-architect skill enforces comprehensive quality gates before marking features complete. Key requirements include code review, QA verification, pattern consistency, type safety, and test quality. See the spec-architect skill for complete quality gate requirements.
+
+## Best Practices
+
+### Do's
+
+- ✅ Use agents proactively based on their strengths
+- ✅ Maintain living documentation that evolves
+- ✅ Always code review before QA testing (catches patterns, types, test issues)
+- ✅ Verify everything through QA before marking complete
+- ✅ Use agent resumption to maintain context and reduce costs
+- ✅ Commit after each major milestone
+- ✅ Break complex tasks into small, testable pieces
+
+### Don'ts
+
+- ❌ Skip code review to save time (prevents technical debt accumulation)
+- ❌ Skip QA verification to save time
+- ❌ Batch multiple tasks together (implement one at a time)
+- ❌ Not use agent resumption (wastes context and costs)
+- ❌ Let the architect write code directly (delegate to developers)
+- ❌ Proceed without clear specifications
+- ❌ Allow direct communication between agents (route through architect)
+
+## Agent Resumption
+
+**CRITICAL**: The spec-architect skill requires checking for existing agents before spawning new ones. Always use agent resumption to maintain context and reduce costs. See the spec-architect skill for the complete agent check and resumption protocol.
 
 ## Project Setup
 
@@ -142,73 +195,13 @@ Create a `specs/` directory in your project root:
 mkdir specs
 ```
 
-### Copy Templates (Optional)
+### Copy Helper Script (Optional)
 
-Copy the spec templates to your project:
+Copy the spec ID helper script to your project:
 
 ```bash
-cp ~/.claude/plugins/spec-dev/spec-templates/* ./specs/
+cp ~/.claude/plugins/spec-dev/scripts/get-next-spec-id.sh ./specs/
 ```
-
-This gives you local copies of:
-- `SPEC_TEMPLATE.md`
-- `TECH_SPEC_TEMPLATE.md`
-- `SPEC_PATTERNS.md`
-- `COMMUNICATION_PROTOCOL.md`
-- `get-next-spec-id.sh`
-
-## Best Practices
-
-### Do's
-
-- ✅ Use agents proactively based on their strengths
-- ✅ Maintain living documentation that evolves
-- ✅ Always code review before QA testing (catches patterns, types, test issues)
-- ✅ Verify everything through QA before marking complete
-- ✅ Commit after each major milestone
-- ✅ Break complex tasks into small, testable pieces
-
-### Don'ts
-
-- ❌ Skip code review to save time (prevents technical debt accumulation)
-- ❌ Skip QA verification to save time
-- ❌ Let the architect write code directly (delegate to developers)
-- ❌ Proceed without clear specifications
-- ❌ Batch multiple tasks together (implement one at a time)
-- ❌ Allow direct communication between agents (route through architect)
-
-## Choosing the Right Workflow
-
-| Scenario | Command | Why |
-|----------|---------|-----|
-| Add form validation | `/prime-simple` | Straightforward, well-understood feature |
-| Fix a bug | `/prime-simple` | Simple, isolated change |
-| Add OAuth authentication | `/prime-spec` → `/prime-tech` → `/prime-build` | Complex, requires planning and design |
-| Multi-service integration | `/prime-spec` → `/prime-tech` → `/prime-build` | Multiple components, dependencies |
-| Refactor architecture | `/prime-spec` → `/prime-tech` → `/prime-build` | Significant impact, needs careful design |
-
-## Quality Gates
-
-Before marking any feature complete:
-
-- ✅ Code review passed (no duplicate patterns, strong types, quality tests)
-- ✅ All acceptance criteria verified by QA
-- ✅ Code follows project conventions
-- ✅ No test regressions (tests not removed or weakened)
-- ✅ Type safety maximized (discriminated unions over optional fields)
-- ✅ Error handling implemented and tested
-- ✅ Performance requirements met
-- ✅ Security considerations addressed
-- ✅ Tests pass (if test suite exists)
-- ✅ Linting/type checking passes
-
-## Documentation
-
-For complete details on the multi-agent architecture and workflows, see:
-
-- **`docs/ways-of-working.md`** - Full system architecture and agent responsibilities
-- **`docs/specification-template.md`** - How to structure specifications
-- **`docs/writing-specs.md`** - Guide to writing effective specs
 
 ## Success Metrics
 
@@ -220,16 +213,37 @@ Track these to measure system effectiveness:
 - **Time to Implementation**: From spec to verified code
 - **Technical Debt Accumulation**: Items added vs resolved
 
-## Evolution
+## Examples
 
-This system should evolve based on:
+### Example 1: Building a New Feature
 
-1. **Usage Patterns** - Which agents are most/least effective
-2. **Bottlenecks** - Where does the process slow down
-3. **Quality Metrics** - Where do defects originate
-4. **Team Feedback** - What's working and what's not
+```bash
+/build Build a user dashboard with metrics tracking and export functionality
+```
 
-Use `/refine-spec` to suggest improvements to the workflow itself.
+The architect will:
+1. Ask clarifying questions about requirements
+2. Use Explore agent to find existing dashboard patterns
+3. Use researcher agent for metrics visualization best practices
+4. Create `specs/001-user-dashboard/feature.md` with requirements
+5. Get your approval on the specification
+6. Create `specs/001-user-dashboard/tech.md` with implementation tasks
+7. Coordinate spec-developer to implement each task
+8. Review each task with spec-reviewer before QA
+9. Verify each task with spec-tester
+10. Mark tasks complete in tech.md as they pass all gates
+
+### Example 2: Iterating on Existing Spec
+
+```bash
+/iterate specs/001-user-dashboard/
+```
+
+The architect will:
+1. Read `feature.md` and `tech.md` from the directory
+2. Check which tasks are complete (checkboxes marked [x])
+3. Continue implementing incomplete tasks
+4. Or add new features if you request them
 
 ## Philosophy
 
@@ -242,3 +256,49 @@ This plugin prioritizes:
 5. **Continuous improvement** through living documentation
 
 The key to success is maintaining discipline in following the process while remaining flexible enough to adapt when requirements don't match reality.
+
+## Advanced Usage
+
+### Accessing the Skill Directly
+
+You can load the spec-architect skill directly in any conversation:
+
+```bash
+/spec-architect
+```
+
+This gives you access to all the workflow guidance, templates, and reference documentation.
+
+### Skill References
+
+The spec-architect skill includes comprehensive reference documentation:
+
+- **SPEC_PATTERNS.md** - Directory structure and file naming conventions
+- **COMMUNICATION_PROTOCOL.md** - Agent briefing format and handover requirements
+- **SPEC_TEMPLATE.md** - Feature specification template
+- **TECH_SPEC_TEMPLATE.md** - Technical specification template
+- **ways-of-working.md** - Complete multi-agent architecture and workflows
+- **writing-specs.md** - Core principles for effective technical specifications
+
+These are loaded as needed during the workflow.
+
+## Getting Help
+
+For more information:
+
+- Load the `spec-architect` skill to see the full workflow guidance
+- Check `CLAUDE.md` in this directory for Claude Code-specific instructions
+- Review the reference documentation in `skills/spec-architect/references/`
+
+## Evolution
+
+This system should evolve based on:
+
+1. **Usage Patterns** - Which agents are most/least effective
+2. **Bottlenecks** - Where does the process slow down
+3. **Quality Metrics** - Where do defects originate
+4. **Team Feedback** - What's working and what's not
+
+---
+
+**Remember**: The architect (you) orchestrates specialized agents to ensure quality. Trust the agents while maintaining oversight of the overall implementation.

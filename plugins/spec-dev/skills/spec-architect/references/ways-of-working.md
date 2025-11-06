@@ -124,7 +124,7 @@ graph TD
 ### 1. Initiation
 
 ```bash
-/prime "Build a user authentication system"
+/build "Build a user authentication system"
 ```
 
 The architect agent is activated with enhanced context and begins requirements gathering.
@@ -140,7 +140,7 @@ The architect:
 
 ### 3. Specification Phase
 
-The architect creates a detailed specification in `specs/YYYY-MM-DD-feature.md` using the template at `.claude/agent-docs/specification-template.md`, containing:
+The architect creates a detailed specification in `specs/<id>-<feature>/feature.md` using the SPEC_TEMPLATE, containing:
 
 - Problem statement and value proposition
 - Functional requirements with testable ACs

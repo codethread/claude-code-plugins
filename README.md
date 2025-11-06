@@ -7,8 +7,9 @@ A local plugin marketplace providing development workflow tools and document pro
 ### 1. Add the Marketplace
 
 In Claude Code, run:
+
 ```bash
-/plugin marketplace add ./
+/plugin marketplace add git@github.com:codethread/claude-code-plugins.git
 ```
 
 This registers the local marketplace from this repository.
@@ -41,10 +42,12 @@ After installation, use slash commands, agents, and skills provided by each plug
 Multi-agent architecture for systematic feature development with test-driven development, code review, and QA validation.
 
 **Provides:**
+
 - Commands: `/prime-simple`, `/prime-spec`, `/prime-tech`, `/prime-build`, `/refine-spec`
 - Agents: `tdd-developer`, `code-reviewer`, `qa-spec-tester`
 
 **Typical workflow:**
+
 1. `/prime-spec` - Requirements gathering and specification
 2. `/prime-tech` - Technical design and task breakdown
 3. `/prime-build` - Coordinated implementation with review and QA
@@ -58,6 +61,7 @@ Comprehensive guidance for creating high-quality Model Context Protocol (MCP) se
 **Source:** Adapted from [anthropics/skills](https://github.com/anthropics/skills)
 
 **Use when:**
+
 - Building MCP servers for external APIs
 - Working with Python (FastMCP) or Node/TypeScript (MCP SDK)
 - Designing agent-centric workflow tools
@@ -69,6 +73,7 @@ Framework for creating effective skills that extend Claude's capabilities.
 **Source:** From [anthropics/skills](https://github.com/anthropics/skills)
 
 **Use when:**
+
 - Creating new skills for specialized domains
 - Packaging reusable knowledge for Claude
 - Designing skills with SKILL.md and bundled resources
@@ -161,11 +166,13 @@ plugins/
 ## Creating Your Own Plugin
 
 1. **Create plugin directory structure:**
+
    ```bash
    mkdir -p plugins/my-plugin/{commands,agents,skills}
    ```
 
 2. **Add plugin metadata** (optional `plugin.json` - marketplace.json registration is sufficient):
+
    ```json
    {
      "name": "my-plugin",
@@ -179,6 +186,7 @@ plugins/
 3. **Create components** (commands, agents, or skills as markdown files):
 
    **Command** (`commands/my-command.md`):
+
    ```markdown
    # My Command
 
@@ -186,6 +194,7 @@ plugins/
    ```
 
    **Agent** (`agents/my-agent.md`):
+
    ```markdown
    # My Agent
 
@@ -193,6 +202,7 @@ plugins/
    ```
 
    **Skill** (`skills/my-skill.md`):
+
    ```markdown
    # My Skill
 
@@ -200,6 +210,7 @@ plugins/
    ```
 
 4. **Register in `.claude-plugin/marketplace.json`:**
+
    ```json
    {
      "name": "personal-configs-plugins",
@@ -224,6 +235,7 @@ plugins/
 ## Attribution
 
 Several plugins in this marketplace are sourced from or adapted from [Anthropic's official skills repository](https://github.com/anthropics/skills):
+
 - **Document processing plugins** (pdf, xlsx, pptx, docx): From anthropics/skills
 - **mcp-builder**: Adapted from anthropics/skills
 - **skill-creator**: From anthropics/skills
