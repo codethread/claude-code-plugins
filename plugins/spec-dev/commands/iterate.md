@@ -10,7 +10,7 @@ Use the Skill tool to load the `spec-architect` skill and execute the **ITERATE 
 
 ## Context
 
-- Most recent spec: !`bash ~/.claude/plugins/marketplaces/personal-configs-plugins/plugins/spec-dev/scripts/get-latest-spec.sh specs`
+- Most recent spec: !`bash ~/.claude/plugins/marketplaces/personal-configs-plugins/plugins/spec-dev/scripts/get-latest-spec.sh`
 
 ## Arguments
 

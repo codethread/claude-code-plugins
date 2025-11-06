@@ -5,7 +5,7 @@
 # Returns a 3-digit padded ID (001, 002, etc.)
 
 get_next_spec_id() {
-    local specs_dir="${1:-$(dirname "$0")}"
+    local specs_dir="${1:-specs}"
 
     # Find all spec directories matching the pattern XXX-*
     # Extract the numerical IDs from directory names
