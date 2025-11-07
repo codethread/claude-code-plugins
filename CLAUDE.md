@@ -6,13 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a local Claude Code plugin marketplace repository. It contains plugin definitions that extend Claude Code with custom commands, agents, and skills.
 
+**Progressive Disclosure**: Each plugin has its own `CLAUDE.md` with detailed plugin-specific guidance. This root file covers marketplace-level architecture and plugin creation patterns only.
+
 ## Plugin Architecture
 
 ### Marketplace Structure
 
 - **`.claude-plugin/marketplace.json`** - Marketplace catalog that registers all available plugins
 - **`plugins/`** - Directory containing individual plugin implementations
-- Each plugin has its own README.md and CLAUDE.md with detailed documentation
+- **Each plugin has its own `README.md` (user guide) and `CLAUDE.md` (maintainer guide)**
 
 ### Plugin Components
 
@@ -21,15 +23,22 @@ Plugins can contain any combination of:
 - **Commands** (`.md` files in `commands/`) - Slash commands like `/prime-spec`
 - **Agents** (`.md` files in `agents/`) - Specialized sub-agents for Task tool
 - **Skills** (`.md` files in `skills/`) - Context that can be loaded into sessions
+- **Scripts** (in `scripts/`) - Shell scripts invoked by commands
 - **Documentation** (`docs/`, `spec-templates/`, etc.)
 
 ## Available Plugins
 
+When working within a specific plugin, **refer to that plugin's `CLAUDE.md`** for detailed architecture and maintenance guidance.
+
 ### Development Workflow
 
 - **spec-dev** - Multi-agent spec-driven development workflow (see `plugins/spec-dev/CLAUDE.md`)
+- **doc-writer** - Technical documentation writing with industry best practices (see `plugins/doc-writer/CLAUDE.md`)
+- **claude-code-knowledge** - Official Claude Code documentation access with skill creation guide (see `plugins/claude-code-knowledge/CLAUDE.md`)
+
+### Plugin Development
+
 - **mcp-builder** - MCP server development guide (see `plugins/mcp-builder/CLAUDE.md`)
-- **skill-creator** - Skill creation framework (see `plugins/skill-creator/CLAUDE.md`)
 
 ### Document Processing
 
@@ -48,8 +57,9 @@ See `plugins/document-skills/CLAUDE.md` for overview of document processing plug
 
 # Install plugins
 /plugin install spec-dev@personal-configs-plugins
+/plugin install doc-writer@personal-configs-plugins
+/plugin install claude-code-knowledge@personal-configs-plugins
 /plugin install mcp-builder@personal-configs-plugins
-/plugin install skill-creator@personal-configs-plugins
 /plugin install pdf@personal-configs-plugins
 /plugin install xlsx@personal-configs-plugins
 /plugin install pptx@personal-configs-plugins
@@ -81,12 +91,13 @@ See `plugins/document-skills/CLAUDE.md` for overview of document processing plug
      "version": "1.0.0",
      "author": { "name": "Your Name" },
      "keywords": ["tag1", "tag2"],
+     "category": "development-tools",
      "source": "./plugins/my-plugin"
    }
    ```
 
-4. Add commands/agents as markdown files in respective directories
-5. Create CLAUDE.md in your plugin directory with plugin-specific guidance
+4. Add commands/agents/skills as markdown files in respective directories
+5. **Create both `README.md` (user guide) and `CLAUDE.md` (maintainer guide)** in your plugin directory
 
 ### Writing Slash Commands
 
@@ -152,143 +163,67 @@ allowed-tools: Bash(bash:*)
 ```
 
 This pattern ensures:
-
 - Arguments are clearly defined once and referenced consistently
 - Bash scripts use the full marketplace plugin path
 - Context from script execution is available throughout the command
 
 ## Plugin Documentation Standards
 
-When working with Claude Code plugins (in `plugins/` directory), follow these documentation standards:
+Understanding the three-layer documentation model is critical:
 
-### README.md - For End Users
-
+### README.md (User Guide)
 **Audience**: Developers using the plugin (humans, not Claude)
 
-**Purpose**: Explain what the plugin does and how to use it
-
 **Should contain**:
-
 - What the plugin does (high-level overview)
 - How to install it
 - How to use the slash commands with examples
 - What files/structure gets created
 - Example workflows
-- Troubleshooting tips
-- Clear, user-friendly language
 
 **Should NOT contain**:
-
 - Instructions written for Claude Code
 - Internal architecture details for maintainers
-- "You are the architect..." type language
-- Detailed multi-agent coordination protocols
-- Agent resumption technical details
+- Multi-agent coordination protocols
 
-**Example structure**:
-
-```markdown
-# Plugin Name
-
-What it does in one sentence.
-
-## Installation
-
-`/plugin install ...`
-
-## Quick Start
-
-/command example
-
-## What Gets Created
-
-Directory structure diagram
-
-## Commands Reference
-
-List of commands with examples
-
-## Examples
-
-Real-world usage scenarios
-```
-
-### CLAUDE.md - For Plugin Maintainers
-
-**Audience**: Developers maintaining/developing the plugin itself
-
-**Purpose**: Document plugin architecture and how to modify it
+### CLAUDE.md (Maintainer Guide)
+**Audience**: Developers maintaining/developing the plugin (and Claude Code when modifying the plugin)
 
 **Should contain**:
-
 - Plugin architecture and design principles
 - Directory structure explanation
 - Component responsibilities (commands, skills, agents, scripts)
 - How to add/modify components
 - Common maintenance tasks
-- Testing procedures
 - Architecture rationale
 - Common pitfalls to avoid
 
 **Should NOT contain**:
-
 - How end users should use the plugin (that's in README.md)
-- How Claude Code should use the plugin (that's in commands/skills)
-
-**Example structure**:
-
-```markdown
-# Plugin Name - Maintainer Documentation
-
-For end-user docs, see README.md.
-
-## Plugin Architecture
-
-Design principles
-
-## Directory Structure
-
-Component explanation
-
-## Component Responsibilities
-
-Commands, skills, agents, scripts
-
-## Common Maintenance Tasks
-
-Step-by-step guides
-
-## Architecture Rationale
-
-Why decisions were made
-
-## Common Pitfalls
-
-What to avoid
-```
+- How Claude Code should execute workflows (that's in commands/skills)
 
 ### Workflow Context Files (Skills, Commands, Agents)
-
-**Purpose**: Provide Claude Code with operational instructions
+**Audience**: Claude Code during execution
 
 **Commands** (`commands/*.md`):
-
 - Provide context (script outputs, arguments)
 - Load skills
 - Direct to workflows
 - Keep under 50 lines
 
 **Skills** (`skills/*/SKILL.md`):
-
 - Contain all workflow intelligence
 - Coordinate agents
 - Reference templates and documentation
 - Comprehensive and self-contained
 
 **Agents** (`agents/*.md`):
-
 - Specialized execution instructions
 - Concise descriptions (<50 words)
 - Detailed system prompts in body
 
 **Key principle**: All Claude Code operational context lives in commands/skills/agents, NOT in README.md or CLAUDE.md
+
+## Working with Plugins
+
+When working within a specific plugin directory, Claude Code should refer to that plugin's `CLAUDE.md` for detailed architecture and maintenance guidance. The root `CLAUDE.md` provides marketplace-level patterns only.

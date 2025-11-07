@@ -46,24 +46,6 @@
       "source": "./plugins/mcp-builder"
     },
     {
-      "name": "skill-creator",
-      "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.",
-      "version": "1.0.0",
-      "author": {
-        "name": "codethread"
-      },
-      "keywords": [
-        "skill",
-        "creation",
-        "development",
-        "workflow",
-        "tools",
-        "integration"
-      ],
-      "category": "development-tools",
-      "source": "./plugins/skill-creator"
-    },
-    {
       "name": "pdf",
       "description": "Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents, and handling forms. When Claude needs to fill in a PDF form or programmatically process, generate, or analyze PDF documents at scale.",
       "version": "1.0.0",
@@ -154,6 +136,28 @@
       ],
       "category": "development-tools",
       "source": "./plugins/doc-writer"
+    },
+    {
+      "name": "claude-code-knowledge",
+      "description": "Official Claude Code documentation access including comprehensive skill creation guide. Provides instant reference to hooks, MCP, skills, slash commands, settings, CLI, and all Claude Code features with automatic sync from docs.anthropic.com. Includes helper scripts for creating, validating, and packaging skills.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Community"
+      },
+      "keywords": [
+        "documentation",
+        "reference",
+        "claude-code",
+        "knowledge",
+        "docs",
+        "hooks",
+        "mcp",
+        "skills",
+        "skill-creation",
+        "settings"
+      ],
+      "category": "development-tools",
+      "source": "./plugins/claude-code-knowledge"
     }
   ]
 }

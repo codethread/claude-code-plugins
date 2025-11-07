@@ -20,13 +20,16 @@ This registers the local marketplace from this repository.
 # Development workflow plugins
 /plugin install spec-dev@personal-configs-plugins
 /plugin install mcp-builder@personal-configs-plugins
-/plugin install skill-creator@personal-configs-plugins
+/plugin install claude-code-knowledge@personal-configs-plugins
 
 # Document processing plugins
 /plugin install pdf@personal-configs-plugins
 /plugin install xlsx@personal-configs-plugins
 /plugin install pptx@personal-configs-plugins
 /plugin install docx@personal-configs-plugins
+
+# Documentation writing
+/plugin install doc-writer@personal-configs-plugins
 ```
 
 ### 3. Use the Plugins
@@ -66,17 +69,41 @@ Comprehensive guidance for creating high-quality Model Context Protocol (MCP) se
 - Working with Python (FastMCP) or Node/TypeScript (MCP SDK)
 - Designing agent-centric workflow tools
 
-#### skill-creator
+#### claude-code-knowledge
 
-Framework for creating effective skills that extend Claude's capabilities.
+Official Claude Code documentation access with comprehensive skill creation guide. Automatically provides Claude with instant reference to the complete Claude Code documentation plus helper scripts for creating skills.
 
-**Source:** From [anthropics/skills](https://github.com/anthropics/skills)
+**What it provides:**
+
+- 45+ documentation topics covering all Claude Code features
+- Comprehensive skill creation guide with helper scripts
+- Automatic documentation sync from official sources
+- Fast local access with comprehensive search
+- Model-invoked: Claude automatically uses it when you ask Claude Code questions
+
+**Topics covered:**
+
+- Core: Setup, CLI, workflows, interactive mode
+- Extensibility: Hooks, MCP servers, skills, slash commands, plugins
+- Skill Creation: Complete guide with init, validate, and package scripts
+- Advanced: Sub-agents, memory, checkpointing, analytics
+- Integrations: GitHub Actions, VS Code, JetBrains, GitLab CI/CD
+- Cloud: Amazon Bedrock, Google Vertex AI
+- Security: Security features, sandboxing, data usage
+
+See `plugins/claude-code-knowledge/README.md` for detailed documentation.
+
+#### doc-writer
+
+Write clear, effective technical documentation following industry-proven patterns from exemplary projects and authoritative style guides.
+
+**Source:** Custom implementation
 
 **Use when:**
 
-- Creating new skills for specialized domains
-- Packaging reusable knowledge for Claude
-- Designing skills with SKILL.md and bundled resources
+- Creating or improving READMEs, API docs, tutorials, guides
+- Following best practices from React, Rust, Stripe, Twilio docs
+- Applying style guides from Google, Diátaxis, Write the Docs, Microsoft
 
 ### Document Processing
 
@@ -146,9 +173,14 @@ plugins/
 ├── mcp-builder/
 │   └── skills/
 │       └── mcp-builder.md
-├── skill-creator/
+├── claude-code-knowledge/
 │   └── skills/
-│       └── skill-creator.md
+│       └── claude-code-knowledge/
+│           ├── SKILL.md
+│           ├── docs/
+│           │   └── skill-creation-guide.md
+│           └── scripts/
+│               └── skill-creator/
 ├── pdf/
 │   └── skills/
 │       └── pdf.md
@@ -238,7 +270,12 @@ Several plugins in this marketplace are sourced from or adapted from [Anthropic'
 
 - **Document processing plugins** (pdf, xlsx, pptx, docx): From anthropics/skills
 - **mcp-builder**: Adapted from anthropics/skills
-- **skill-creator**: From anthropics/skills
+
+Custom plugins developed for this marketplace:
+
+- **spec-dev**: Multi-agent spec-driven development workflow
+- **claude-code-knowledge**: Official Claude Code documentation with integrated skill creation guide (skill creation scripts from anthropics/skills)
+- **doc-writer**: Technical documentation writing guide
 
 ## Reference
 

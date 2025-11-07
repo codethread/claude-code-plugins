@@ -8,11 +8,11 @@ The `doc-writer` plugin provides Claude Code with comprehensive documentation wr
 
 ### Design Principles
 
-1. **Research-based:** All guidance is grounded in analysis of real-world excellent documentation
-2. **Framework-driven:** Uses the Diátaxis framework for documentation organization
-3. **Pattern catalog:** Provides specific, reusable patterns rather than abstract advice
-4. **Progressive complexity:** Scaffolds from simple to advanced approaches
-5. **Quality-focused:** Includes checklists and anti-patterns to avoid
+1. **Test base knowledge first:** Document only what Claude doesn't naturally do
+2. **Actionable verification:** Concrete steps (researcher agent, Context7 MCP) not abstract warnings
+3. **Focus on unique patterns:** Opinionated, counter-intuitive, or project-specific
+4. **Ruthless simplification:** Apply docs-reviewer agent to eliminate unnecessary content
+5. **Research-based:** All guidance grounded in analysis of excellent documentation
 
 ## Directory Structure
 
@@ -20,30 +20,43 @@ The `doc-writer` plugin provides Claude Code with comprehensive documentation wr
 plugins/doc-writer/
 ├── README.md                           # End-user documentation
 ├── CLAUDE.md                          # This file - maintainer documentation
+├── agents/
+│   └── docs-reviewer.md               # Documentation review agent
 └── skills/
     └── writing-documentation/
         ├── SKILL.md                   # Main skill file loaded by Claude
         └── references/
             ├── exemplary-projects.md  # Analysis of 8 well-documented projects
-            └── best-practices.md      # Synthesis of style guides
+            ├── best-practices.md      # Synthesis of style guides
+            └── llm-pitfalls.md        # LLM-specific issues and countermeasures
 ```
 
 ### Component Responsibilities
+
+#### `agents/docs-reviewer.md`
+**Purpose:** Specialized agent for ruthlessly simplifying documentation
+
+**Contains:**
+- Philosophy of ruthless simplicity
+- Review process and criteria
+- Special scrutiny for Claude Code docs
+- Examples of simplification
+- Review checklist
+
+**Design note:** Particularly brutal for CLAUDE.md, SKILL.md, commands, and agents to keep them focused.
 
 #### `SKILL.md`
 **Purpose:** Main operational context loaded into Claude's session
 
 **Contains:**
-- Core documentation philosophy and principles
-- Diátaxis framework breakdown (tutorials, how-tos, reference, explanations)
-- Voice, tone, and style guidelines
-- Structural patterns and templates
-- Code example standards
-- Quality checklists
-- Anti-patterns to avoid
-- Decision guides
+- Claude Code documentation workflow (test base knowledge first)
+- API verification using researcher agent and Context7 MCP
+- Security verification patterns
+- Production-ready code example requirements
+- docs-reviewer agent usage
+- LLM self-checklist
 
-**Design note:** This file is comprehensive (~500 lines) to be self-contained. It references but doesn't duplicate the research files.
+**Design note:** This file is focused (~170 lines) on unique patterns Claude doesn't naturally follow. It references research files for detailed guidance.
 
 #### `references/exemplary-projects.md`
 **Purpose:** Document analysis of projects known for excellent documentation
@@ -328,18 +341,18 @@ Periodically validate skill output against exemplary projects:
 ### For Maintainers
 
 **Don't:**
-- ❌ Add every new documentation project to references (curate quality over quantity)
-- ❌ Override Diátaxis framework without strong rationale
-- ❌ Make SKILL.md too long (already comprehensive; avoid bloat)
+- ❌ Add content Claude already knows naturally
+- ❌ Use abstract warnings ("don't hallucinate") instead of actionable steps
+- ❌ Make SKILL.md too long (currently ~170 lines; avoid bloat)
 - ❌ Duplicate content between skill and references
-- ❌ Remove research citations (preserves credibility)
+- ❌ Skip testing base knowledge before adding patterns
 
 **Do:**
-- ✅ Keep skill actionable and pattern-focused
-- ✅ Update references when landscape changes significantly
-- ✅ Test changes with real documentation tasks
-- ✅ Maintain clear separation: user docs (README) vs. maintainer docs (CLAUDE.md)
-- ✅ Document architectural decisions
+- ✅ Test with `claude --print --model haiku` before documenting (cost-effective)
+- ✅ Document only unique/opinionated patterns
+- ✅ Make verification actionable (researcher agent, Context7 MCP)
+- ✅ Apply docs-reviewer agent to all updates
+- ✅ Keep skill focused on behavior-changing patterns
 
 ### For Skill Content
 
