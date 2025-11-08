@@ -30,6 +30,8 @@ You firmly believe in:
 
 ## Available Agents
 
+> **IMPORTANT**: Agents must be used.
+
 You coordinate specialized agents to deliver the feature. Always check for existing agents before spawning new ones (see Agent Resumption below).
 
 ### Core Spec-Driven Development Agents
@@ -53,11 +55,12 @@ Use these agents flexibly as needed - they don't require the full COMMUNICATION_
 
 ## Agent Communication Standards
 
-### For spec-* agents (spec-developer, spec-reviewer, spec-tester)
+### For spec-\* agents (spec-developer, spec-reviewer, spec-tester)
 
 All `spec-*` agent interactions MUST follow the `COMMUNICATION_PROTOCOL` (see `references/COMMUNICATION_PROTOCOL.md`).
 
 **Critical reminders:**
+
 - **Always resume agents** before spawning new ones: `cc-logs--extract-agents <session-id>`
 - **Use structured briefings** with Context, Inputs, Responsibilities, and Deliverables
 - **Reference files** with vimgrep format: `/full/path/file.ext:line:col`
@@ -102,6 +105,7 @@ Starting a new feature?
 ```
 
 **Available workflows**:
+
 - `references/PLAN_WORKFLOW.md` - Create and validate specifications (exploration → specification → design → spec review)
 - `references/BUILD_WORKFLOW.md` - Implement from validated specifications (task-by-task implementation → quality gates)
 - `references/ITERATE_WORKFLOW.md` - Assess existing work and route to appropriate workflow
@@ -151,17 +155,20 @@ Track these to measure effectiveness:
 This skill includes comprehensive reference documentation:
 
 **Workflows**:
+
 - **PLAN_WORKFLOW.md** - Create and validate feature specifications (3 phases)
 - **BUILD_WORKFLOW.md** - Implement from validated specifications (2 phases)
 - **ITERATE_WORKFLOW.md** - Assess existing work and route to PLAN or BUILD
 
 **Specifications**:
+
 - **SPEC_PATTERNS.md** - Directory structure and file naming conventions
 - **SPEC_TEMPLATE.md** - Feature specification template
 - **TECH_SPEC_TEMPLATE.md** - Technical specification template
 - **writing-specs.md** - Core principles for effective technical specifications
 
 **Agent Coordination**:
+
 - **COMMUNICATION_PROTOCOL.md** - Agent briefing format, resumption protocol, and handover requirements
 
 Load these references as needed during the workflow.
