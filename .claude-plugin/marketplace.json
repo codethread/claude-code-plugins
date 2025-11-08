@@ -46,79 +46,6 @@
       "source": "./plugins/mcp-builder"
     },
     {
-      "name": "pdf",
-      "description": "Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents, and handling forms. When Claude needs to fill in a PDF form or programmatically process, generate, or analyze PDF documents at scale.",
-      "version": "1.0.0",
-      "author": {
-        "name": "codethread"
-      },
-      "keywords": [
-        "PDF",
-        "document",
-        "extraction",
-        "manipulation",
-        "forms",
-        "merge",
-        "split"
-      ],
-      "category": "document-processing",
-      "source": "./plugins/document-skills/pdf"
-    },
-    {
-      "name": "xlsx",
-      "description": "Comprehensive spreadsheet creation, editing, and analysis with support for formulas, formatting, data analysis, and visualization. When Claude needs to work with spreadsheets (.xlsx, .xlsm, .csv, .tsv, etc) for creating new spreadsheets, analyzing data, modifying existing spreadsheets, or recalculating formulas.",
-      "version": "1.0.0",
-      "author": {
-        "name": "codethread"
-      },
-      "keywords": [
-        "Excel",
-        "spreadsheet",
-        "XLSX",
-        "formulas",
-        "data analysis",
-        "visualization"
-      ],
-      "category": "document-processing",
-      "source": "./plugins/document-skills/xlsx"
-    },
-    {
-      "name": "pptx",
-      "description": "Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for creating new presentations, modifying or editing content, working with layouts, or adding comments and speaker notes.",
-      "version": "1.0.0",
-      "author": {
-        "name": "codethread"
-      },
-      "keywords": [
-        "PowerPoint",
-        "presentation",
-        "PPTX",
-        "slides",
-        "layouts",
-        "design"
-      ],
-      "category": "document-processing",
-      "source": "./plugins/document-skills/pptx"
-    },
-    {
-      "name": "docx",
-      "description": "Comprehensive document creation, editing, and analysis with support for tracked changes, comments, formatting preservation, and text extraction. When Claude needs to work with professional documents (.docx files) for creating new documents, modifying content, working with tracked changes, or adding comments.",
-      "version": "1.0.0",
-      "author": {
-        "name": "codethread"
-      },
-      "keywords": [
-        "Word",
-        "document",
-        "DOCX",
-        "tracked changes",
-        "comments",
-        "formatting"
-      ],
-      "category": "document-processing",
-      "source": "./plugins/document-skills/docx"
-    },
-    {
       "name": "doc-writer",
       "description": "Write clear, effective technical documentation following industry-proven patterns from exemplary projects (React, Rust, Stripe, Twilio) and authoritative style guides (Google, Diátaxis, Write the Docs, Microsoft). Use when creating or improving READMEs, API docs, tutorials, guides, or any technical documentation.",
       "version": "1.0.0",
@@ -158,22 +85,6 @@
       ],
       "category": "development-tools",
       "source": "./plugins/claude-code-knowledge"
-    },
-    {
-      "name": "path-test",
-      "description": "Testing plugin to discover how Claude Code resolves file paths from plugin commands. Contains multiple test commands each using different path resolution strategies.",
-      "version": "1.0.0",
-      "author": {
-        "name": "codethread"
-      },
-      "keywords": [
-        "testing",
-        "path-resolution",
-        "plugin-development",
-        "debugging"
-      ],
-      "category": "development-tools",
-      "source": "./plugins/path-test"
     }
   ]
 }

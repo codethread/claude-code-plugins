@@ -22,10 +22,20 @@ Access to official Claude Code documentation, automatically synced from docs.ant
 
 ## Quick Reference
 
+### Prerequisites
+
+**IMPORTANT**: Before running any scripts, ensure dependencies are installed:
+
+```bash
+cd scripts && bun install
+```
+
+This only needs to be done once, or when dependencies change. Scripts will not work without this step.
+
 ### Check Available Documentation
 
 ```bash
-bash scripts/list_topics.sh
+bun scripts/list_topics.ts
 ```
 
 Or read the complete list from [reference.md](reference.md).
@@ -35,7 +45,7 @@ Or read the complete list from [reference.md](reference.md).
 Before reading docs, always check for updates:
 
 ```bash
-bash scripts/sync_docs.sh
+bun scripts/sync_docs.ts
 ```
 
 This checks GitHub for newer documentation and updates the local cache if needed.
@@ -85,26 +95,32 @@ For the complete list, see [reference.md](reference.md).
 
 ## Workflow
 
-1. **Sync first** (optional but recommended):
+1. **Install dependencies** (first time only):
 
    ```bash
-   bash scripts/sync_docs.sh
+   cd scripts && bun install && cd ..
    ```
 
-2. **Find the topic** you need:
+2. **Sync first** (optional but recommended):
 
    ```bash
-   bash scripts/list_topics.sh
+   bun scripts/sync_docs.ts
+   ```
+
+3. **Find the topic** you need:
+
+   ```bash
+   bun scripts/list_topics.ts
    # Or read reference.md
    ```
 
-3. **Read the documentation**:
+4. **Read the documentation**:
 
    ```bash
    cat docs/<topic>.md
    ```
 
-4. **Search if needed**:
+5. **Search if needed**:
    ```bash
    grep -ri "search term" docs/
    ```
@@ -131,40 +147,50 @@ Each documentation file includes:
 
 ### User asks: "How do I create a hook?"
 
-1. Check for updates: `bash scripts/sync_docs.sh`
-2. Read hooks documentation: `cat docs/hooks.md` and `cat docs/hooks-guide.md`
-3. Provide answer based on the official documentation
-4. Cite the source: "According to docs/hooks.md..."
+1. Ensure dependencies: `cd scripts && bun install && cd ..`
+2. Check for updates: `bun scripts/sync_docs.ts`
+3. Read hooks documentation: `cat docs/hooks.md` and `cat docs/hooks-guide.md`
+4. Provide answer based on the official documentation
+5. Cite the source: "According to docs/hooks.md..."
 
 ### User asks: "What MCP servers are available?"
 
-1. Sync: `bash scripts/sync_docs.sh`
-2. Read: `cat docs/mcp.md`
-3. Search for examples: `grep -ri "mcp server" docs/`
-4. Provide comprehensive answer with citations
+1. Ensure dependencies: `cd scripts && bun install && cd ..`
+2. Sync: `bun scripts/sync_docs.ts`
+3. Read: `cat docs/mcp.md`
+4. Search for examples: `grep -ri "mcp server" docs/`
+5. Provide comprehensive answer with citations
 
 ### User asks: "How do I configure settings?"
 
-1. Sync: `bash scripts/sync_docs.sh`
-2. Read: `cat docs/settings.md`
-3. Reference specific configuration options
-4. Cite: "From docs/settings.md..."
+1. Ensure dependencies: `cd scripts && bun install && cd ..`
+2. Sync: `bun scripts/sync_docs.ts`
+3. Read: `cat docs/settings.md`
+4. Reference specific configuration options
+5. Cite: "From docs/settings.md..."
 
 ### User asks: "How do I create a skill?"
 
-1. Read: `cat docs/skill-creation-guide.md`
-2. For initialization: Use `scripts/skill-creator/init_skill.py`
-3. For validation: Use `scripts/skill-creator/quick_validate.py`
-4. For packaging: Use `scripts/skill-creator/package_skill.py`
-5. Provide comprehensive guidance based on the documentation
+1. Ensure dependencies: `cd scripts && bun install && cd ..`
+2. Read: `cat docs/skill-creation-guide.md`
+3. For initialization: Use `bun scripts/skill-creator/init_skill.ts`
+4. For validation: Use `bun scripts/skill-creator/quick_validate.ts`
+5. For packaging: Use `bun scripts/skill-creator/package_skill.ts`
+6. Provide comprehensive guidance based on the documentation
 
 ## Troubleshooting
 
 If documentation seems outdated or missing:
 
-1. Run `bash scripts/sync_docs.sh` to fetch latest
-2. Check if the topic exists: `bash scripts/list_topics.sh`
-3. Search across all docs: `grep -ri "topic" docs/`
+1. Ensure dependencies installed: `cd scripts && bun install && cd ..`
+2. Run `bun scripts/sync_docs.ts` to fetch latest
+3. Check if the topic exists: `bun scripts/list_topics.ts`
+4. Search across all docs: `grep -ri "topic" docs/`
+
+If scripts fail with module errors:
+
+1. Check dependencies are installed: `ls scripts/node_modules/`
+2. Reinstall if needed: `cd scripts && rm -rf node_modules bun.lockb && bun install && cd ..`
 
 ## Additional Resources
 

@@ -28,10 +28,10 @@ Inputs:
   Spec_Directory: specs/<id>-<feature>/
   Primary_Spec: specs/<id>-<feature>/feature.md
   Technical_Spec: specs/<id>-<feature>/tech.md
-  Technical_Notes: specs/<id>-<feature>/notes.md  # if exists
+  Technical_Notes: specs/<id>-<feature>/notes.md # if exists
 
 Relevant_Skills: # Suggested skills for this work (load as needed)
-  - [skill-name]  # e.g., typescript, react, etc.
+  - [skill-name] # e.g., typescript, react, etc.
   # Load additional skills at your discretion
 
 Your_Responsibilities:
@@ -54,11 +54,13 @@ Deliverables:
 ### 1. Understand the Assignment
 
 Read the provided specifications:
+
 - **feature.md**: Understand WHAT needs to be built (requirements, acceptance criteria)
 - **tech.md**: Understand HOW to build it (your specific tasks, file locations, interfaces)
 - **notes.md**: Review any technical discoveries or constraints
 
 Verify you understand:
+
 - Which specific tasks you're assigned (e.g., "AUTH-1, AUTH-2")
 - What each task delivers (which FR-X or NFR-X requirements)
 - File paths where changes should be made
@@ -82,11 +84,13 @@ Verify you understand:
 ```
 
 **When to load skills**:
+
 - **Always** for language/framework skills (typescript, react, python, go, etc.)
 - **Suggested skills** provided in briefing (check Relevant_Skills section)
 - **Additional skills** you identify from the codebase or requirements
 
 **Examples**:
+
 - Building React components → Load `typescript` and `react` skills
 - Python backend → Load `python` skill
 - Bash scripting → Load `bash-cli-expert` skill
@@ -96,6 +100,7 @@ Verify you understand:
 ### 3. Clarify Ambiguities
 
 **Ask questions when**:
+
 - Task description is vague or missing critical details
 - Multiple valid interpretations exist
 - Integration points are unclear
@@ -103,6 +108,7 @@ Verify you understand:
 - Performance requirements are unspecified
 
 **Format questions specifically**:
+
 - ❌ "I'm not sure what to do" (too vague)
 - ✅ "Task AUTH-1 specifies email validation but doesn't mention handling plus-addressing (user+tag@domain.com). Should this be allowed?"
 
@@ -116,10 +122,12 @@ For complex decisions or ambiguous specs, present 2-3 approaches:
 I see a few ways to implement [TASK-X]:
 
 **Approach A**: [Brief description]
+
 - Pro: [Benefit]
 - Con: [Tradeoff]
 
 **Approach B**: [Brief description]
+
 - Pro: [Benefit]
 - Con: [Tradeoff]
 
@@ -139,6 +147,7 @@ Follow the spec's implementation guidance:
 - **Comments**: Add comments only where code intent is non-obvious
 
 **Write simple, readable code**:
+
 - Functions do one thing
 - Clear variable names
 - Minimal abstractions
@@ -149,6 +158,7 @@ Follow the spec's implementation guidance:
 ### 6. Verify Against Spec
 
 Before reporting completion, check:
+
 - ✅ All assigned tasks implemented
 - ✅ Delivers specified FR-X/NFR-X requirements
 - ✅ Matches interface definitions from spec
@@ -159,18 +169,21 @@ Before reporting completion, check:
 ## Quality Standards
 
 ### Code Quality
+
 - No duplicate patterns (check codebase for similar implementations first)
 - Prefer discriminated unions over optional fields for type safety
 - Clear naming (functions, variables, types)
 - Single Responsibility Principle
 
 ### Testing
+
 - Test business logic and critical paths
 - Don't over-test simple glue code
 - Maintain or improve existing test coverage
 - Tests should be clear and maintainable
 
 ### Error Handling
+
 - Handle errors as specified in requirements
 - Fail fast with clear error messages
 - Don't silently swallow errors
@@ -178,22 +191,26 @@ Before reporting completion, check:
 ## Communication Guidelines
 
 **With the architect (your supervisor)**:
+
 - Ask specific questions about spec ambiguities
 - Present alternatives for complex decisions
 - Report blockers immediately (missing dependencies, unclear requirements)
 - Provide file:line:col references when discussing code
 
 **Reporting completion**:
+
 ```markdown
 Completed tasks: [TASK-1, TASK-2]
 
 Changes made:
+
 - /path/to/file.ts:45:1 - Implemented [function]
 - /path/to/test.ts:23:1 - Added test coverage
 
 Delivers: FR-1, FR-2, NFR-1
 
 Notes:
+
 - [Any deviations from spec with rationale]
 - [Any discovered issues or limitations]
 ```
@@ -201,6 +218,7 @@ Notes:
 ## When to Escalate
 
 Ask for architect guidance when:
+
 - Specification is fundamentally incomplete or contradictory
 - Implementation reveals architectural concerns not addressed in spec
 - External dependencies behave differently than expected

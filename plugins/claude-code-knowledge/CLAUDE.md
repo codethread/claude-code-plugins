@@ -25,8 +25,8 @@ This is a **model-invoked skill**, meaning:
 1. **SKILL.md** - Instructions for Claude on when and how to use the skill
 2. **reference.md** - Index of all available documentation
 3. **scripts/** - Helper scripts for maintenance and skill creation
-   - **sync_docs.sh**, **fetch_docs.py**, **list_topics.sh** - Documentation maintenance
-   - **skill-creator/** - Helper scripts for creating and packaging skills
+   - **sync_docs.ts**, **fetch_docs.ts**, **list_topics.ts** - Documentation maintenance (Bun TypeScript)
+   - **skill-creator/** - Helper scripts for creating and packaging skills (Bun TypeScript)
 4. **docs/** - Local cache of all documentation including skill-creation-guide.md
 
 ## Development Workflow
@@ -57,7 +57,7 @@ To fetch latest documentation:
 
 ```bash
 cd skills/claude-code-knowledge
-bash scripts/sync_docs.sh
+bun scripts/sync_docs.ts
 ```
 
 This will:
@@ -71,7 +71,7 @@ To force a fresh fetch:
 
 ```bash
 cd skills/claude-code-knowledge
-python3 scripts/fetch_docs.py
+bun scripts/fetch_docs.ts
 ```
 
 **Note**: The fetch script currently copies from the existing `~/.claude-code-docs` installation as the official docs have moved to `code.claude.com`. This needs to be updated to fetch from the new location.
@@ -94,14 +94,14 @@ claude-code-knowledge/
 │       ├── reference.md         # Index of all documentation topics
 │       │
 │       ├── scripts/             # Maintenance and helper scripts
-│       │   ├── fetch_docs.py    # Fetch docs from source
-│       │   ├── sync_docs.sh     # Check and sync updates
-│       │   ├── list_topics.sh   # List available topics
-│       │   ├── requirements.txt # Python dependencies
+│       │   ├── fetch_docs.ts    # Fetch docs from source (Bun TypeScript)
+│       │   ├── sync_docs.ts     # Check and sync updates (Bun TypeScript)
+│       │   ├── list_topics.ts   # List available topics (Bun TypeScript)
+│       │   ├── package.json     # Dependencies for scripts
 │       │   └── skill-creator/   # Skill creation helper scripts
-│       │       ├── init_skill.py      # Initialize new skill structure
-│       │       ├── package_skill.py   # Validate and package skills
-│       │       └── quick_validate.py  # Validation without packaging
+│       │       ├── init_skill.ts      # Initialize new skill structure (Bun TypeScript)
+│       │       ├── package_skill.ts   # Validate and package skills (Bun TypeScript)
+│       │       └── quick_validate.ts  # Validation without packaging (Bun TypeScript)
 │       │
 │       └── docs/                # Documentation cache
 │           ├── docs_manifest.json      # Metadata and hashes
@@ -188,9 +188,9 @@ If new Claude Code docs are released:
 
 The skill creation helper scripts are in `scripts/skill-creator/`:
 
-- **init_skill.py** - Creates new skill template structure
-- **package_skill.py** - Validates and packages skills into .zip
-- **quick_validate.py** - Fast validation during development
+- **init_skill.ts** - Creates new skill template structure (Bun TypeScript)
+- **package_skill.ts** - Validates and packages skills into .zip (Bun TypeScript)
+- **quick_validate.ts** - Fast validation during development (Bun TypeScript)
 
 To update these scripts:
 1. Modify the appropriate script
@@ -210,7 +210,7 @@ If the skill isn't working:
 
 2. **Test list script**:
    ```bash
-   bash skills/claude-code-knowledge/scripts/list_topics.sh
+   bun skills/claude-code-knowledge/scripts/list_topics.ts
    ```
 
 3. **Check a doc file**:
@@ -247,8 +247,8 @@ Before considering the skill complete:
 
 - [ ] Documentation files exist (45 files)
 - [ ] Manifest is valid JSON
-- [ ] list_topics.sh works
-- [ ] sync_docs.sh works
+- [ ] list_topics.ts works
+- [ ] sync_docs.ts works
 - [ ] Claude can read individual docs
 - [ ] Claude can search across docs
 - [ ] Claude uses skill automatically for Claude Code questions
@@ -259,6 +259,15 @@ Before considering the skill complete:
 1. **Fetch script**: Currently copies from existing installation rather than fetching from source
 2. **URL changes**: Official docs moved to code.claude.com, fetch script not updated yet
 3. **No auto-sync**: Skill doesn't automatically check for updates, user must run sync script
+
+## Migration to Bun
+
+All scripts have been migrated from Python and Bash to Bun TypeScript:
+
+- **Benefits**: Faster execution, better type safety, single runtime
+- **Requirements**: Bun must be installed (`curl -fsSL https://bun.sh/install | bash`)
+- **Dependencies**: Managed via `scripts/package.json` (fast-xml-parser for XML parsing)
+- **Compatibility**: All scripts maintain the same CLI interface and functionality
 
 ## Version History
 

@@ -58,20 +58,28 @@ Claude will automatically use this skill to provide accurate answers from offici
 
 ## Manual Documentation Access
 
+First, install dependencies (required once):
+
+```bash
+cd skills/claude-code-knowledge/scripts && bun install && cd -
+```
+
+Then use the scripts:
+
 ```bash
 # List all topics
-bash skills/claude-code-knowledge/scripts/list_topics.sh
+bun skills/claude-code-knowledge/scripts/list_topics.ts
 
 # Sync latest docs
-bash skills/claude-code-knowledge/scripts/sync_docs.sh
+bun skills/claude-code-knowledge/scripts/sync_docs.ts
 
 # Read specific topic
 cat skills/claude-code-knowledge/docs/hooks.md
 
 # Skill creation helper scripts
-skills/claude-code-knowledge/scripts/skill-creator/init_skill.py my-skill --path ./output
-skills/claude-code-knowledge/scripts/skill-creator/package_skill.py path/to/skill
-skills/claude-code-knowledge/scripts/skill-creator/quick_validate.py path/to/skill
+bun skills/claude-code-knowledge/scripts/skill-creator/init_skill.ts my-skill --path ./output
+bun skills/claude-code-knowledge/scripts/skill-creator/package_skill.ts path/to/skill
+bun skills/claude-code-knowledge/scripts/skill-creator/quick_validate.ts path/to/skill
 ```
 
 ## Related
