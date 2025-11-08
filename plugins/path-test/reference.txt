@@ -1,0 +1,7 @@
+This is the path-test plugin reference file.
+
+If you can read this, the path resolution worked correctly!
+
+Plugin: path-test
+File: reference.txt
+Purpose: Testing file path resolution from plugin commands

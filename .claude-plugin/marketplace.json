@@ -158,6 +158,22 @@
       ],
       "category": "development-tools",
       "source": "./plugins/claude-code-knowledge"
+    },
+    {
+      "name": "path-test",
+      "description": "Testing plugin to discover how Claude Code resolves file paths from plugin commands. Contains multiple test commands each using different path resolution strategies.",
+      "version": "1.0.0",
+      "author": {
+        "name": "codethread"
+      },
+      "keywords": [
+        "testing",
+        "path-resolution",
+        "plugin-development",
+        "debugging"
+      ],
+      "category": "development-tools",
+      "source": "./plugins/path-test"
     }
   ]
 }
