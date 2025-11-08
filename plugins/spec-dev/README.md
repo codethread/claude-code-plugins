@@ -1,15 +1,6 @@
 # Spec-Driven Development Plugin
 
-Systematic, specification-driven feature development with multi-agent implementation and automated quality gates.
-
-## When to Use
-
-Use this plugin when:
-- Building new features from clear requirements
-- Need structured workflow from spec to verified implementation
-- Want automated code review and QA
-- Building complex features that need task breakdown
-- Continuing work on existing specifications
+Systematic feature development with specifications, automated code review, and QA verification.
 
 ## Installation
 
@@ -17,74 +8,73 @@ Use this plugin when:
 /plugin install spec-dev@personal-configs-plugins
 ```
 
-## What You Get
+## What This Does
 
-### Commands
+Creates specifications → validates → implements task-by-task with code review and QA → verifies against requirements.
 
-**`/build <feature description>`**
+## Commands
 
-Builds new features through complete workflow:
-1. Explores codebase for patterns
-2. Creates specification (you review and approve)
-3. Creates technical design with tasks
-4. Implements with automated review
-5. Verifies against specifications
+### `/build <feature description>`
 
-**`/iterate [spec-directory]`**
+```bash
+/build Add OAuth2 authentication with GitHub provider
+```
 
-Continues or expands existing work:
-- Loads existing specs from `specs/` directory
-- Assesses current state
-- Continues implementation or adds features
-- Use without arguments to continue most recent spec
+Explores codebase → creates `specs/001-oauth-auth/feature.md` → you review → creates `tech.md` → validates → implements with review and QA.
 
-### Agents
+### `/iterate [spec-directory]`
 
-- **spec-architect** - Coordinates workflow and quality gates
-- **spec-developer** - Implements code with automated review
-- **spec-reviewer** - Code quality verification
-- **spec-tester** - QA verification against requirements
+```bash
+/iterate                         # Continue most recent spec
+/iterate specs/001-oauth-auth/   # Work on specific spec
+```
 
-### What Gets Created
+Routes to PLAN workflow (update specs) or BUILD workflow (continue implementation).
 
-Specifications in standard structure:
+## What Gets Created
 
 ```
 specs/
-└── 001-feature-name/
-    ├── feature.md    # Requirements and acceptance criteria
+└── 001-oauth-authentication/
+    ├── feature.md    # Requirements (FR-1, FR-2, NFR-1...)
     ├── tech.md       # Implementation tasks with checkboxes
     └── notes.md      # Technical research (optional)
 ```
 
-## Quick Example
+**feature.md**: Functional (FR-X) and non-functional requirements (NFR-X), interface definitions, success metrics, testing setup (exact commands, environment, test data).
 
-```bash
-/build Add user authentication with OAuth2 support
-```
-
-Claude will:
-1. Explore your codebase
-2. Create spec in `specs/001-user-authentication/`
-3. Break down into tasks in `tech.md`
-4. Implement with automated review
-5. Mark tasks complete as they pass verification
-
-Continue work:
-```bash
-/iterate specs/001-user-authentication/
-# or just: /iterate
-```
+**tech.md**: Numbered tasks linking to FR/NFR, testability markers, progress checkboxes.
 
 ## Quality Standards
 
-Automated quality gates enforce:
-- Code review for patterns and type safety
-- Implementation matches specifications
-- Tests maintain or improve coverage
-- No duplicate code patterns
-- Type safety maximized
+Specifications validated before implementation. Code reviewed for patterns, types, tests. QA verifies against requirements.
 
-## Related
+## Example Workflow
 
-See `CLAUDE.md` for maintainer documentation and plugin architecture.
+```bash
+/build Add user profile editing with avatar upload
+```
+
+1. Specification created in `specs/002-user-profile/feature.md`
+2. You review and approve
+3. Technical design created in `tech.md`
+4. Specification validated
+5. Implementation begins task-by-task:
+   ```
+   ✓ PROFILE-1: Create profile model (code review → QA → passed)
+   ✓ PROFILE-2: Add avatar upload endpoint (code review → QA → passed)
+   → PROFILE-3: Build profile UI component (in progress)
+   ```
+
+Continue later:
+
+```bash
+/iterate
+```
+
+Add new feature to existing spec:
+
+```bash
+/iterate specs/002-user-profile/
+# Prompt: "Add password change to user profile"
+```

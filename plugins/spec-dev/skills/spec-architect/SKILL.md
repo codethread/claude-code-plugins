@@ -163,7 +163,6 @@ This skill includes comprehensive reference documentation:
 
 **Agent Coordination**:
 - **COMMUNICATION_PROTOCOL.md** - Agent briefing format, resumption protocol, and handover requirements
-- **ways-of-working.md** - Complete multi-agent architecture and coordination patterns
 
 Load these references as needed during the workflow.
 
