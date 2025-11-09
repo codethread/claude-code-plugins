@@ -32,6 +32,24 @@ Provides:
 - **Search capability** - Search across all documentation
 - **Official source** - Synced from docs.anthropic.com
 
+### Hook: `claude-code-prompt`
+
+**Auto-suggestion hook** - Proactively reminds Claude to use the skill when you mention Claude Code topics.
+
+**Triggers on:**
+- Mentions of "Claude Code", "claude-code", or "claudecode"
+- Questions about Claude ("How does Claude...", "Can Claude...")
+- Claude Code features: hooks, MCP servers, skills, slash commands, settings
+- Related keywords: plugin, sub-agent, checkpointing, memory
+
+**Smart detection:**
+- ✅ Triggers: "How do I create a hook?"
+- ✅ Triggers: "Can Claude use MCP servers?"
+- ✅ Triggers: "What are Claude Code skills?"
+- ❌ Won't trigger: "I prefer Claude Sonnet over Claude Opus"
+
+This hook injects a prompt suggestion into Claude's context, reminding it to load the skill before responding to your question.
+
 ### Documentation Coverage
 
 - **Core**: Setup, CLI, workflows, interactive mode
@@ -55,6 +73,51 @@ How do I create a skill?
 ```
 
 Claude will automatically use this skill to provide accurate answers from official documentation.
+
+## Hook Setup
+
+### Installation
+
+The plugin includes a UserPromptSubmit hook that auto-suggests the skill. To enable it:
+
+1. **Install hook dependencies** (one-time setup):
+```bash
+cd ~/.claude/plugins/claude-code-knowledge/hooks
+bun install
+```
+
+2. **Add hook to your settings.json**:
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/claude-code-prompt.ts",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+The `${CLAUDE_PLUGIN_ROOT}` variable automatically resolves to the plugin's installation directory, so no hardcoded paths needed!
+
+3. **Restart Claude Code** to apply changes
+
+### How It Works
+
+When you submit a prompt, the hook:
+1. Analyzes your prompt for Claude Code related keywords
+2. Detects questions about Claude or its features
+3. If matched, injects a suggestion into Claude's context
+4. Claude sees the suggestion and loads the skill before responding
+
+This ensures Claude always has access to the latest official documentation when answering your questions.
 
 ## Manual Documentation Access
 

@@ -1,0 +1,68 @@
+{
+    "version": "1.0",
+    "description": "Skill activation triggers for claude-code-knowledge plugin. Automatically suggests the skill when Claude Code topics are mentioned.",
+    "skills": {
+        "claude-code-knowledge": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Official Claude Code documentation access with auto-sync",
+            "promptTriggers": {
+                "keywords": [
+                    "claude code",
+                    "claudecode",
+                    "claude-code",
+                    "hook",
+                    "hooks",
+                    "mcp server",
+                    "mcp servers",
+                    "skill",
+                    "skills",
+                    "slash command",
+                    "slash commands",
+                    "claude settings",
+                    "claude config",
+                    "claude feature",
+                    "claude capability",
+                    "claude documentation",
+                    "claude docs",
+                    "sub-agent",
+                    "subagent",
+                    "checkpointing",
+                    "claude memory",
+                    "claude analytics",
+                    "claude security",
+                    "claude plugin",
+                    "claude plugins"
+                ],
+                "intentPatterns": [
+                    "how\\s+(?:do|does|can)\\s+(?:i\\s+)?(?:use\\s+)?claude",
+                    "can\\s+claude",
+                    "does\\s+claude",
+                    "is\\s+claude",
+                    "what\\s+(?:is|are)\\s+claude.*(?:hook|mcp|skill|setting|feature|plugin)",
+                    "how\\s+(?:to|do\\s+i).*(?:create|add|setup|configure|install).*(?:hook|mcp|skill|command|plugin)",
+                    "claude.*(?:work|feature|capability|setting|config)",
+                    "(?:create|add|setup|install|configure).*(?:hook|mcp\\s+server|skill|slash\\s+command|plugin)",
+                    "how\\s+(?:to|do\\s+i).*claude.*(?:hook|mcp|skill|setting|plugin)",
+                    "explain.*(?:hook|mcp|skill|slash\\s+command|plugin)",
+                    "what.*claude.*(?:do|support|feature|capability)",
+                    "claude.*(?:documentation|docs|reference|guide)"
+                ]
+            }
+        }
+    },
+    "notes": {
+        "usage": "This skill-rules.json is part of the claude-code-knowledge plugin and will be merged with the user's project skill-rules.json when the plugin is installed.",
+        "enforcement_types": {
+            "suggest": "Skill suggestion appears but doesn't block execution"
+        },
+        "priority_levels": {
+            "high": "Important - Trigger for most matches"
+        },
+        "customization": {
+            "keywords": "Add more Claude Code related terms as the documentation expands",
+            "intentPatterns": "Use regex for flexible user intent matching"
+        }
+    }
+}
