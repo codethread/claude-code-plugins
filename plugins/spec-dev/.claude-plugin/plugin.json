@@ -1,6 +1,6 @@
 {
   "name": "spec-dev",
-  "description": "Multi-agent spec-driven development workflow. Use /prime-spec for complex features, /prime-tech for technical design, /prime-build for implementation, or /prime-simple for quick features. Systematic requirements → specification → implementation → verification.",
+  "description": "Multi-agent spec-driven development workflow with automatic session resumption. Use /build to create specifications and implement features, /iterate to continue work. Systematic requirements → specification → implementation → verification with hooks-based session tracking.",
   "version": "1.0.0",
   "author": {
     "name": "codethread"
@@ -12,6 +12,7 @@
     "workflow",
     "TDD",
     "QA",
-    "architecture"
+    "architecture",
+    "session-tracking"
   ]
 }

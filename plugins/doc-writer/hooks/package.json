@@ -1,0 +1,10 @@
+{
+  "name": "doc-writer-hooks",
+  "version": "1.0.0",
+  "description": "Hooks for doc-writer plugin",
+  "type": "module",
+  "scripts": {
+    "test": "bun doc-writer-suggest.ts"
+  },
+  "dependencies": {}
+}

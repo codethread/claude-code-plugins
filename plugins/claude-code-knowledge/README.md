@@ -27,7 +27,6 @@ You don't need to explicitly invoke it - Claude decides when to use it.
 
 Provides:
 - **45+ documentation topics** covering all Claude Code features
-- **Automatic sync** - Documentation stays up-to-date
 - **Fast local access** - No network delay
 - **Search capability** - Search across all documentation
 - **Official source** - Synced from docs.anthropic.com
@@ -35,6 +34,12 @@ Provides:
 ### Hook: `claude-code-prompt`
 
 **Auto-suggestion hook** - Proactively reminds Claude to use the skill when you mention Claude Code topics.
+
+### Skill Rules: `skill-rules.json`
+
+**Pattern-based triggers** - Framework-level skill suggestion based on prompt patterns.
+
+Works alongside the hook and model-invoked skill for comprehensive coverage.
 
 **Triggers on:**
 - Mentions of "Claude Code", "claude-code", or "claudecode"
@@ -119,13 +124,14 @@ When you submit a prompt, the hook:
 
 This ensures Claude always has access to the latest official documentation when answering your questions.
 
+## Complete Setup Checklist
+
+✅ Plugin installed via `/plugin install`
+✅ Hook dependencies installed: `cd ~/.claude/plugins/claude-code-knowledge/hooks && bun install`
+✅ Script dependencies installed: `cd ~/.claude/plugins/claude-code-knowledge/skills/claude-code-knowledge/scripts && bun install`
+✅ Hook enabled in settings.json (optional but recommended)
+
 ## Manual Documentation Access
-
-First, install dependencies (required once):
-
-```bash
-cd skills/claude-code-knowledge/scripts && bun install && cd -
-```
 
 Then use the scripts:
 

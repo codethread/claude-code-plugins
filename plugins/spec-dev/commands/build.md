@@ -18,11 +18,7 @@ Use the Skill tool to load the `spec-architect` skill and execute the **BUILD wo
 
 ## Instructions
 
-1. Load the spec-architect skill using the Skill tool:
-
-   ```
-   Skill({ command: "spec-architect" })
-   ```
+1. Load the `spec-dev:spec-architect` skill
 
 2. Follow the **PLAN Workflow** first to create and validate specifications
 

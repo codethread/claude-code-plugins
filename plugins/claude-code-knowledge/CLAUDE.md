@@ -4,30 +4,43 @@ This skill provides Claude with access to official Claude Code documentation and
 
 ## Architecture
 
-### Self-Contained Design
+### Multi-Strategy Trigger Architecture
 
-This skill is entirely self-contained:
-- Documentation is stored within the skill directory
-- No external dependencies except for initial fetch
+This plugin uses **three complementary mechanisms** to ensure Claude has documentation access:
+
+1. **Model-Invoked Skill** - Claude decides based on SKILL.md description field
+2. **UserPromptSubmit Hook** - Proactively injects context before Claude processes prompts
+3. **skill-rules.json** - Pattern-based skill suggestion system
+
+Each mechanism serves different use cases:
+- **Model-invoked**: For explicit Claude Code questions when Claude recognizes the topic
+- **Hook**: Catches edge cases, adds redundancy, improves accuracy with contextual suggestions
+- **skill-rules**: Framework-level prompt pattern matching with keywords and regex
+
+This redundancy ensures Claude rarely misses opportunities to use official documentation.
+
+### Data Storage
+
+Documentation and dependencies:
+- Documentation is stored within the skill directory (`skills/claude-code-knowledge/docs/`)
+- Requires Bun runtime for scripts and hooks
 - Works offline once documentation is cached
-- No hooks or external configuration needed
-
-### Model-Invoked Behavior
-
-This is a **model-invoked skill**, meaning:
-- Claude automatically decides when to use it
-- User doesn't need to explicitly invoke it
-- Triggered by questions about Claude Code
-- Description field controls when Claude uses it
+- Hook dependencies in `hooks/package.json`, script dependencies in `skills/claude-code-knowledge/scripts/package.json`
 
 ### Key Components
 
 1. **SKILL.md** - Instructions for Claude on when and how to use the skill
 2. **reference.md** - Index of all available documentation
-3. **scripts/** - Helper scripts for maintenance and skill creation
+3. **hooks/** - Hook subsystem for proactive context injection
+   - **claude-code-prompt.ts** - UserPromptSubmit hook that detects Claude Code questions
+   - **hooks.json** - Hook registration and configuration
+   - **package.json** - Hook dependencies
+   - **README.md** - Comprehensive hook documentation
+4. **skill-rules.json** - Pattern-based triggers for skill suggestion (keywords and regex)
+5. **scripts/** - Helper scripts for maintenance and skill creation
    - **sync_docs.ts**, **fetch_docs.ts**, **list_topics.ts** - Documentation maintenance (Bun TypeScript)
    - **skill-creator/** - Helper scripts for creating and packaging skills (Bun TypeScript)
-4. **docs/** - Local cache of all documentation including skill-creation-guide.md
+6. **docs/** - Local cache of all documentation including skill-creation-guide.md
 
 ## Development Workflow
 
@@ -83,27 +96,34 @@ claude-code-knowledge/
 ├── .claude-plugin/
 │   └── plugin.json              # Plugin metadata for marketplace
 │
+├── hooks/                       # Hook subsystem for proactive context injection
+│   ├── claude-code-prompt.ts   # UserPromptSubmit hook (Bun TypeScript)
+│   ├── hooks.json              # Hook configuration and registration
+│   ├── package.json            # Hook dependencies
+│   └── README.md               # Hook documentation and testing guide
+│
 ├── skills/                      # Skills directory
-│   └── claude-code-knowledge/   # The actual skill
+│   ├── skill-rules.json        # Pattern-based skill suggestion (keywords, regex)
+│   └── claude-code-knowledge/  # The actual skill
 │       │
-│       ├── SKILL.md             # ⭐ CRITICAL: Skill instructions
-│       │                        # - Description triggers when Claude uses it
-│       │                        # - Instructions tell Claude how to use it
-│       │                        # - allowed-tools restricts what it can do
+│       ├── SKILL.md            # ⭐ CRITICAL: Skill instructions
+│       │                       # - Description triggers when Claude uses it
+│       │                       # - Instructions tell Claude how to use it
+│       │                       # - allowed-tools restricts what it can do
 │       │
-│       ├── reference.md         # Index of all documentation topics
+│       ├── reference.md        # Index of all documentation topics
 │       │
-│       ├── scripts/             # Maintenance and helper scripts
-│       │   ├── fetch_docs.ts    # Fetch docs from source (Bun TypeScript)
-│       │   ├── sync_docs.ts     # Check and sync updates (Bun TypeScript)
-│       │   ├── list_topics.ts   # List available topics (Bun TypeScript)
-│       │   ├── package.json     # Dependencies for scripts
-│       │   └── skill-creator/   # Skill creation helper scripts
+│       ├── scripts/            # Maintenance and helper scripts
+│       │   ├── fetch_docs.ts   # Fetch docs from source (Bun TypeScript)
+│       │   ├── sync_docs.ts    # Check and sync updates (Bun TypeScript)
+│       │   ├── list_topics.ts  # List available topics (Bun TypeScript)
+│       │   ├── package.json    # Dependencies for scripts
+│       │   └── skill-creator/  # Skill creation helper scripts
 │       │       ├── init_skill.ts      # Initialize new skill structure (Bun TypeScript)
 │       │       ├── package_skill.ts   # Validate and package skills (Bun TypeScript)
 │       │       └── quick_validate.ts  # Validation without packaging (Bun TypeScript)
 │       │
-│       └── docs/                # Documentation cache
+│       └── docs/               # Documentation cache
 │           ├── docs_manifest.json      # Metadata and hashes
 │           ├── skill-creation-guide.md # Comprehensive skill creation guide
 │           └── *.md                    # 45+ documentation files
@@ -134,6 +154,32 @@ The most critical file. Contains:
 - Include key trigger words (hooks, MCP, skills, etc.)
 - Emphasize using docs over guessing
 
+### hooks/claude-code-prompt.ts
+
+UserPromptSubmit hook that proactively suggests the skill when Claude Code topics are detected.
+
+**How it works**:
+- Analyzes user prompts before Claude processes them
+- Detects Claude Code-related questions using pattern matching
+- Injects contextual suggestion to load the skill
+- Improves accuracy by catching edge cases the model might miss
+
+**Detection patterns**:
+- Exact keywords: "claude code", "hooks", "mcp", "skills"
+- Question patterns: "how do/can/does claude..."
+- Feature patterns: "create a hook", "configure settings"
+
+See `hooks/README.md` for complete documentation, testing procedures, and debugging.
+
+### skill-rules.json
+
+Framework-level skill suggestion system that defines prompt triggers:
+- Keywords array for exact matches
+- intentPatterns regex for flexible matching
+- Priority and enforcement settings
+
+Works alongside the hook and model-invoked mechanisms for comprehensive coverage.
+
 ### docs_manifest.json
 
 Tracks all documentation:
@@ -146,13 +192,27 @@ Tracks all documentation:
 
 ### How Claude Uses the Skill
 
+The plugin uses three trigger mechanisms working together:
+
+**Model-Invoked Path**:
 1. User asks: "How do I create a hook?" or "How do I create a skill?"
-2. Claude sees the question matches skill description
+2. Claude sees the question matches SKILL.md description
 3. Claude reads SKILL.md for instructions
-4. Claude runs: `bash scripts/sync_docs.sh` (optional)
-5. Claude reads: `cat docs/hooks.md` or `cat docs/skill-creation-guide.md`
+4. Claude optionally syncs docs: `bun scripts/sync_docs.ts`
+5. Claude reads relevant documentation
 6. For skill creation, Claude may use helper scripts from `scripts/skill-creator/`
 7. Claude provides answer with citation
+
+**Hook Path**:
+1. User submits prompt with Claude Code keywords
+2. UserPromptSubmit hook (claude-code-prompt.ts) detects the question
+3. Hook injects contextual suggestion to load the skill
+4. Claude sees the suggestion and follows the model-invoked path above
+
+**skill-rules.json Path**:
+1. User prompt matches keywords or intentPatterns in skill-rules.json
+2. Framework suggests the skill based on pattern configuration
+3. Claude follows the model-invoked path above
 
 ### Tool Restrictions
 
@@ -174,6 +234,24 @@ If Claude isn't using the skill when expected:
 2. Update the `description` field in frontmatter
 3. Add more trigger keywords
 4. Make it more specific about when to use
+
+### Updating Hook Detection Patterns
+
+If the hook isn't triggering on relevant questions:
+
+1. Edit `hooks/claude-code-prompt.ts`
+2. Update the detection patterns in the script
+3. Test with hook debugging commands (see `hooks/README.md`)
+4. Verify hook triggers correctly without false positives
+
+### Updating skill-rules.json
+
+If the skill-rules system isn't suggesting the skill:
+
+1. Edit `skills/skill-rules.json`
+2. Add new keywords or update intentPatterns regex
+3. Adjust priority or enforcement settings if needed
+4. Test that patterns match intended prompts
 
 ### Adding New Documentation
 
@@ -251,8 +329,13 @@ Before considering the skill complete:
 - [ ] sync_docs.ts works
 - [ ] Claude can read individual docs
 - [ ] Claude can search across docs
-- [ ] Claude uses skill automatically for Claude Code questions
+- [ ] Hook triggers on Claude Code questions (test via hook debugging)
+- [ ] Hook context appears in transcript correctly
+- [ ] skill-rules.json is valid JSON
+- [ ] Claude uses skill automatically for Claude Code questions (any of 3 paths)
 - [ ] Skill provides accurate answers with citations
+- [ ] Hook dependencies installed: `cd hooks && bun install`
+- [ ] Script dependencies installed: `cd skills/claude-code-knowledge/scripts && bun install`
 
 ## Known Issues
 

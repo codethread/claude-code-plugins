@@ -113,7 +113,7 @@ function urlToSafeFilename(urlPath: string): string {
     }
   }
 
-  if (!path.includes(prefix) && urlPath.includes('claude-code/')) {
+  if (path === urlPath && urlPath.includes('claude-code/')) {
     path = urlPath.split('claude-code/').pop() || urlPath;
   }
 
@@ -491,13 +491,19 @@ async function main() {
 
       const oldHash = manifest.files[filename]?.hash || "";
       const oldEntry = manifest.files[filename] || {};
+      const filePath = join(docsDir, filename);
+      const fileExists = existsSync(filePath);
 
       let contentHash: string;
       let lastUpdated: string;
 
-      if (contentHasChanged(content, oldHash)) {
+      if (!fileExists || contentHasChanged(content, oldHash)) {
         contentHash = await saveMarkdownFile(docsDir, filename, content);
-        log.info(`Updated: ${filename}`);
+        if (!fileExists) {
+          log.info(`Created: ${filename}`);
+        } else {
+          log.info(`Updated: ${filename}`);
+        }
         lastUpdated = new Date().toISOString();
       } else {
         contentHash = oldHash;
@@ -531,13 +537,19 @@ async function main() {
 
     const oldHash = manifest.files[filename]?.hash || "";
     const oldEntry = manifest.files[filename] || {};
+    const filePath = join(docsDir, filename);
+    const fileExists = existsSync(filePath);
 
     let contentHash: string;
     let lastUpdated: string;
 
-    if (contentHasChanged(content, oldHash)) {
+    if (!fileExists || contentHasChanged(content, oldHash)) {
       contentHash = await saveMarkdownFile(docsDir, filename, content);
-      log.info(`Updated: ${filename}`);
+      if (!fileExists) {
+        log.info(`Created: ${filename}`);
+      } else {
+        log.info(`Updated: ${filename}`);
+      }
       lastUpdated = new Date().toISOString();
     } else {
       contentHash = oldHash;

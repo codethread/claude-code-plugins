@@ -49,8 +49,8 @@ Delegate to **spec-reviewer agent** for STATIC analysis (code review WITHOUT run
 
 **If the reviewer finds blocking issues**:
 - Use `cc-logs--extract-agents <session-id>` to find developer agent ID
-- Resume developer agent: `Task({ resume: "<dev-agent-id>", prompt: "Code review found issues: [specific issues]. Please fix these." })`
-- Re-review until code quality standards are met
+- Resume developer agent once to fix: `Task({ resume: "<dev-agent-id>", prompt: "Code review found issues: [specific issues]. Please fix these." })`
+- If further issues remain after resumption, spawn a new developer agent (resumption only works once)
 - Only proceed to QA once code review passes
 
 **If the reviewer suggests improvements (non-blocking)**:
@@ -101,9 +101,10 @@ Check the `tech.md` for testing timing:
 
 If QA finds problems:
 - Use `cc-logs--extract-agents <session-id>` to find developer agent ID
-- Resume developer agent: `Task({ resume: "<dev-agent-id>", prompt: "QA testing found failures: [specific failures]. Please fix." })`
-- Code review the fixes (can resume spec-reviewer agent)
-- Re-test with QA (can resume spec-tester agent)
+- Resume developer agent once: `Task({ resume: "<dev-agent-id>", prompt: "QA testing found failures: [specific failures]. Please fix." })`
+- Code review the fixes (spawn new reviewer agent - each agent only resumes once)
+- Re-test with QA (spawn new tester agent)
+- If more fixes needed after first resumption, spawn new developer agent
 - Do not proceed until this task fully passes
 
 ### Step 6: Architect Review
@@ -133,7 +134,7 @@ Only NOW select the next task and repeat this entire process.
 **ENFORCEMENT RULES**:
 - If you find yourself saying "implement tasks LINK-1 through LINK-3", STOP. Implement only one at a time.
 - Mandatory sequence: Implement → Code Review → Fix Review Issues → QA Test → Fix QA Issues → Architect Review → Mark Complete
-- **ALWAYS use `resume` when sending agents back to fix issues** - Never spawn new agents for rework
+- **Use `resume` strategically** - Each agent can only be resumed once, best used after initial review/testing to fix issues
 - For [TESTABLE] tasks: Code review and test immediately. Do not proceed without both passing.
 - For [TEST AFTER COMPONENT] groups: Complete all tasks (with code review for each), then QA test as unit
 - Code review is NEVER optional - it catches pattern duplication, type safety issues, and test problems before QA

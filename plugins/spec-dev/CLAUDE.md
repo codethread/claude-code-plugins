@@ -13,8 +13,12 @@ Commands provide context → Skills provide intelligence → Agents execute task
 
 ```
 plugins/spec-dev/
+├── .claude-plugin/     # plugin.json metadata
 ├── commands/           # build.md, iterate.md
 ├── agents/             # spec-developer.md, spec-reviewer.md, spec-tester.md
+├── hooks/              # Session tracking and auto-resumption
+│   ├── hooks.json      # Hook registration (PreToolUse, PreCompact, SessionStart)
+│   └── *.sh            # Hook handler scripts
 ├── skills/spec-architect/
 │   ├── SKILL.md        # Routing and coordination
 │   └── references/     # PLAN_WORKFLOW, BUILD_WORKFLOW, ITERATE_WORKFLOW
@@ -37,6 +41,15 @@ plugins/spec-dev/
 
 **Scripts**: Idempotent, stable output, used in command Context sections.
 
+**Hooks**: Session tracking and automatic resumption system:
+- **PreToolUse** (skill-pretooluse-handler.sh): Initializes session tracking when spec-architect skill loads
+- **PreCompact** (precompact-handler.sh): Increments compaction counter in session file
+- **SessionStart** (sessionstart-handler.sh): Auto-resumes spec-dev sessions by loading spec-architect skill with ITERATE workflow
+
+Session files stored in: `~/.local/cache/personal-configs-plugins/spec-dev/<normalized-cwd>/<session-id>.json`
+
+See `hooks/README.md` for debugging commands and session file structure.
+
 ## Key Design Decisions
 
 **Workflow Separation**: Three workflows avoid loading planning context during iteration. PLAN creates specs, BUILD implements, ITERATE routes.
@@ -47,6 +60,12 @@ plugins/spec-dev/
 
 **Spec Review Gate**: After technical design, spec-reviewer validates completeness, contradictions, dependencies, self-containment, testability, and testing setup.
 
+**Session Resumption**: Hooks enable automatic workflow continuation:
+- When spec-architect skill loads, session tracking initializes
+- On compaction, counter increments
+- On session resume/restart, you're automatically put back into spec-dev mode with ITERATE workflow
+- This ensures seamless work continuation without manually re-invoking /iterate
+
 ## Maintenance Tasks
 
 **Update workflows**: Edit `references/{PLAN,BUILD,ITERATE}_WORKFLOW.md`
@@ -56,6 +75,12 @@ plugins/spec-dev/
 **Change agent behavior**: Edit `agents/spec-*.md` system prompt
 
 **Add quality gates**: Update workflow file, update spec-reviewer briefing if needed, document in COMMUNICATION_PROTOCOL if affects all agents
+
+**Update hooks**: Edit `hooks/*.sh` and test with hook debugging commands (see `hooks/README.md`)
+
+**Modify session behavior**: Edit `hooks/sessionstart-handler.sh` for auto-resume logic
+
+**Change session tracking**: Edit `hooks/skill-pretooluse-handler.sh` for initialization
 
 ## Testing
 
@@ -71,6 +96,9 @@ cc-logs--extract-agents <session-id>
 - [ ] Workflows reference correctly
 - [ ] Scripts handle edge cases
 - [ ] Agent resumption works
+- [ ] Hook handlers execute successfully (use hook debugging commands from hooks/README.md)
+- [ ] Session tracking creates files in expected location
+- [ ] Auto-resumption loads skill correctly after compaction
 
 ## Common Pitfalls
 

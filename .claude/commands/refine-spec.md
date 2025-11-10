@@ -1,15 +1,15 @@
 ---
-description: Refine the prime commands for spec building
+description: Refine the spec-dev plugin
 argument-hint: [improvement to make]
-allowed-tools: Skill
+allowed-tools: Skill, Bash
 ---
 
 # Spec driven development refinement
 
 ## Context
 
+- Documents: !`fd --extension md . 'plugins/spec-dev'`
 - Read EVERYTHING inside `plugins/spec-dev/*`
-- Load the `skill-creator` Skill for context on skills
 
 ## Brief
 

@@ -1,10 +1,12 @@
 ---
 name: claude-code-knowledge
 description: Access official Claude Code documentation including comprehensive guides on hooks, MCP servers, agent skills, slash commands, settings, CLI reference, security, memory, plugins, and troubleshooting. Use when the user asks about Claude Code features, configuration, capabilities, or best practices. ALWAYS use this skill instead of guessing about Claude Code functionality - it contains the authoritative documentation from docs.anthropic.com with automatic updates. Also includes comprehensive skill creation guide with helper scripts when users want to create new skills.
-allowed-tools: Read, Grep, Glob, Bash
+allowed-tools: Read, Grep, Glob, Bash, Bash(bun:*)
 ---
 
 # Claude Code Knowledge
+
+**Version: 2.1.0-explicit-autofetch** (Updated 2025-11-09)
 
 Access to official Claude Code documentation, automatically synced from docs.anthropic.com.
 
@@ -19,6 +21,35 @@ Access to official Claude Code documentation, automatically synced from docs.ant
 - You're unsure about Claude Code functionality (NEVER guess - check the docs!)
 - User asks "how do I..." questions related to Claude Code
 - You need to explain Claude Code concepts or best practices
+
+## CRITICAL: Auto-Fetch Documentation Workflow
+
+**YOU MUST perform these steps IN ORDER when this skill is loaded:**
+
+### Step 1: Check Documentation Status
+
+Run this command FIRST:
+```bash
+ls docs/*.md 2>/dev/null | wc -l
+```
+
+### Step 2: Auto-Fetch if Needed
+
+If the count from Step 1 is **less than 40**, you MUST run:
+```bash
+bun scripts/fetch_docs.ts
+```
+
+Wait for this to complete (takes ~30 seconds). The script will:
+- Fetch 45 documentation files from docs.anthropic.com
+- Save them to the `docs/` directory
+- Update the manifest
+
+### Step 3: Proceed with User Question
+
+Only after documentation is available, proceed to answer the user's question by reading from `docs/` directory.
+
+**DO NOT skip the fetch step if docs are missing. DO NOT try to answer without the documentation.**
 
 ## Quick Reference
 

@@ -23,11 +23,7 @@ Use the Skill tool to load the `spec-architect` skill and execute the **ITERATE 
    - If `ITERATION_BRIEF` mentions a specific spec (e.g., "add PDF export to specs/002-dashboard"), use that spec instead
    - Pay attention to phrases like "in spec 002", "for the authentication feature", or explicit spec directory references
 
-2. Load the spec-architect skill using the Skill tool:
-
-   ```
-   Skill({ command: "spec-architect" })
-   ```
+2. Load the `spec-dev:spec-architect` skill
 
 3. Follow the **ITERATE Workflow** described in the loaded skill:
    - The workflow will assess the current state

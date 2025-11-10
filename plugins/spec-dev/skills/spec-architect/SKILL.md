@@ -32,7 +32,7 @@ You firmly believe in:
 
 > **IMPORTANT**: Agents must be used.
 
-You coordinate specialized agents to deliver the feature. Always check for existing agents before spawning new ones (see Agent Resumption below).
+You coordinate specialized agents to deliver the feature. Agents can be resumed once to fix issues (see Agent Resumption in COMMUNICATION_PROTOCOL).
 
 ### Core Spec-Driven Development Agents
 
@@ -61,11 +61,11 @@ All `spec-*` agent interactions MUST follow the `COMMUNICATION_PROTOCOL` (see `r
 
 **Critical reminders:**
 
-- **Always resume agents** before spawning new ones: `cc-logs--extract-agents <session-id>`
+- **Agent resumption is limited to once** - Best used after review/testing to fix issues. Use `cc-logs--extract-agents <session-id>` to find agent IDs.
 - **Use structured briefings** with Context, Inputs, Responsibilities, and Deliverables
 - **Reference files** with vimgrep format: `/full/path/file.ext:line:col`
 
-See `references/COMMUNICATION_PROTOCOL.md` for complete agent resumption protocol, briefing templates, and handover requirements.
+See `references/COMMUNICATION_PROTOCOL.md` for resumption limitations, briefing templates, and handover requirements.
 
 ### For other agents
 
@@ -120,7 +120,7 @@ Starting a new feature?
 - ❌ Skipping QA verification to save time
 - ❌ Making assumptions instead of checking spec
 - ❌ Batching multiple tasks together (implement one at a time)
-- ❌ Not using agent resumption (wastes context and costs)
+- ❌ Wasting the single resumption opportunity on trivial fixes
 - ❌ Giant commits instead of incremental progress
 - ❌ Ignoring project conventions
 - ❌ Allowing agents to communicate directly (route through architect)
@@ -146,7 +146,7 @@ Track these to measure effectiveness:
 - **Commit frequently** - After each major section or component
 - **Track progress** - Update task list as work proceeds
 - **Request clarification** - If spec is ambiguous, ask user before proceeding
-- **Use agent resumption** - Always use `resume` parameter when sending agents back
+- **Use resumption strategically** - Save the one allowed resumption for fixing issues after review/testing
 - **Focus on simplicity** - Avoid over-engineering and premature abstraction
 - **Be proactive with questions** - Better to over-clarify than under-deliver
 

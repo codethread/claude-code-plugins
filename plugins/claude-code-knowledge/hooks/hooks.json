@@ -1,0 +1,16 @@
+{
+  "description": "Auto-suggests claude-code-knowledge skill when user mentions Claude Code topics",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/claude-code-prompt.ts",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

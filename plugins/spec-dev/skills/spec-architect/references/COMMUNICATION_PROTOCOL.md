@@ -12,70 +12,44 @@ This protocol defines the communication standards for multi-agent workflows in C
 
 ## Agent Resumption Protocol
 
-**CRITICAL: Architects MUST resume agents whenever possible to maintain context and reduce costs.**
+**IMPORTANT: Agent resumption is limited - each agent can only be resumed ONCE. Use strategically.**
 
-### When to Resume Agents
+### Resumption Limitations
 
-1. **After code review**: Resume the developer agent with reviewer feedback
-2. **After QA testing**: Resume the developer agent with test failures
-3. **For iterative refinement**: Resume any agent to build on their previous work
-4. **For clarification**: Resume an agent to answer follow-up questions about their work
+Agents can be resumed only one time after their initial execution. This means:
+- First execution: Agent does initial work
+- First resumption: Agent can fix issues or continue work
+- After that: Must spawn new agents for additional work
 
-### Benefits of Resumption
+### Best Use Case for Resumption
 
-- **Cost efficiency**: Avoids re-processing context and re-analyzing codebases
-- **Better outcomes**: Agents maintain full understanding of prior decisions
-- **Faster execution**: No need to re-gather information already collected
-- **Continuity**: Agent can reference specific prior findings and build on them
+Resume the developer agent after initial review/testing to fix issues. This is the most valuable use of the single resumption opportunity.
 
-### How to Find and Resume Agents
+Typical flow:
+1. Developer implements feature
+2. Reviewer/tester finds issues
+3. **Resume developer to fix** (using the one allowed resumption)
+4. After that, spawn new agents if further work is needed
 
-1. **Get session ID** from the session start message:
-   ```
-   Initialized agent context session: <session-id>
-   ```
+### Finding Previous Agent IDs
 
-2. **List all agents** in the current session:
-   ```bash
-   cc-logs--extract-agents <session-id>
-   ```
+Use `cc-logs--extract-agents <session-id>` to get agent IDs from the current session when you need to resume.
 
-   This outputs agent IDs, models, descriptions, and prompts for all agents spawned in this session.
-
-3. **Resume an agent** using the Task tool with the `resume` parameter:
-   ```
-   Task({
-     resume: "<agent-id>",
-     prompt: "Based on the code review feedback, please fix issues X, Y, and Z"
-   })
-   ```
-
-### Example Workflow
-
+Example:
 ```bash
 # Get session ID (shown at session start)
 # "Initialized agent context session: 9e3db88b-75cb-416b-a0a7-73e4bd0e5a2b"
 
-# List all agents spawned in this session
 cc-logs--extract-agents 9e3db88b-75cb-416b-a0a7-73e4bd0e5a2b
 
-# Output shows:
-# Agent ID: a1b2c3d4
-# Subagent Type: spec-developer
-# Model: sonnet
-# Description: Implement AUTH-1
-# Prompt: Implement ONLY task AUTH-1 from the tech spec...
-#
-# Agent ID: e5f6g7h8
-# Subagent Type: spec-reviewer
-# Model: sonnet
-# Description: Review AUTH-1 implementation
-# Prompt: Review the implementation of task AUTH-1...
+# Output shows agent IDs and details for resumption
+```
 
-# Resume the developer agent with fixes
+Resume using the Task tool:
+```
 Task({
-  resume: "a1b2c3d4",
-  prompt: "The code reviewer found these issues: [list]. Please fix them."
+  resume: "<agent-id>",
+  prompt: "Based on the code review feedback, please fix issues X, Y, and Z"
 })
 ```
 

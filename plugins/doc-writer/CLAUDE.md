@@ -20,6 +20,11 @@ The `doc-writer` plugin provides Claude Code with comprehensive documentation wr
 plugins/doc-writer/
 ├── README.md                           # End-user documentation
 ├── CLAUDE.md                          # This file - maintainer documentation
+├── hooks/                             # Auto-detection hooks
+│   ├── README.md                      # Hook documentation
+│   ├── hooks.json                     # Hook configuration
+│   ├── package.json                   # Hook dependencies
+│   └── doc-writer-suggest.ts          # PostToolUse hook for .md files
 ├── agents/
 │   └── docs-reviewer.md               # Documentation review agent
 └── skills/
@@ -32,6 +37,25 @@ plugins/doc-writer/
 ```
 
 ### Component Responsibilities
+
+#### `hooks/doc-writer-suggest.ts`
+**Purpose:** Auto-detection hook that suggests doc-writer skill when markdown files are modified
+
+**Contains:**
+- PostToolUse event handler
+- File extension detection (.md files)
+- Tool name filtering (Write, Edit, MultiEdit)
+- Contextual suggestion for skill and agent
+
+**Design note:** Provides gentle, contextual suggestions rather than mandatory enforcement. Triggers after file modifications to suggest quality improvements.
+
+**Hook behavior:**
+- Monitors Write, Edit, and MultiEdit tool usage
+- Detects `.md` file modifications (case-insensitive)
+- Provides contextual suggestions to Claude via `hookSpecificOutput.additionalContext`
+- Suggests `doc-writer:writing-documentation` skill for writing
+- Suggests `doc-writer:docs-reviewer` agent for review
+- Non-intrusive - Claude receives context but doesn't announce it unless relevant or asked
 
 #### `agents/docs-reviewer.md`
 **Purpose:** Specialized agent for ruthlessly simplifying documentation
@@ -92,6 +116,28 @@ plugins/doc-writer/
 3. Skill provides operational instructions for writing documentation
 4. Reference files are available but not loaded (reduces token usage)
 5. Claude applies patterns when user requests documentation
+
+### Hook-Based Auto-Detection
+
+The plugin includes a `PostToolUse` hook that automatically suggests the skill when relevant:
+
+1. User asks Claude to create/edit markdown files
+2. Claude uses Write, Edit, or MultiEdit tools
+3. Hook detects `.md` file modifications
+4. Hook injects suggestion into context
+5. Claude sees suggestion and can proactively apply doc-writer skill
+
+**Benefits:**
+- Users don't need to remember to invoke the skill
+- Contextual suggestions provided to Claude automatically
+- Non-intrusive - Claude receives context but doesn't announce unless relevant
+- Helps maintain documentation quality across sessions
+
+**How it works in practice:**
+- Hook fires after Write/Edit/MultiEdit on `.md` files
+- Adds suggestion context that Claude can see and consider
+- Claude may proactively use the suggestion or not depending on relevance
+- To verify it's working, ask Claude: "What PostToolUse hook context did you receive?"
 
 ### Knowledge Organization
 
@@ -167,6 +213,67 @@ The Diátaxis framework covers four main types (tutorial, how-to, reference, exp
 - Common problems → solutions mapping
 ...
 ```
+
+### Maintaining Hooks
+
+The plugin includes a `PostToolUse` hook for auto-detection. To maintain or modify:
+
+**Testing the hook:**
+
+```bash
+cd plugins/doc-writer/hooks
+
+# Test with markdown file (should output hookSpecificOutput JSON)
+cat <<'EOF' | bun doc-writer-suggest.ts
+{
+  "session_id": "test",
+  "transcript_path": "/tmp/test",
+  "cwd": "/tmp",
+  "permission_mode": "auto",
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {"file_path": "/tmp/test.md", "content": "# Test"},
+  "tool_response": {"filePath": "/tmp/test.md", "success": true}
+}
+EOF
+
+# Test with non-markdown file (should produce no output)
+cat <<'EOF' | bun doc-writer-suggest.ts
+{
+  "session_id": "test",
+  "transcript_path": "/tmp/test",
+  "cwd": "/tmp",
+  "permission_mode": "auto",
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {"file_path": "/tmp/test.ts", "content": "const x = 1;"},
+  "tool_response": {"filePath": "/tmp/test.ts", "success": true}
+}
+EOF
+
+# Test in Claude Code (verify hook actually fires)
+claude --print --model haiku "Create /tmp/hook-test.md with '# Test'. After completing, tell me what PostToolUse hook context you received."
+```
+
+**Updating hook behavior:**
+
+1. Edit `hooks/doc-writer-suggest.ts`
+2. Modify detection logic or suggestion text
+3. Test with sample inputs
+4. Verify hook exits with code 0
+5. Update `hooks/README.md` if behavior changes
+
+**Common modifications:**
+- Add support for other file extensions (.mdx, .rst, .adoc)
+- Change suggestion text or formatting
+- Add more tool types (e.g., Delete for cleanup suggestions)
+- Filter by file path patterns (e.g., only trigger for docs/ directory)
+
+**Important notes:**
+- Hook provides context via `hookSpecificOutput.additionalContext`
+- Does not use `"decision": "block"` - suggestion is informational only
+- Claude receives the context but doesn't announce it unless relevant or asked
+- To test if working, explicitly ask Claude what context it received
 
 ### Improving Templates
 
@@ -291,6 +398,30 @@ When making significant changes:
 - [ ] **README generation works:**
   ```
   Write a README for a library that validates emails
+  ```
+
+- [ ] **Hook triggers on markdown files (manual script test):**
+  ```bash
+  # In hooks directory
+  cat <<'EOF' | bun doc-writer-suggest.ts
+  {"session_id":"test","transcript_path":"/tmp","cwd":"/tmp","permission_mode":"auto","hook_event_name":"PostToolUse","tool_name":"Write","tool_input":{"file_path":"/tmp/test.md","content":"# Test"},"tool_response":{"filePath":"/tmp/test.md","success":true}}
+  EOF
+  # Should output hookSpecificOutput JSON with additionalContext
+  ```
+
+- [ ] **Hook doesn't trigger on non-markdown files:**
+  ```bash
+  # In hooks directory
+  cat <<'EOF' | bun doc-writer-suggest.ts
+  {"session_id":"test","transcript_path":"/tmp","cwd":"/tmp","permission_mode":"auto","hook_event_name":"PostToolUse","tool_name":"Write","tool_input":{"file_path":"/tmp/test.ts","content":"const x = 1;"},"tool_response":{"filePath":"/tmp/test.ts","success":true}}
+  EOF
+  # Should produce no output (exits silently)
+  ```
+
+- [ ] **Hook works in Claude Code:**
+  ```bash
+  claude --print --model haiku "Create /tmp/test.md with '# Test'. After completing, tell me what PostToolUse hook context you received."
+  # Claude should report receiving doc-writer suggestion
   ```
 
 - [ ] **Style guidelines applied:**

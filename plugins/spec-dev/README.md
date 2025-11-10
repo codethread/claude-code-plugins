@@ -78,3 +78,18 @@ Add new feature to existing spec:
 /iterate specs/002-user-profile/
 # Prompt: "Add password change to user profile"
 ```
+
+## Session Resumption
+
+Spec-dev sessions **automatically resume** after:
+- Session restart
+- Session resumption
+- Compaction events
+
+When resuming, the plugin:
+- Automatically loads the `spec-architect` skill
+- Follows the ITERATE workflow
+- Shows how many compactions have occurred
+- Displays the most recent specification
+
+This ensures you can seamlessly continue work without manually re-invoking `/iterate`.

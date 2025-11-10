@@ -45,13 +45,20 @@ Learn to design tools for AI agents:
 - **Python** - FastMCP implementation guide
 - **TypeScript** - Node/TypeScript MCP SDK guide
 
-### Embedded References
+### Reference Documentation
 
-Complete reference documentation for:
+Complete reference files for deep-dive guidance:
 - MCP best practices (naming, formatting, pagination, limits)
 - Python patterns (Pydantic models, async/await, tool registration)
 - TypeScript patterns (Zod schemas, type safety, build process)
 - Evaluation creation (question design, verification, XML format)
+
+### Evaluation Scripts
+
+Python testing harness to validate your MCP server:
+- Run evaluation questions against your server
+- Verify Claude can answer complex questions using your tools
+- Get actionable feedback on tool design
 
 ## Quick Example
 
