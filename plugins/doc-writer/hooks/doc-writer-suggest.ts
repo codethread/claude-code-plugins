@@ -63,11 +63,11 @@ async function main() {
       context += "  • Security verification patterns\n\n";
       context += "📋 RECOMMENDED AGENT:\n";
       context += "  → doc-writer:docs-reviewer\n\n";
-      context +=
-        "SUGGESTION: Consider using the writing-documentation skill\n";
-      context +=
-        "for quality documentation, or use docs-reviewer agent to\n";
-      context += "ruthlessly simplify and improve existing documentation.\n";
+      context += "IMPORTANT: Use the Skill tool to load writing-documentation\n";
+      context += "before writing documentation. This provides essential patterns\n";
+      context += "for API verification, security checks, and production-ready\n";
+      context += "examples. For existing docs, use docs-reviewer agent to\n";
+      context += "ruthlessly simplify and improve.\n";
       context += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
 
       // Return JSON with hookSpecificOutput for PostToolUse

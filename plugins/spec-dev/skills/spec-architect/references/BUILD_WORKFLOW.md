@@ -10,6 +10,18 @@ Use this workflow to implement a feature from an existing, validated technical s
 
 **Objective**: Build the feature by coordinating specialized agents
 
+**FIRST STEP: Load Project Configuration**
+
+Check if `specs/PROJECT.md` exists. If it does:
+1. Read the entire file
+2. Extract the "General Instructions" and "Architect Instructions" sections for your own use
+3. Keep the agent-specific sections ready to inject into briefings:
+   - "Developer Agent Instructions" → inject into spec-developer briefings
+   - "Reviewer Agent Instructions" → inject into spec-reviewer briefings
+   - "Tester Agent Instructions" → inject into spec-tester briefings
+
+When briefing agents, inject PROJECT.md sections into `Your_Responsibilities` as defined in COMMUNICATION_PROTOCOL.
+
 **CRITICAL RULE: Implement and verify ONE task at a time. Never batch tasks.**
 
 **For each task in `tech.md`, follow this exact sequence**:
@@ -38,13 +50,15 @@ Provide full context per `COMMUNICATION_PROTOCOL`, including:
 
 **CRITICAL**: Before functional testing, perform static code analysis for quality and consistency.
 
-Delegate to **spec-reviewer agent** for STATIC analysis (code review WITHOUT running code):
+Delegate to **spec-reviewer agent** for STATIC analysis (code review WITHOUT running code) per `COMMUNICATION_PROTOCOL`.
 
+Example briefing:
 > "Review the implementation of task LINK-1 through STATIC code analysis. Check for:
 > - Similar patterns in the codebase (are we duplicating existing solutions?)
 > - Type safety (should we use discriminated unions instead of optional fields?)
 > - Test quality (are tests clear, comprehensive, and maintainable?)
 > - Architectural consistency (does this follow project conventions?)
+> - PROJECT REQUIREMENTS: [inject Reviewer Agent Instructions here if PROJECT.md exists]
 > Focus ONLY on code quality for LINK-1. Do NOT test functionality - that's spec-tester's job."
 
 **If the reviewer finds blocking issues**:
@@ -61,20 +75,14 @@ Delegate to **spec-reviewer agent** for STATIC analysis (code review WITHOUT run
 
 Delegate to **spec-tester agent** for FUNCTIONAL testing from user perspective:
 
-Brief the tester with:
+Provide full context per `COMMUNICATION_PROTOCOL`, including:
 - **User Perspective**: Identify who the "user" is (web UI user, API consumer, module user)
-- **Testing Setup**: Direct them to the "Testing Setup" section in `feature.md` which contains:
-  - System startup commands (how to start servers, clients, databases)
-  - Environment requirements (env variables, migrations, API keys)
-  - Test data setup (how to seed data or create test accounts)
-  - Access points (URLs, ports, credentials)
-  - Cleanup procedures (how to stop and clean up)
-- **Relevant_Skills**: Suggest testing skills based on what's being tested (check available skills):
-  - Web UI changes → `playwright-skill` (if available) for browser testing
-  - REST APIs → Use curl or API testing tools
-  - Document generation → `pdf`, `xlsx`, `docx`, `pptx` skills (if available)
-  - CLI tools → bash testing skills (if available)
-  - Adapt based on what testing skills exist in this repository
+- **Testing Setup**: Direct them to the "Testing Setup" section in `feature.md`
+- **Relevant_Skills**: Suggest testing skills based on what's being tested:
+  - Web UI → `playwright-skill` (if available)
+  - REST APIs → curl or API testing tools
+  - Documents → `pdf`, `xlsx`, `docx`, `pptx` skills
+  - CLI tools → bash testing skills
 - **What to verify**: Which FR-X/NFR-X requirements this task delivers
 
 > "Verify task LINK-1 from the user's perspective as a web UI user.

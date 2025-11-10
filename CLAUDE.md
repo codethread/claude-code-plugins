@@ -169,38 +169,57 @@ This pattern ensures:
 
 ## Plugin Documentation Standards
 
-Understanding the three-layer documentation model is critical:
+Two-layer documentation model for reduced maintenance:
 
-### README.md (User Guide)
-**Audience**: Developers using the plugin (humans, not Claude)
+### README.md (User Quick Start)
+**Audience**: Developers using the plugin
 
-**Should contain**:
-- What the plugin does (high-level overview)
-- How to install it
-- How to use the slash commands with examples
-- What files/structure gets created
-- Example workflows
+**Structure**: What / Why / How
+- **What**: Brief description of what the plugin provides (1-2 sentences)
+- **Why**: Key benefits (3-5 bullet points)
+- **How**: Installation and basic usage
+- **Ask Claude**: Directive to ask Claude for details
 
-**Should NOT contain**:
-- Instructions written for Claude Code
-- Internal architecture details for maintainers
-- Multi-agent coordination protocols
+**Keep it minimal**: ~30-50 lines. Direct users to ask Claude for comprehensive information.
 
-### CLAUDE.md (Maintainer Guide)
-**Audience**: Developers maintaining/developing the plugin (and Claude Code when modifying the plugin)
+**Example**:
+```markdown
+# Plugin Name
+
+Brief description.
+
+## What
+- Bullet list of what it provides
+
+## Why
+- Key benefits
+
+## How
+### Install
+/plugin install name@personal-configs-plugins
+
+### Use
+Basic usage example
+
+**Ask Claude for details:**
+What can this plugin do?
+Show me advanced workflows
+```
+
+### CLAUDE.md (Comprehensive Documentation)
+**Audience**: Maintainers AND Claude (when asked by users)
 
 **Should contain**:
 - Plugin architecture and design principles
-- Directory structure explanation
-- Component responsibilities (commands, skills, agents, scripts)
+- Directory structure with detailed component descriptions
+- Component responsibilities (commands, skills, agents, scripts, hooks)
+- Hook implementation details and testing procedures
 - How to add/modify components
 - Common maintenance tasks
 - Architecture rationale
 - Common pitfalls to avoid
 
-**Should NOT contain**:
-- How end users should use the plugin (that's in README.md)
-- How Claude Code should execute workflows (that's in commands/skills)
+**Key insight**: When users ask Claude for details, Claude reads CLAUDE.md. This eliminates the need for verbose READMEs.
 
 ### Workflow Context Files (Skills, Commands, Agents)
 **Audience**: Claude Code during execution

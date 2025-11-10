@@ -8,6 +8,13 @@ Use this workflow to create specifications for a new feature from a user briefin
 
 **Objective**: Understand the problem space before proposing solutions
 
+**FIRST STEP: Load Project Configuration**
+
+Check if `specs/PROJECT.md` exists. If it does:
+1. Read the entire file
+2. Extract the "General Instructions" and "Architect Instructions" sections for your own use
+3. Keep the agent-specific sections (Developer, Reviewer, Tester) ready to inject into agent briefings later
+
 **Actions**:
 
 1. **Problem Understanding**:
@@ -55,6 +62,7 @@ Use this workflow to create specifications for a new feature from a user briefin
      - Note any testing tools available (playwright-skill, API scripts, etc.)
    - Clear acceptance criteria for each requirement
    - External dependency validation (pre-flight checks)
+   - Follow PROJECT.md guidelines if loaded earlier
 
 3. **User Review and Approval**:
    - Present draft specification for review

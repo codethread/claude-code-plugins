@@ -6,17 +6,20 @@ Use this workflow when continuing work on an existing specification.
 
 **Actions**:
 
-1. **Load Specification**:
+1. **Load Project Configuration**: Check for `specs/PROJECT.md`. If exists, read and extract sections per COMMUNICATION_PROTOCOL.
+
+2. **Load Specification**:
    - Read `feature.md` from provided spec directory
    - Read `tech.md` if it exists
    - Read `notes.md` if it exists
 
-2. **Assess Current State**:
+3. **Assess Current State**:
    - Review what's been completed (marked checkboxes in `tech.md`)
    - Identify incomplete tasks
    - Check for any new requirements or changes needed
+   - Follow PROJECT.md guidelines if loaded earlier
 
-3. **Determine Next Action**:
+4. **Determine Next Action**:
    - Continue incomplete implementation → Use BUILD workflow
    - Expand/refine specifications → Use PLAN workflow
    - Create initial specifications → Use PLAN workflow

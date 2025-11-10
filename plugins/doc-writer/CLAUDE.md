@@ -18,10 +18,9 @@ The `doc-writer` plugin provides Claude Code with comprehensive documentation wr
 
 ```
 plugins/doc-writer/
-├── README.md                           # End-user documentation
-├── CLAUDE.md                          # This file - maintainer documentation
+├── README.md                           # End-user documentation (what/why/how)
+├── CLAUDE.md                          # This file - maintainer documentation (architecture, hook details)
 ├── hooks/                             # Auto-detection hooks
-│   ├── README.md                      # Hook documentation
 │   ├── hooks.json                     # Hook configuration
 │   ├── package.json                   # Hook dependencies
 │   └── doc-writer-suggest.ts          # PostToolUse hook for .md files
@@ -41,21 +40,42 @@ plugins/doc-writer/
 #### `hooks/doc-writer-suggest.ts`
 **Purpose:** Auto-detection hook that suggests doc-writer skill when markdown files are modified
 
-**Contains:**
-- PostToolUse event handler
-- File extension detection (.md files)
-- Tool name filtering (Write, Edit, MultiEdit)
-- Contextual suggestion for skill and agent
-
-**Design note:** Provides gentle, contextual suggestions rather than mandatory enforcement. Triggers after file modifications to suggest quality improvements.
-
 **Hook behavior:**
-- Monitors Write, Edit, and MultiEdit tool usage
+- Runs on `PostToolUse` event after Write, Edit, or MultiEdit tools execute
 - Detects `.md` file modifications (case-insensitive)
 - Provides contextual suggestions to Claude via `hookSpecificOutput.additionalContext`
 - Suggests `doc-writer:writing-documentation` skill for writing
 - Suggests `doc-writer:docs-reviewer` agent for review
 - Non-intrusive - Claude receives context but doesn't announce it unless relevant or asked
+
+**Testing the hook:**
+
+Manual script test:
+```bash
+cd plugins/doc-writer/hooks
+
+# Test with markdown file (should output hookSpecificOutput JSON)
+cat <<'EOF' | bun doc-writer-suggest.ts
+{"session_id":"test","transcript_path":"/tmp","cwd":"/tmp","permission_mode":"auto","hook_event_name":"PostToolUse","tool_name":"Write","tool_input":{"file_path":"/tmp/test.md","content":"# Test"},"tool_response":{"filePath":"/tmp/test.md","success":true}}
+EOF
+
+# Test with non-markdown (should produce no output)
+cat <<'EOF' | bun doc-writer-suggest.ts
+{"session_id":"test","transcript_path":"/tmp","cwd":"/tmp","permission_mode":"auto","hook_event_name":"PostToolUse","tool_name":"Write","tool_input":{"file_path":"/tmp/test.ts","content":"const x = 1;"},"tool_response":{"filePath":"/tmp/test.ts","success":true}}
+EOF
+```
+
+Test in Claude Code:
+```bash
+claude --print --model haiku "Create /tmp/test.md with '# Test'. After completing, tell me what PostToolUse hook context you received."
+```
+
+**Troubleshooting:**
+- Hook only triggers on `.md` files with Write/Edit/MultiEdit
+- Verify plugin is installed: `/plugin list`
+- Check hook dependencies: `cd hooks && bun install`
+- Hook provides context to Claude - doesn't force announcements
+- Ask Claude explicitly what context it received to verify hook is working
 
 #### `agents/docs-reviewer.md`
 **Purpose:** Specialized agent for ruthlessly simplifying documentation

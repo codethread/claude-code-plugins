@@ -35,7 +35,6 @@ Documentation and dependencies:
    - **claude-code-prompt.ts** - UserPromptSubmit hook that detects Claude Code questions
    - **hooks.json** - Hook registration and configuration
    - **package.json** - Hook dependencies
-   - **README.md** - Comprehensive hook documentation
 4. **skill-rules.json** - Pattern-based triggers for skill suggestion (keywords and regex)
 5. **scripts/** - Helper scripts for maintenance and skill creation
    - **sync_docs.ts**, **fetch_docs.ts**, **list_topics.ts** - Documentation maintenance (Bun TypeScript)
@@ -159,17 +158,45 @@ The most critical file. Contains:
 UserPromptSubmit hook that proactively suggests the skill when Claude Code topics are detected.
 
 **How it works**:
-- Analyzes user prompts before Claude processes them
+- Runs on `UserPromptSubmit` event before Claude processes prompts
+- Analyzes user prompts for Claude Code-related keywords
 - Detects Claude Code-related questions using pattern matching
-- Injects contextual suggestion to load the skill
+- Injects contextual suggestion to load the skill via stdout
 - Improves accuracy by catching edge cases the model might miss
 
 **Detection patterns**:
 - Exact keywords: "claude code", "hooks", "mcp", "skills"
-- Question patterns: "how do/can/does claude..."
-- Feature patterns: "create a hook", "configure settings"
+- Standalone "claude" patterns: "how do/can/does claude..." (but NOT with model names)
+- Feature patterns: "create a hook", "configure settings", "slash command"
 
-See `hooks/README.md` for complete documentation, testing procedures, and debugging.
+**Testing the hook**:
+
+Manual script test:
+```bash
+cd plugins/claude-code-knowledge/hooks
+
+# Test with Claude Code question (should output context)
+cat <<'EOF' | bun claude-code-prompt.ts
+{"session_id":"test","transcript_path":"/tmp","cwd":"/tmp","permission_mode":"auto","hook_event_name":"UserPromptSubmit","prompt":"How do I create a hook?"}
+EOF
+
+# Test with non-Claude question (should produce no output)
+cat <<'EOF' | bun claude-code-prompt.ts
+{"session_id":"test","transcript_path":"/tmp","cwd":"/tmp","permission_mode":"auto","hook_event_name":"UserPromptSubmit","prompt":"What's the weather?"}
+EOF
+```
+
+Test in Claude Code:
+```bash
+claude --print --model haiku "How do I create a hook? After answering, tell me if you received UserPromptSubmit hook context."
+```
+
+**Troubleshooting**:
+- Hook only triggers on Claude Code-related prompts
+- Verify plugin is installed: `/plugin list`
+- Check hook dependencies: `cd hooks && bun install`
+- Enable debug mode: `claude --debug`
+- Context is injected to Claude automatically, doesn't interrupt user flow
 
 ### skill-rules.json
 

@@ -76,11 +76,17 @@ Use standard Task tool delegation. Provide clear context and objectives but adap
 All specifications follow the directory-based `SPEC_PATTERNS` (see `references/SPEC_PATTERNS.md`):
 
 ```
-specs/<numerical-id>-<kebab-cased-feature>/
-├── feature.md      # WHAT needs to be built (FR-X, NFR-X)
-├── notes.md        # Technical discoveries from spike work (optional)
-└── tech.md         # HOW to build it (COMPONENT-N tasks)
+specs/
+├── PROJECT.md      # Project-wide configuration and agent instructions (optional)
+└── <numerical-id>-<kebab-cased-feature>/
+    ├── feature.md      # WHAT needs to be built (FR-X, NFR-X)
+    ├── notes.md        # Technical discoveries from spike work (optional)
+    └── tech.md         # HOW to build it (COMPONENT-N tasks)
 ```
+
+### Project Configuration (PROJECT.md)
+
+Optional project-wide agent instructions (General, Architect, Developer, Reviewer, Tester). Loaded by architect at workflow start, injected into agent briefings. Template: `references/PROJECT_TEMPLATE.md`.
 
 ### Requirement Numbering
 
@@ -89,6 +95,7 @@ specs/<numerical-id>-<kebab-cased-feature>/
 
 ### Templates Available
 
+- `references/PROJECT_TEMPLATE.md` - Project configuration template (create at `specs/PROJECT.md`)
 - `references/SPEC_TEMPLATE.md` - Feature specification template
 - `references/TECH_SPEC_TEMPLATE.md` - Technical specification template
 

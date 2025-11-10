@@ -22,8 +22,8 @@ plugins/spec-dev/
 ├── skills/spec-architect/
 │   ├── SKILL.md        # Routing and coordination
 │   └── references/     # PLAN_WORKFLOW, BUILD_WORKFLOW, ITERATE_WORKFLOW
-│                       # SPEC_TEMPLATE, TECH_SPEC_TEMPLATE, SPEC_PATTERNS
-│                       # COMMUNICATION_PROTOCOL, writing-specs
+│                       # SPEC_TEMPLATE, TECH_SPEC_TEMPLATE, PROJECT_TEMPLATE
+│                       # SPEC_PATTERNS, COMMUNICATION_PROTOCOL, writing-specs
 └── scripts/            # get-next-spec-id.sh, get-latest-spec.sh
 ```
 
@@ -32,6 +32,8 @@ plugins/spec-dev/
 **Commands**: Provide context (script outputs, arguments), load skill, direct to workflow. Keep under 50 lines.
 
 **Skills**: Load PLAN_WORKFLOW (create specs), BUILD_WORKFLOW (implement), or ITERATE_WORKFLOW (route). Load references progressively.
+
+**Project Configuration** (optional): `specs/PROJECT.md` contains project-specific instructions for all agents. Created from `references/PROJECT_TEMPLATE.md`.
 
 **Agents**:
 - `spec-*` agents follow COMMUNICATION_PROTOCOL (structured briefings, agent resumption, vimgrep references)
@@ -46,9 +48,40 @@ plugins/spec-dev/
 - **PreCompact** (precompact-handler.sh): Increments compaction counter in session file
 - **SessionStart** (sessionstart-handler.sh): Auto-resumes spec-dev sessions by loading spec-architect skill with ITERATE workflow
 
-Session files stored in: `~/.local/cache/personal-configs-plugins/spec-dev/<normalized-cwd>/<session-id>.json`
+**Session files**: `~/.local/cache/personal-configs-plugins/spec-dev/<normalized-cwd>/<session-id>.json`
+- Contains status, compaction count, cwd, timestamp
+- Created when spec-architect skill loads
+- Enables automatic workflow resumption
 
-See `hooks/README.md` for debugging commands and session file structure.
+**Debugging hooks:**
+
+Find sessions:
+```bash
+cwd=$(pwd | sed 's|^/||' | sed 's|/|-|g')
+ls -la ~/.local/cache/personal-configs-plugins/spec-dev/$cwd/
+```
+
+View session file:
+```bash
+session_id="your-session-id"
+cwd=$(pwd | sed 's|^/||' | sed 's|/|-|g')
+cat ~/.local/cache/personal-configs-plugins/spec-dev/$cwd/$session_id.json
+```
+
+Test hooks:
+```bash
+# PreToolUse
+echo '{"tool_name":"Skill","tool_input":{"skill":"spec-architect"},"session_id":"test-123","cwd":"'$(pwd)'"}' | \
+  ~/.claude/plugins/marketplaces/personal-configs-plugins/plugins/spec-dev/hooks/skill-pretooluse-handler.sh
+
+# PreCompact
+echo '{"session_id":"test-123","cwd":"'$(pwd)'"}' | \
+  ~/.claude/plugins/marketplaces/personal-configs-plugins/plugins/spec-dev/hooks/precompact-handler.sh
+
+# SessionStart
+echo '{"session_id":"test-123","cwd":"'$(pwd)'","source":"startup"}' | \
+  ~/.claude/plugins/marketplaces/personal-configs-plugins/plugins/spec-dev/hooks/sessionstart-handler.sh
+```
 
 ## Key Design Decisions
 
@@ -70,7 +103,7 @@ See `hooks/README.md` for debugging commands and session file structure.
 
 **Update workflows**: Edit `references/{PLAN,BUILD,ITERATE}_WORKFLOW.md`
 
-**Update templates**: Edit `references/*_TEMPLATE.md`
+**Update templates**: Edit `references/*_TEMPLATE.md` (SPEC_TEMPLATE, TECH_SPEC_TEMPLATE, PROJECT_TEMPLATE)
 
 **Change agent behavior**: Edit `agents/spec-*.md` system prompt
 

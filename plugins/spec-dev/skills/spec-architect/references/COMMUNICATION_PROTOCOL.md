@@ -2,13 +2,9 @@
 
 This protocol defines the communication standards for multi-agent workflows in Claude Code, optimized for resumable agent interactions.
 
-## Why This Protocol Exists
+## Protocol Goals
 
-1. **Resumable Architecture**: Agents can be resumed to continue previous work, maintaining full context and enabling iterative refinement
-2. **Context Preservation**: Resumed agents retain all prior knowledge, enabling efficient follow-up work without re-gathering information
-3. **Precision Requirements**: Clear initial briefings enable focused work, while resumption allows for clarification and iteration
-4. **Traceability**: Multiple agents working on interconnected tasks need clear reference points for coordination
-5. **Boundary Definition**: Agents must understand both their responsibilities AND explicit non-responsibilities to prevent scope creep
+Resumable agents, clear boundaries, architect distributes PROJECT.md content.
 
 ## Agent Resumption Protocol
 
@@ -126,6 +122,18 @@ Location: `src/services/auth.ts`
   - Updates: `src/routes/auth.ts:28:1`
 ```
 
+## Project Configuration
+
+If `specs/PROJECT.md` exists, architect loads it once at workflow start and injects relevant sections into `Your_Responsibilities`:
+
+- **General Instructions** → All agents
+- **Architect Instructions** → Architect only (not passed to agents)
+- **Developer Agent Instructions** → spec-developer
+- **Reviewer Agent Instructions** → spec-reviewer
+- **Tester Agent Instructions** → spec-tester
+
+Agents never read PROJECT.md directly.
+
 ## Agent Briefing Protocol
 
 When delegating to any agent, provide this structured context:
@@ -154,6 +162,7 @@ Relevant_Skills: # Suggested skills for this work (load as needed)
 Your_Responsibilities:
   - [Specific task 1]
   - [Specific task 2]
+  - [Project-specific instructions from PROJECT.md if applicable - injected by architect]
 
 NOT_Your_Responsibilities:
   - [Explicitly excluded task 1]
@@ -227,6 +236,10 @@ Your_Responsibilities:
 - Implement tasks AUTH-1, AUTH-2, and AUTH-3 from the technical spec
 - Ensure all code follows project conventions in CLAUDE.md
 - Create unit tests for each component
+- PROJECT REQUIREMENTS (from specs/PROJECT.md):
+  - Always run tests after completing work: `yarn test <files-changed>`
+  - Use the project's logger (don't use console.log): `import { logger } from '@/lib/logger'`
+  - All error messages should be actionable and include next steps
 
 NOT_Your_Responsibilities:
 

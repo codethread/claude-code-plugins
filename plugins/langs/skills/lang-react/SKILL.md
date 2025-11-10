@@ -1,5 +1,5 @@
 ---
-name: react
+name: lang-react
 description: Build React SPAs where components are declarative UI consuming external state (Zustand/XState/TanStack Query). Logic lives in stores, not components.
 ---
 
