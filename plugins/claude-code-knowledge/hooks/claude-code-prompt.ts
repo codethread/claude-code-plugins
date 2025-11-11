@@ -2,14 +2,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-
-interface HookInput {
-  session_id: string;
-  transcript_path: string;
-  cwd: string;
-  permission_mode: string;
-  prompt: string;
-}
+import type { SyncHookJSONOutput, UserPromptSubmitHookInput } from '@anthropic-ai/claude-agent-sdk';
 
 interface SessionCache {
   knowledge_suggested: boolean;
@@ -21,7 +14,7 @@ async function main() {
   try {
     // Read input from stdin
     const input = readFileSync(0, 'utf-8');
-    const data: HookInput = JSON.parse(input);
+    const data: UserPromptSubmitHookInput = JSON.parse(input);
     const prompt = data.prompt.toLowerCase();
 
     // Check for Claude Code related keywords (case insensitive)
@@ -112,7 +105,7 @@ async function main() {
       context += '</plugin-claude-code-knowledge-suggestion>';
 
       // Return JSON with hookSpecificOutput for UserPromptSubmit
-      const output = {
+      const output: SyncHookJSONOutput = {
         hookSpecificOutput: {
           hookEventName: 'UserPromptSubmit',
           additionalContext: context,

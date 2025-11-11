@@ -18,6 +18,7 @@ import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
+import type { PreToolUseHookInput } from '@anthropic-ai/claude-agent-sdk';
 import { XMLParser } from 'fast-xml-parser';
 
 // ============================================================================
@@ -46,19 +47,6 @@ const RATE_LIMIT_DELAY = 500; // ms
 // ============================================================================
 // Types
 // ============================================================================
-
-interface HookInput {
-  session_id: string;
-  transcript_path: string;
-  cwd: string;
-  permission_mode: string;
-  hook_event_name: string;
-  tool_name: string;
-  tool_input: {
-    skill?: string;
-    [key: string]: unknown;
-  };
-}
 
 interface ManifestFile {
   original_url?: string;
@@ -105,7 +93,7 @@ const MANIFEST_PATH = join(DOCS_DIR, MANIFEST_FILE);
 // Hook Input Handling
 // ============================================================================
 
-async function readHookInput(): Promise<HookInput | null> {
+async function readHookInput(): Promise<PreToolUseHookInput | null> {
   try {
     const input = await Bun.stdin.text();
     return JSON.parse(input);
@@ -114,11 +102,12 @@ async function readHookInput(): Promise<HookInput | null> {
   }
 }
 
-function shouldSync(hookInput: HookInput | null): boolean {
+function shouldSync(hookInput: PreToolUseHookInput | null): boolean {
   if (!hookInput) return false;
   if (hookInput.tool_name !== 'Skill') return false;
 
-  const skillName = hookInput.tool_input.skill || '';
+  const toolInput = hookInput.tool_input as Record<string, unknown>;
+  const skillName = (toolInput.skill as string) || '';
   return (
     skillName === 'claude-code-knowledge' ||
     skillName === 'claude-code-knowledge:claude-code-knowledge'

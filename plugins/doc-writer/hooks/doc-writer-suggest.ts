@@ -2,17 +2,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-
-interface HookInput {
-  session_id: string;
-  transcript_path: string;
-  cwd: string;
-  permission_mode: string;
-  hook_event_name: string;
-  tool_name: string;
-  tool_input: Record<string, unknown>;
-  tool_response: unknown;
-}
+import type { PostToolUseHookInput, SyncHookJSONOutput } from '@anthropic-ai/claude-agent-sdk';
 
 interface SessionCache {
   doc_writer_suggested: boolean;
@@ -24,7 +14,7 @@ async function main() {
   try {
     // Read input from stdin
     const input = readFileSync(0, 'utf-8');
-    const data: HookInput = JSON.parse(input);
+    const data: PostToolUseHookInput = JSON.parse(input);
 
     // Check if the tool was Write, Edit, or MultiEdit
     const relevantTools = ['Write', 'Edit', 'MultiEdit'];
@@ -38,13 +28,15 @@ async function main() {
 
     if (data.tool_name === 'Write' || data.tool_name === 'Edit') {
       // Single file operations
-      filePath = data.tool_input.file_path as string;
+      const toolInput = data.tool_input as Record<string, unknown>;
+      filePath = toolInput.file_path as string;
       if (filePath?.toLowerCase().endsWith('.md')) {
         isMarkdownFile = true;
       }
     } else if (data.tool_name === 'MultiEdit') {
       // MultiEdit might have multiple files
-      const edits = data.tool_input.edits as Array<{ file_path: string }>;
+      const toolInput = data.tool_input as Record<string, unknown>;
+      const edits = toolInput.edits as Array<{ file_path: string }>;
       if (edits && Array.isArray(edits)) {
         for (const edit of edits) {
           if (edit.file_path?.toLowerCase().endsWith('.md')) {
@@ -85,7 +77,7 @@ async function main() {
 
       // Return JSON with hookSpecificOutput for PostToolUse
       // Note: decision is undefined (no blocking), but additionalContext should still be provided
-      const output = {
+      const output: SyncHookJSONOutput = {
         hookSpecificOutput: {
           hookEventName: 'PostToolUse',
           additionalContext: context,

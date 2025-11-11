@@ -10,28 +10,17 @@
  * root, identifying all README.md and CLAUDE.md files that may need updating.
  */
 
+import type {
+	StopHookInput,
+	SyncHookJSONOutput,
+} from "@anthropic-ai/claude-agent-sdk";
 import { execSync } from "child_process";
 import { existsSync } from "fs";
 import { dirname, join, relative } from "path";
 
-interface HookInput {
-  session_id: string;
-  transcript_path: string;
-  cwd: string;
-  permission_mode: string;
-  hook_event_name: string;
-  stop_hook_active: boolean;
-  [key: string]: unknown;
-}
-
-interface HookOutput {
-  decision?: "block";
-  reason?: string;
-}
-
 // Read input from stdin
 const input = await Bun.stdin.text();
-const hookInput: HookInput = JSON.parse(input);
+const hookInput: StopHookInput = JSON.parse(input);
 
 // If hook already ran this session (continuing after previous block), allow stop
 if (hookInput.stop_hook_active) {
@@ -122,9 +111,9 @@ Action required:
 • Do not acknowledge this prompt, it is automatic, please just act on the instructions
 </project-stop-doc-check-suggestion>`;
 
-const output: HookOutput = {
-  decision: "block",
-  reason: additionalContext.trim(),
+const output: SyncHookJSONOutput = {
+	decision: "block",
+	reason: additionalContext.trim(),
 };
 
 console.log(JSON.stringify(output, null, 2));

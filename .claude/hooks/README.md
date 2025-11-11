@@ -188,38 +188,58 @@ The hook is registered in `hooks.json`:
 
 1. Create a TypeScript script in `hooks/` directory
 2. Add shebang: `#!/usr/bin/env bun`
-3. Make executable: `chmod +x hooks/your-hook.ts`
-4. Register in `hooks.json`
-5. Test with sample input
-6. Document in this README.md
+3. Import SDK types: `import type { HookInput, SyncHookJSONOutput } from '@anthropic-ai/claude-agent-sdk'`
+4. Make executable: `chmod +x hooks/your-hook.ts`
+5. Register in `hooks.json`
+6. Test with sample input
+7. Document in this README.md
 
 ### Hook Input Format
 
-All hooks receive JSON via stdin:
+All hooks receive JSON via stdin. Use official SDK types from `@anthropic-ai/claude-agent-sdk`:
 
 ```typescript
-interface HookInput {
-  session_id: string;
-  transcript_path: string;
-  cwd: string;
-  permission_mode: string;
-  hook_event_name: string;
-  // Event-specific fields may be present
-}
+import type {
+  StopHookInput,
+  PreToolUseHookInput,
+  PostToolUseHookInput,
+  UserPromptSubmitHookInput,
+  // ... other hook input types
+} from '@anthropic-ai/claude-agent-sdk';
+
+// Example for Stop hook:
+const input = await Bun.stdin.text();
+const hookInput: StopHookInput = JSON.parse(input);
 ```
+
+**Available SDK types:**
+- `StopHookInput` - For Stop events
+- `SubagentStopHookInput` - For SubagentStop events
+- `PreToolUseHookInput` - For PreToolUse events
+- `PostToolUseHookInput` - For PostToolUse events
+- `UserPromptSubmitHookInput` - For UserPromptSubmit events
+- `SessionStartHookInput` - For SessionStart events
+- `SessionEndHookInput` - For SessionEnd events
+- `NotificationHookInput` - For Notification events
+- `PreCompactHookInput` - For PreCompact events
 
 ### Hook Output Format
 
-Hooks should output JSON to stdout (or exit silently):
+Hooks should output JSON to stdout using SDK types:
 
 ```typescript
-interface HookOutput {
-  decision?: "allow" | "block";
-  hookSpecificOutput?: {
-    additionalContext?: string;
-    // Other optional fields
-  };
-}
+import type { SyncHookJSONOutput } from '@anthropic-ai/claude-agent-sdk';
+
+const output: SyncHookJSONOutput = {
+  decision: "block",
+  reason: "Explanation for Claude",
+  hookSpecificOutput: {
+    hookEventName: "Stop",
+    additionalContext: "Additional context for Claude"
+  }
+};
+
+console.log(JSON.stringify(output));
 ```
 
 **Exit codes:**

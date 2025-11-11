@@ -276,6 +276,40 @@ Show me advanced workflows
 
 When creating hooks that provide suggestions via `additionalContext` or `reason` fields, **ALWAYS use XML tags with minimal, concise content**.
 
+### TypeScript Types for Hooks
+
+**ALWAYS use official SDK types** from `@anthropic-ai/claude-agent-sdk` for hook development:
+
+```typescript
+import type {
+  PostToolUseHookInput,
+  SyncHookJSONOutput,
+} from '@anthropic-ai/claude-agent-sdk';
+
+const input = await Bun.stdin.text();
+const hookInput: PostToolUseHookInput = JSON.parse(input);
+
+const output: SyncHookJSONOutput = {
+  hookSpecificOutput: {
+    hookEventName: "PostToolUse",
+    additionalContext: "..."
+  }
+};
+```
+
+**Benefits:**
+- Full TypeScript type safety
+- Auto-complete in IDEs
+- Guaranteed compatibility with Claude Code
+- No need to manually maintain type definitions
+
+**Available types:**
+- `StopHookInput`, `SubagentStopHookInput`
+- `PreToolUseHookInput`, `PostToolUseHookInput`
+- `UserPromptSubmitHookInput`, `SessionStartHookInput`, `SessionEndHookInput`
+- `NotificationHookInput`, `PreCompactHookInput`
+- `SyncHookJSONOutput`, `AsyncHookJSONOutput`
+
 ### Standard Pattern: Concise XML Tags
 
 **Use structured XML tags with plain text (no emojis, no fancy formatting):**
