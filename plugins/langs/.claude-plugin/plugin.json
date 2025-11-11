@@ -1,0 +1,17 @@
+{
+  "name": "langs",
+  "description": "Language-specific coding skills including React, TypeScript, and more. Provides best practices, patterns, and expert guidance for writing clean, type-safe, and maintainable code in modern programming languages and frameworks.",
+  "version": "1.0.0",
+  "author": {
+    "name": "codethread"
+  },
+  "keywords": [
+    "react",
+    "typescript",
+    "javascript",
+    "best-practices",
+    "patterns",
+    "type-safety",
+    "code-quality"
+  ]
+}

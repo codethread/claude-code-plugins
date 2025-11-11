@@ -7,103 +7,28 @@
   "plugins": [
     {
       "name": "spec-dev",
-      "description": "Multi-agent spec-driven development workflow with code review. Use /prime-spec for complex features, /prime-tech for technical design, /prime-build for implementation, or /prime-simple for quick features. Flow: requirements → specification → implementation → code review → QA verification.",
-      "version": "1.0.0",
-      "author": {
-        "name": "codethread"
-      },
-      "keywords": [
-        "specification",
-        "requirements",
-        "multi-agent",
-        "workflow",
-        "TDD",
-        "code-review",
-        "QA",
-        "architecture"
-      ],
-      "category": "development-workflow",
-      "source": "./plugins/spec-dev"
+      "source": "./plugins/spec-dev",
+      "category": "development-workflow"
     },
     {
       "name": "mcp-builder",
-      "description": "Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).",
-      "version": "1.0.0",
-      "author": {
-        "name": "codethread"
-      },
-      "keywords": [
-        "MCP",
-        "Model Context Protocol",
-        "server",
-        "tools",
-        "integration",
-        "API",
-        "Python",
-        "TypeScript"
-      ],
-      "category": "development-tools",
-      "source": "./plugins/mcp-builder"
+      "source": "./plugins/mcp-builder",
+      "category": "development-tools"
     },
     {
       "name": "doc-writer",
-      "description": "Write clear, effective technical documentation following industry-proven patterns from exemplary projects (React, Rust, Stripe, Twilio) and authoritative style guides (Google, Diátaxis, Write the Docs, Microsoft). Use when creating or improving READMEs, API docs, tutorials, guides, or any technical documentation.",
-      "version": "1.0.0",
-      "author": {
-        "name": "codethread"
-      },
-      "keywords": [
-        "documentation",
-        "technical writing",
-        "README",
-        "API docs",
-        "tutorials",
-        "guides",
-        "best practices"
-      ],
-      "category": "development-tools",
-      "source": "./plugins/doc-writer"
+      "source": "./plugins/doc-writer",
+      "category": "development-tools"
     },
     {
       "name": "claude-code-knowledge",
-      "description": "Official Claude Code documentation access including comprehensive skill creation guide. Provides instant reference to hooks, MCP, skills, slash commands, settings, CLI, and all Claude Code features with automatic sync from docs.anthropic.com. Includes helper scripts for creating, validating, and packaging skills.",
-      "version": "1.0.0",
-      "author": {
-        "name": "Community"
-      },
-      "keywords": [
-        "documentation",
-        "reference",
-        "claude-code",
-        "knowledge",
-        "docs",
-        "hooks",
-        "mcp",
-        "skills",
-        "skill-creation",
-        "settings"
-      ],
-      "category": "development-tools",
-      "source": "./plugins/claude-code-knowledge"
+      "source": "./plugins/claude-code-knowledge",
+      "category": "development-tools"
     },
     {
       "name": "langs",
-      "description": "Language-specific coding skills including React, TypeScript, and more. Provides best practices, patterns, and expert guidance for writing clean, type-safe, and maintainable code in modern programming languages and frameworks.",
-      "version": "1.0.0",
-      "author": {
-        "name": "codethread"
-      },
-      "keywords": [
-        "react",
-        "typescript",
-        "javascript",
-        "best-practices",
-        "patterns",
-        "type-safety",
-        "code-quality"
-      ],
-      "category": "development-tools",
-      "source": "./plugins/langs"
+      "source": "./plugins/langs",
+      "category": "development-tools"
     }
   ]
 }

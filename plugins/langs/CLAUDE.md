@@ -17,6 +17,8 @@ The `langs` plugin provides language-specific coding expertise through a collect
 
 ```
 plugins/langs/
+├── .claude-plugin/
+│   └── plugin.json            # Plugin metadata
 ├── README.md                    # End-user documentation
 ├── CLAUDE.md                   # This file - maintainer documentation
 ├── hooks/                      # Auto-detection hooks
@@ -156,8 +158,8 @@ To add a new language (e.g., `lang-python`):
    - Add auto-load instruction for `.py` files
    - Example: "ALWAYS use `lang-python` Skill when writing Python code"
 
-5. **Update marketplace.json keywords (optional):**
-   - Add "python" to keywords array
+5. **Update plugin.json keywords (optional):**
+   - Add "python" to keywords array in `.claude-plugin/plugin.json`
 
 ### Updating Skill Content
 
@@ -343,7 +345,7 @@ Periodically test skills against real projects:
 
 Track significant changes:
 
-1. **Update version in marketplace.json:**
+1. **Update version in plugin.json:**
    ```json
    {
      "name": "langs",

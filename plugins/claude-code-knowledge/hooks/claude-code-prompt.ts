@@ -108,18 +108,9 @@ async function main() {
 
       // Use JSON output method for explicit control
       let context = "<plugin-claude-code-knowledge-suggestion>\n";
-      context += "📚 CLAUDE CODE DOCUMENTATION CONTEXT\n\n";
-      context += `💡 Detection: ${matchReason}\n\n`;
-      context += "📖 RECOMMENDED SKILL:\n";
-      context += "  → claude-code-knowledge:claude-code-knowledge\n\n";
-      context += "This skill provides:\n";
-      context += "  • Official Claude Code documentation\n";
-      context += "  • 45+ topics covering all features\n";
-      context += "  • Hooks, MCP, skills, settings, CLI\n";
-      context += "  • Auto-synced from docs.anthropic.com\n\n";
-      context +=
-        "IMPORTANT: Use the Skill tool to load claude-code-knowledge\n";
-      context += "before answering questions about Claude Code features.\n";
+      context += `Detected Claude Code question: ${matchReason}\n\n`;
+      context += "RECOMMENDED SKILL:\n";
+      context += "  → claude-code-knowledge:claude-code-knowledge\n";
       context += "</plugin-claude-code-knowledge-suggestion>";
 
       // Return JSON with hookSpecificOutput for UserPromptSubmit

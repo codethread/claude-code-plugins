@@ -1,36 +1,108 @@
-# [Feature Name] - Technical Requirements
+# [Feature Name] - Implementation Guide
 
 User Sign off: [REQUIRED - DO NOT BUILD WITHOUT THIS]
 
-## Executive Summary
+## Implementation Context
 
-[Brief overview of technical approach]
+### What We're Building
 
-## Architecture Overview
+[1-2 sentence summary linking to feature.md requirements]
 
-### System Context
+### Why This Approach
 
-[How this fits in the larger system - include diagram if helpful]
+[High-level rationale for technical direction taken]
 
-### Component Architecture
+## Discovery Findings
 
-[Detailed component breakdown with responsibilities]
+### Similar Implementations
 
-### Data Architecture
+[Reference existing features that solve similar problems - use Explore agent findings]
 
-[Data models, storage strategy, caching approach]
+**Pattern: [Pattern Name]**
+- Implementation: `relative-to-cwd/path/to/existing.ext:startLine:endLine`
+- Follow this pattern for: [what aspects]
+- Note: [Key observations about the pattern]
+
+**Pattern: [Another Pattern]**
+- Example: `relative-to-cwd/path/to/another.ext:line:col`
+- Key learning: [What to replicate or avoid]
+
+### Key Integration Points
+
+[Where this feature connects to existing code - from Explore agent discoveries]
+
+- **[System/Service]**: Uses `ServiceName` from `relative-to-cwd/path/to/service.ext:line:col`
+  - Purpose: [Why we integrate here]
+- **[Another Integration]**: Add to `relative-to-cwd/path/to/file.ext:line:col`
+  - Purpose: [Why we integrate here]
+
+### Constraints & Gotchas
+
+[Technical constraints, edge cases, and discoveries from exploration]
+
+- [Constraint or gotcha discovered]
+- [Performance limitation or consideration]
+- [Security requirement or compliance need]
 
 ## Technology Decisions
 
-### Framework/Library Selection
+### [Decision Area]
 
-| Requirement | Option 1    | Option 2    | Recommendation |
-| ----------- | ----------- | ----------- | -------------- |
-| [Need]      | [Pros/Cons] | [Pros/Cons] | [Choice + Why] |
+**Options Considered:**
+- **Option A**: [Brief description]
+  - Pros: [Key benefits]
+  - Cons: [Key drawbacks]
+- **Option B**: [Brief description]
+  - Pros: [Key benefits]
+  - Cons: [Key drawbacks]
 
-### Integration Patterns
+**Selected: Option [X]**
+- Rationale: [Why this choice best serves requirements]
+- Documentation: [Link to official docs if helpful]
+- Example usage: `relative-to-cwd/path/to/similar-usage.ext:line:col`
 
-[How components communicate - REST, GraphQL, Events, etc.]
+## File Map
+
+### Files to Create
+
+- `relative-to-cwd/path/to/new/file.ext:1:1` - [Component purpose and responsibility]
+- `relative-to-cwd/path/to/another/new.ext:1:1` - [Component purpose]
+
+### Files to Modify
+
+- `relative-to-cwd/path/to/existing.ext:line:col` - [What needs to change and why]
+- `relative-to-cwd/path/to/another.ext:line:col` - [What needs to change]
+
+### Files to Reference
+
+[Files that provide patterns, types, or examples to follow]
+
+- `relative-to-cwd/path/to/pattern.ext` - [What pattern/approach to follow]
+- `relative-to-cwd/path/to/types.ext` - [Type patterns to replicate]
+
+## Component Architecture
+
+### Component: [Component Name]
+
+**Responsibility**: [What this component does - high level, not implementation details]
+
+**Interfaces With:**
+- Uses: `relative-to-cwd/path/to/dependency.ext:line:col` - [Why and how it's used]
+- Provides: [What other components will consume from this]
+
+**Key Constraints:**
+- [Performance requirements from NFRs]
+- [Security requirements from NFRs]
+- [Other constraints discovered during planning]
+
+**Testing Approach:**
+- Follow pattern: `relative-to-cwd/path/to/similar/test.ext:line:col`
+- Use: [Testing tools/skills - playwright-skill, API helpers, etc.]
+- Focus: [What aspects are critical to test]
+
+### Component: [Another Component]
+
+[Repeat structure above for each major component]
 
 ## Implementation Tasks
 
@@ -39,66 +111,134 @@ User Sign off: [REQUIRED - DO NOT BUILD WITHOUT THIS]
 Location: `relative-to-cwd/path/to/component/directory`
 
 - [ ] **COMP-1**: [Task description] (delivers FR-X, NFR-Y) [TESTABLE]
-  - Specific implementation details
-  - Interfaces with: `relative-to-cwd/to/file.ext:line:col`
-  - Creates: `relative-to-cwd/to/new/file.ext:1:1`
+  - Create: `relative-to-cwd/path/to/new/file.ext:1:1`
+  - Reference pattern: `relative-to-cwd/path/to/existing/similar.ext:line:col`
+  - Integration: Uses [ServiceName] from `relative-to-cwd/path/to/service.ext:line:col`
 
 - [ ] **COMP-2**: [Task description] (delivers FR-X) [TESTABLE]
-  - Specific implementation details
-  - Updates: `relative-to-cwd/to/existing/file.ext:line:col`
+  - Modify: `relative-to-cwd/path/to/existing/file.ext:line:col`
+  - Follow pattern from COMP-1
   - Dependencies: COMP-1 must be complete
 
 ### Component: [Another Component] [TEST AFTER COMPONENT]
 
 Location: `relative-to-cwd/to/another/component`
 
-- [ ] **AUTH-1**: [Authentication task] (delivers FR-1, NFR-3)
-  - Implementation specifics
-  - File: `relative-to-cwd/to/auth/service.ts:1:1`
+- [ ] **AUTH-1**: [Task description] (delivers FR-1, NFR-3)
+  - Create: `relative-to-cwd/to/auth/service.ts:1:1`
+  - Reference: `relative-to-cwd/to/existing/auth-pattern.ts:23:67`
 
-- [ ] **AUTH-2**: [Session management] (delivers FR-2)
-  - Implementation specifics
-  - Updates: `relative-to-cwd/to/session/manager.ts:45:12`
-  - Note: AUTH-1 must be complete before AUTH-2
+- [ ] **AUTH-2**: [Task description] (delivers FR-2)
+  - Update: `relative-to-cwd/to/session/manager.ts:45:12`
+  - Dependencies: AUTH-1 must be complete before AUTH-2
 
 Note: Test AUTH-1 and AUTH-2 together after both are implemented
 
-## Technical Specifications
+## Testing Guidance
 
-### API Design
+### Testing Setup
 
-[Detailed endpoint specifications with request/response schemas]
+[Reference to Testing Setup section in feature.md - spec-tester will use this]
 
-### Database Schema [optional]
+See feature.md "Testing Setup" section for system startup, environment requirements, test data, access points, and cleanup procedures.
 
-[Table definitions, indexes, relationships]
+### Testing Patterns to Follow
 
-## Testing Strategy
+**Unit tests:**
+- Pattern: `relative-to-cwd/path/to/unit.test.ext:line:col`
+- Focus: [What to test at unit level]
 
-### Unit Testing
+**Integration tests:**
+- Pattern: `relative-to-cwd/path/to/integration.test.ext:line:col`
+- Focus: [What to test at integration level]
 
-[Coverage targets, mocking strategy]
+**E2E tests:**
+- Tools: [playwright-skill / API helpers / etc.]
+- Pattern: `relative-to-cwd/path/to/e2e.test.ext:line:col`
 
-### Integration Testing [optional]
+### Testing Tools Available
 
-[Test scenarios, environment setup]
+[List testing tools, scripts, or helpers available for this feature]
 
-## Operational Considerations
+- Jest/Vitest for unit and integration tests
+- playwright-skill for UI testing (spec-tester can load this)
+- API test helpers: `scripts/test-api.sh`
+- [Other tools discovered during exploration]
 
-### Logging
+## Implementation Notes
 
-[logging strategy]
+### Discovered During Planning
+
+[Technical discoveries, constraints, gotchas from Explore/researcher agents]
+
+- [Finding from exploration that affects implementation]
+- [Constraint discovered that wasn't obvious initially]
+- [Best practice from similar implementations]
+
+### Migration Strategy
+
+[If this involves breaking changes to PUBLIC APIs]
+
+- [How existing consumers will be supported]
+- [Deprecation timeline if applicable]
+- [Communication plan for breaking changes]
+
+Note: Internal APIs can be refactored freely without migration strategy.
+
+### Performance Considerations
+
+[Specific NFRs and validation approach]
+
+- NFR-X requires: [Specific performance target]
+- Validate with: [How to measure/verify]
+
+### Security Considerations
+
+[Authentication, authorization, data protection, compliance]
+
+- [Specific security requirements from NFRs]
+- [Compliance requirements if applicable]
+- [Security patterns to follow from similar features]
+
+## References
+
+### Codebase Documentation
+
+[Links to relevant documentation within the repository]
+
+- [Internal docs about patterns/architecture]
+- [ADRs (Architecture Decision Records) if applicable]
+
+### External Documentation
+
+[Links to API docs, library docs, frameworks]
+
+- [Library/framework documentation]
+- [API documentation for external services]
+
+### Related Specifications
+
+[Links to related feature.md files in specs/]
+
+- `specs/XXX-related-feature/feature.md` - [How it relates]
 
 ## Technical Debt Considerations
 
-[Known compromises and future refactoring needs]
+[Known compromises and future refactoring needs identified during planning]
+
+- [Known shortcut or compromise with rationale]
+- [Future improvement opportunity]
 
 ## Dependencies and Prerequisites
 
 [External services, libraries, infrastructure requirements]
 
-## Regressions or missed requirements
+- [External service dependencies]
+- [Library/framework versions required]
+- [Infrastructure or environment requirements]
+
+## Regressions or Missed Requirements
 
 None found
 
-<!-- section for the future to document missed requirements and their resolution, with the intention being to prevent future mistakes -->
+<!-- Section for documenting missed requirements discovered during implementation and their resolution, with the intention being to prevent future mistakes -->

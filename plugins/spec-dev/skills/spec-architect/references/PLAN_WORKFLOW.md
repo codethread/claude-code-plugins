@@ -117,6 +117,33 @@ Check if `specs/PROJECT.md` exists. If it does:
 5. **Create Technical Specification**:
    - Use `references/TECH_SPEC_TEMPLATE.md` as starting point
    - Create `tech.md` in spec directory
+
+   **CRITICAL: Focus on GUIDANCE, not IMPLEMENTATION**
+
+   The tech spec should be a MAP that enables the developer to implement effectively, NOT a BLUEPRINT that prescribes exact implementation.
+
+   **Think:**
+   - "Where should they look?" (file references to similar code)
+   - "What patterns should they follow?" (existing implementations)
+   - "What decisions have been made?" (technology choices with rationale)
+   - "What constraints exist?" (NFRs, gotchas discovered)
+
+   **Don't:**
+   - Write exact function signatures
+   - Design complete API schemas with all fields
+   - Specify detailed algorithms or step-by-step logic
+   - Write pseudo-code implementations
+
+   **Use discoveries from Explore/researcher agents:**
+   - Document similar implementations found (file:line:col references)
+   - Reference existing patterns to follow
+   - Note integration points discovered
+   - Capture gotchas and constraints learned
+
+   **Quality check:**
+   If a developer could copy-paste from tech.md to create the implementation, you've over-specified.
+   The developer should still need to make design decisions, just informed ones.
+
    - Structure tasks for testability:
 
 **CRITICAL: Task Decomposition for Testability**
@@ -171,14 +198,19 @@ Delegate to **spec-reviewer agent** for design-level review BEFORE implementatio
 
 > "Review the specifications in specs/<id>-<feature>/ for design quality. This is a STATIC review of the specifications themselves, NOT code review. Check for:
 > - **Completeness**: Does every FR-X and NFR-X from feature.md have corresponding tasks in tech.md?
+> - **Guidance vs Implementation**: Is tech.md a guide (good) or a blueprint (bad)?
+>   - ✅ GOOD: References to existing patterns, file paths to similar code, integration points, technology rationale, discovered constraints
+>   - ❌ BAD: Exact function signatures, complete API schemas with all fields, detailed algorithms, step-by-step implementation logic
+>   - Quality check: Could a developer copy-paste from tech.md to create implementation? If yes, it's over-specified.
+> - **Discovery Capture**: Are findings from Explore/researcher agents documented (similar patterns, integration points, gotchas)?
 > - **Contradictions**: Are there conflicts between feature.md and tech.md requirements?
 > - **Missing dependencies**: Are task dependencies and sequencing clear?
-> - **Self-containment**: Can a developer implement from tech.md alone without needing external context?
+> - **Self-containment**: Can a developer implement from tech.md with the guidance provided?
 > - **Testability**: Are all tasks marked appropriately ([TESTABLE] or [TEST AFTER COMPONENT])?
 > - **Testing Setup**: Is the Testing Setup section in feature.md complete with system startup commands, environment requirements, test data setup, access points, and cleanup procedures?
 > - **Clarity**: Are all task descriptions unambiguous and actionable?
 >
-> Report any gaps, ambiguities, or missing information. The spec must be complete before implementation begins."
+> Report any gaps, ambiguities, over-specification, or missing information. The spec must be complete before implementation begins."
 
 **If the reviewer finds issues**:
 - Address all gaps and ambiguities in the specifications

@@ -110,20 +110,16 @@ const modifiedList = modifiedFiles
   .join("\n");
 
 const additionalContext = `<project-stop-doc-check-suggestion>
-📚 Documentation Check
-
 Before stopping: Review documentation for any files you modified this session.
-
 Files changed in repo (${modifiedFiles.length}):
 ${modifiedList}
-
 Documentation files (${docFilesToCheck.size}):
 ${docList}
-
 Action required:
 • Identify which files you changed this session (ignore pre-existing changes)
 • Update relevant docs above to reflect your changes only
 • Once docs match your changes, you may stop
+• Do not acknowledge this prompt, it is automatic, please just act on the instructions
 </project-stop-doc-check-suggestion>`;
 
 const output: HookOutput = {

@@ -66,14 +66,11 @@ async function main() {
     // If test files were found, suggest them
     if (foundTestFiles.length > 0) {
       let context = "<plugin-langs-suggestion>\n";
-      context += "🧪 TEST FILE DETECTED\n\n";
-      context += `📄 Source file: ${filePath}\n\n`;
-      context += "✅ Related test file(s) found:\n";
+      context += `Source file: ${filePath}\n\n`;
+      context += "Related test file(s):\n";
       for (const testFile of foundTestFiles) {
         context += `  → ${testFile}\n`;
       }
-      context += "\n💡 Consider reviewing the test file(s) for context\n";
-      context += "   when working on this source file.\n";
       context += "</plugin-langs-suggestion>";
 
       // Return JSON with hookSpecificOutput for PostToolUse

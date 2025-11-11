@@ -34,30 +34,86 @@ When working within a specific plugin, **refer to that plugin's `CLAUDE.md`** fo
 
 ## Creating New Plugins
 
-1. Create plugin directory structure:
+Follow this pattern for minimal, focused manifests where each file has a clear role:
 
-   ```bash
-   mkdir -p plugins/my-plugin/{commands,agents,skills}
-   ```
+### 1. Create plugin directory structure
 
-2. Add plugin metadata (no `plugin.json` needed - marketplace.json is sufficient)
+```bash
+mkdir -p plugins/my-plugin/{.claude-plugin,commands,agents,skills}
+```
 
-3. Register in `.claude-plugin/marketplace.json`:
+### 2. Create plugin manifest
 
-   ```json
-   {
-     "name": "my-plugin",
-     "description": "What it does",
-     "version": "1.0.0",
-     "author": { "name": "Your Name" },
-     "keywords": ["tag1", "tag2"],
-     "category": "development-tools",
-     "source": "./plugins/my-plugin"
-   }
-   ```
+**File**: `plugins/my-plugin/.claude-plugin/plugin.json`
 
-4. Add commands/agents/skills as markdown files in respective directories
-5. **Create both `README.md` (user guide) and `CLAUDE.md` (maintainer guide)** in your plugin directory
+**Role**: Core plugin metadata that travels with the plugin
+
+```json
+{
+  "name": "my-plugin",
+  "description": "Brief description of what this plugin does",
+  "version": "1.0.0",
+  "author": {
+    "name": "Your Name"
+  },
+  "keywords": ["tag1", "tag2", "tag3"]
+}
+```
+
+**Contains**: Only essential plugin identity and metadata
+
+### 3. Register in marketplace
+
+**File**: `.claude-plugin/marketplace.json`
+
+**Role**: Marketplace catalog that tells Claude Code where to find plugins
+
+```json
+{
+  "plugins": [
+    {
+      "name": "my-plugin",
+      "source": "./plugins/my-plugin",
+      "category": "development-tools"
+    }
+  ]
+}
+```
+
+**Contains**: Only marketplace-specific fields (`source`, `category`) - plugin metadata comes from plugin.json
+
+### 4. Add plugin components
+
+- Add commands as `.md` files in `commands/`
+- Add agents as `.md` files in `agents/`
+- Add skills in `skills/<skill-name>/SKILL.md`
+- **Create both `README.md` (user guide) and `CLAUDE.md` (maintainer guide)** in your plugin directory
+
+### Best Practices
+
+**Minimal duplication**:
+- ✅ Plugin.json: Core metadata (name, description, version, author, keywords)
+- ✅ Marketplace.json: Source path + marketplace additions (category)
+- ❌ Don't repeat description, version, author in both files
+
+**When to duplicate**:
+- Marketplace can override plugin.json if you need different descriptions for different marketplaces
+- Most plugins don't need this - keep it simple
+
+**Alternative: `strict: false`** (not recommended):
+```json
+// In marketplace.json - defines everything, no plugin.json needed
+{
+  "name": "my-plugin",
+  "source": "./plugins/my-plugin",
+  "description": "What it does",
+  "version": "1.0.0",
+  "author": { "name": "Your Name" },
+  "strict": false  // Makes plugin.json optional
+}
+```
+
+Why not recommended: Plugin.json keeps metadata with the plugin, making it portable across marketplaces.
 
 ### Writing Slash Commands
 
@@ -218,24 +274,31 @@ Show me advanced workflows
 
 ## Writing Hook Suggestions
 
-When creating hooks that provide suggestions via `additionalContext` or `reason` fields, **ALWAYS use XML tags** instead of visual formatting (box-drawing characters, headers, footers).
+When creating hooks that provide suggestions via `additionalContext` or `reason` fields, **ALWAYS use XML tags with minimal, concise content**.
 
-### Standard Pattern: XML Tags
+### Standard Pattern: Concise XML Tags
 
-**Use structured XML tags:**
+**Use structured XML tags with plain text (no emojis, no fancy formatting):**
 
 ```typescript
-// ✅ CORRECT: XML tag pattern
+// ✅ CORRECT: Concise XML tag pattern
 let context = "<plugin-PLUGINNAME-suggestion>\n";
-context += "📝 SUGGESTION TITLE\n\n";
-context += "💡 Key information\n\n";
-context += "Suggestion content...\n";
+context += "Detected [what triggered the hook]\n\n";
+context += "RECOMMENDED SKILL:\n";
+context += "  → skill-name:skill-name\n";
 context += "</plugin-PLUGINNAME-suggestion>";
 ```
 
-**Don't use visual formatting:**
+**Don't use emojis or visual formatting:**
 
 ```typescript
+// ❌ INCORRECT: Emojis and visual decorations
+let context = "<plugin-PLUGINNAME-suggestion>\n";
+context += "📝 SUGGESTION TITLE\n\n";
+context += "💡 Key information\n\n";
+context += "✅ Detailed explanation...\n";
+context += "</plugin-PLUGINNAME-suggestion>";
+
 // ❌ INCORRECT: Box-drawing characters
 let context = "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
 context += "📝 SUGGESTION TITLE\n";
@@ -256,14 +319,18 @@ Follow this pattern for tag names:
 3. **Wildcard matching**: Pattern `<plugin-*-suggestion>` allows users to control all plugin suggestions at once
 4. **Parseable**: Future tooling can extract and process structured suggestions
 5. **Referenceable**: Clear boundaries make suggestions easier to cite and follow
+6. **Concise**: Claude already has context about skills/agents/tools - just nudge, don't explain
 
 ### Examples
 
 **Plugin hook (PostToolUse):**
 ```typescript
 const context = "<plugin-doc-writer-suggestion>\n" +
-  "📝 DOCUMENTATION QUALITY SUGGESTION\n\n" +
-  "IMPORTANT: Use the Skill tool to load writing-documentation\n" +
+  "Detected markdown file modification: FILENAME\n\n" +
+  "ESSENTIAL SKILL:\n" +
+  "  → doc-writer:writing-documentation\n\n" +
+  "RECOMMENDED AGENT:\n" +
+  "  → doc-writer:docs-reviewer\n" +
   "</plugin-doc-writer-suggestion>";
 
 const output = {
@@ -277,8 +344,17 @@ const output = {
 **Project hook (Stop with blocking):**
 ```typescript
 const context = "<project-stop-doc-check-suggestion>\n" +
-  "📚 Documentation Check\n\n" +
-  "Before stopping: Review documentation files...\n" +
+  "Before stopping: Review documentation for any files you modified this session.\n" +
+  "Files changed in repo (N):\n" +
+  "  - file1.ts\n" +
+  "  - file2.md\n" +
+  "Documentation files (N):\n" +
+  "  - README.md\n" +
+  "  - CLAUDE.md\n" +
+  "Action required:\n" +
+  "• Identify which files you changed this session (ignore pre-existing changes)\n" +
+  "• Update relevant docs above to reflect your changes only\n" +
+  "• Once docs match your changes, you may stop\n" +
   "</project-stop-doc-check-suggestion>";
 
 const output = {

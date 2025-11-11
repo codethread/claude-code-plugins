@@ -42,7 +42,7 @@ specs/
 ├── PROJECT.md       # Project-wide agent instructions (optional)
 └── 001-feature-name/
     ├── feature.md   # Requirements (FR-1, NFR-1)
-    ├── tech.md      # Implementation tasks
+    ├── tech.md      # Implementation guidance (patterns, integration points, tasks)
     └── notes.md     # Research notes (optional)
 ```
 

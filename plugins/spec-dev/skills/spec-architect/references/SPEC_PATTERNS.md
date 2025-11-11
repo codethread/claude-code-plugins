@@ -42,7 +42,7 @@ specs/<numerical-id>-<kebab-cased-feature>/
 **Pattern**: `specs/<numerical-id>-<kebab-cased-feature>/tech.md`
 **Example**: `specs/001-user-authentication/tech.md`
 **Created by**: `/build` command (BUILD workflow - Technical Design Phase)
-**Contains**: HOW to build it - architecture decisions, implementation approach, technology choices
+**Contains**: Implementation GUIDANCE - discovered patterns, integration points, technology rationale, constraints. MAP (guidance) not BLUEPRINT (implementation details)
 **Template**: `references/TECH_SPEC_TEMPLATE.md`
 
 ## Document Relationships

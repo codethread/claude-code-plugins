@@ -63,14 +63,14 @@ async function main() {
       const cacheDir = join(
         homedir(),
         ".local/cache/personal-configs-plugins/doc-writer",
-        normalizedCwd
+        normalizedCwd,
       );
       const sessionFile = join(cacheDir, `${data.session_id}.json`);
 
       // If already suggested this session, exit silently
       if (existsSync(sessionFile)) {
         const session: SessionCache = JSON.parse(
-          readFileSync(sessionFile, "utf-8")
+          readFileSync(sessionFile, "utf-8"),
         );
         if (session.doc_writer_suggested) {
           process.exit(0);
@@ -78,22 +78,11 @@ async function main() {
       }
 
       let context = "<plugin-doc-writer-suggestion>\n";
-      context += "📝 DOCUMENTATION QUALITY SUGGESTION\n\n";
-      context += `💡 Detected markdown file modification: ${filePath}\n\n`;
-      context += "📖 RECOMMENDED SKILL:\n";
+      context += `Detected markdown file modification: ${filePath}\n\n`;
+      context += "ESSENTIAL SKILL:\n";
       context += "  → doc-writer:writing-documentation\n\n";
-      context += "This skill provides:\n";
-      context += "  • Industry best practices from React, Stripe, etc.\n";
-      context += "  • API verification workflow (researcher + Context7)\n";
-      context += "  • Production-ready code examples\n";
-      context += "  • Security verification patterns\n\n";
-      context += "📋 RECOMMENDED AGENT:\n";
-      context += "  → doc-writer:docs-reviewer\n\n";
-      context += "IMPORTANT: Use the Skill tool to load writing-documentation\n";
-      context += "before writing documentation. This provides essential patterns\n";
-      context += "for API verification, security checks, and production-ready\n";
-      context += "examples. For existing docs, use docs-reviewer agent to\n";
-      context += "ruthlessly simplify and improve.\n";
+      context += "RECOMMENDED AGENT:\n";
+      context += "  → doc-writer:docs-reviewer\n";
       context += "</plugin-doc-writer-suggestion>";
 
       // Return JSON with hookSpecificOutput for PostToolUse

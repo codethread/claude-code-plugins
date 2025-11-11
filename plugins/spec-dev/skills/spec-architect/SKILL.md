@@ -121,7 +121,9 @@ Starting a new feature?
 
 ## Common Pitfalls to Avoid
 
+- ❌ Over-specifying tech.md with implementation details instead of guidance
 - ❌ Implementing without checking existing code first (use Explore agent)
+- ❌ Not documenting discoveries from Explore/researcher agents in tech.md
 - ❌ Ignoring repository-specific agents that provide domain expertise
 - ❌ Skipping code review to save time (prevents technical debt)
 - ❌ Skipping QA verification to save time

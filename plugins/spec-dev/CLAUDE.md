@@ -87,11 +87,13 @@ echo '{"session_id":"test-123","cwd":"'$(pwd)'","source":"startup"}' | \
 
 **Workflow Separation**: Three workflows avoid loading planning context during iteration. PLAN creates specs, BUILD implements, ITERATE routes.
 
+**MAP vs BLUEPRINT Philosophy**: tech.md provides GUIDANCE (map) not IMPLEMENTATION (blueprint). Architect documents discoveries, patterns, integration points, and constraints; developer makes informed implementation decisions. Quality check: if developer could copy-paste from tech.md to implement, it's over-specified.
+
 **Testing Setup**: Spec template includes exact commands to start systems, environment setup, test data, access points, cleanup. Validated before implementation.
 
 **Protocol Scope**: COMMUNICATION_PROTOCOL applies to `spec-*` agents only. Flexible delegation for others encourages using domain-specific agents.
 
-**Spec Review Gate**: After technical design, spec-reviewer validates completeness, contradictions, dependencies, self-containment, testability, and testing setup.
+**Spec Review Gate**: After technical design, spec-reviewer validates completeness, guidance vs over-specification, discovery capture, contradictions, dependencies, self-containment, testability, and testing setup. The reviewer operates in two modes: specification review during PLAN phase (checking for over-specification) and code review during BUILD phase (checking for patterns, types, tests).
 
 **Session Resumption**: Hooks enable automatic workflow continuation:
 - When spec-architect skill loads, session tracking initializes
@@ -103,9 +105,9 @@ echo '{"session_id":"test-123","cwd":"'$(pwd)'","source":"startup"}' | \
 
 **Update workflows**: Edit `references/{PLAN,BUILD,ITERATE}_WORKFLOW.md`
 
-**Update templates**: Edit `references/*_TEMPLATE.md` (SPEC_TEMPLATE, TECH_SPEC_TEMPLATE, PROJECT_TEMPLATE)
+**Update templates**: Edit `references/*_TEMPLATE.md` (SPEC_TEMPLATE, TECH_SPEC_TEMPLATE, PROJECT_TEMPLATE). Note: TECH_SPEC_TEMPLATE.md follows MAP approach (guidance) not BLUEPRINT approach (implementation details)
 
-**Change agent behavior**: Edit `agents/spec-*.md` system prompt
+**Change agent behavior**: Edit `agents/spec-*.md` system prompt. Note: spec-reviewer has dual modes (specification review in PLAN, code review in BUILD)
 
 **Add quality gates**: Update workflow file, update spec-reviewer briefing if needed, document in COMMUNICATION_PROTOCOL if affects all agents
 
