@@ -13,7 +13,6 @@
 import { existsSync, statSync, readdirSync } from 'fs';
 import { mkdir } from 'fs/promises';
 import { join, basename, relative, resolve } from 'path';
-import { file } from 'bun';
 import { validateSkill } from './quick_validate';
 
 async function packageSkill(skillPath: string, outputDir?: string): Promise<string | null> {

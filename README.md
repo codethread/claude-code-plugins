@@ -26,6 +26,10 @@ Extends Claude Code with:
 # Add marketplace
 /plugin marketplace add git@github.com:codethread/claude-code-plugins.git
 
+# Install dependencies (run once after adding marketplace)
+cd ~/.claude/plugins/marketplaces/personal-configs-plugins
+bun install
+
 # Install plugins
 /plugin install spec-dev@personal-configs-plugins
 /plugin install doc-writer@personal-configs-plugins
@@ -38,6 +42,28 @@ Extends Claude Code with:
 /plugin install xlsx@personal-configs-plugins
 /plugin install pptx@personal-configs-plugins
 /plugin install docx@personal-configs-plugins
+```
+
+**Note:** The `bun install` command installs all dependencies needed by plugin scripts and hooks. You only need to run this once after adding the marketplace.
+
+### For Contributors
+
+If you're contributing to this marketplace, quality scripts are available:
+
+```bash
+cd ~/.claude/plugins/marketplaces/personal-configs-plugins
+
+# Check code quality (type checking + linting)
+bun run check
+
+# Run type checking only
+bun run typecheck
+
+# Check linting only
+bun run lint
+
+# Check formatting (dry-run, doesn't modify files)
+bun run format
 ```
 
 ### Use

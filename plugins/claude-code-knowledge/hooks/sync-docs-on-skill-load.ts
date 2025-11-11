@@ -346,7 +346,7 @@ async function discoverClaudeCodePages(sitemapUrl: string): Promise<string[]> {
 // Content Fetching
 // ============================================================================
 
-function validateMarkdownContent(content: string, filename: string): void {
+function validateMarkdownContent(content: string, _filename: string): void {
   if (!content || content.startsWith('<!DOCTYPE') || content.slice(0, 100).includes('<html')) {
     throw new Error("Received HTML instead of markdown");
   }
