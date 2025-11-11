@@ -1,0 +1,17 @@
+{
+  "description": "Suggests test files when TypeScript source files are read",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/test-file-suggest.ts",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

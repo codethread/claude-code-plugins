@@ -22,46 +22,7 @@ Access to official Claude Code documentation, automatically synced from docs.ant
 - User asks "how do I..." questions related to Claude Code
 - You need to explain Claude Code concepts or best practices
 
-## CRITICAL: Auto-Fetch Documentation Workflow
-
-**YOU MUST perform these steps IN ORDER when this skill is loaded:**
-
-### Step 1: Check Documentation Status
-
-Run this command FIRST:
-```bash
-ls docs/*.md 2>/dev/null | wc -l
-```
-
-### Step 2: Auto-Fetch if Needed
-
-If the count from Step 1 is **less than 40**, you MUST run:
-```bash
-bun scripts/fetch_docs.ts
-```
-
-Wait for this to complete (takes ~30 seconds). The script will:
-- Fetch 45 documentation files from docs.anthropic.com
-- Save them to the `docs/` directory
-- Update the manifest
-
-### Step 3: Proceed with User Question
-
-Only after documentation is available, proceed to answer the user's question by reading from `docs/` directory.
-
-**DO NOT skip the fetch step if docs are missing. DO NOT try to answer without the documentation.**
-
 ## Quick Reference
-
-### Prerequisites
-
-**IMPORTANT**: Before running any scripts, ensure dependencies are installed:
-
-```bash
-cd scripts && bun install
-```
-
-This only needs to be done once, or when dependencies change. Scripts will not work without this step.
 
 ### Check Available Documentation
 
@@ -70,16 +31,6 @@ bun scripts/list_topics.ts
 ```
 
 Or read the complete list from [reference.md](reference.md).
-
-### Sync with Latest Documentation
-
-Before reading docs, always check for updates:
-
-```bash
-bun scripts/sync_docs.ts
-```
-
-This checks GitHub for newer documentation and updates the local cache if needed.
 
 ### Read Specific Documentation
 
@@ -126,32 +77,20 @@ For the complete list, see [reference.md](reference.md).
 
 ## Workflow
 
-1. **Install dependencies** (first time only):
-
-   ```bash
-   cd scripts && bun install && cd ..
-   ```
-
-2. **Sync first** (optional but recommended):
-
-   ```bash
-   bun scripts/sync_docs.ts
-   ```
-
-3. **Find the topic** you need:
+1. **Find the topic** you need:
 
    ```bash
    bun scripts/list_topics.ts
    # Or read reference.md
    ```
 
-4. **Read the documentation**:
+2. **Read the documentation**:
 
    ```bash
    cat docs/<topic>.md
    ```
 
-5. **Search if needed**:
+3. **Search if needed**:
    ```bash
    grep -ri "search term" docs/
    ```
@@ -178,50 +117,36 @@ Each documentation file includes:
 
 ### User asks: "How do I create a hook?"
 
-1. Ensure dependencies: `cd scripts && bun install && cd ..`
-2. Check for updates: `bun scripts/sync_docs.ts`
-3. Read hooks documentation: `cat docs/hooks.md` and `cat docs/hooks-guide.md`
-4. Provide answer based on the official documentation
-5. Cite the source: "According to docs/hooks.md..."
+1. Read hooks documentation: `cat docs/hooks.md` and `cat docs/hooks-guide.md`
+2. Provide answer based on the official documentation
+3. Cite the source: "According to docs/hooks.md..."
 
 ### User asks: "What MCP servers are available?"
 
-1. Ensure dependencies: `cd scripts && bun install && cd ..`
-2. Sync: `bun scripts/sync_docs.ts`
-3. Read: `cat docs/mcp.md`
-4. Search for examples: `grep -ri "mcp server" docs/`
-5. Provide comprehensive answer with citations
+1. Read: `cat docs/mcp.md`
+2. Search for examples: `grep -ri "mcp server" docs/`
+3. Provide comprehensive answer with citations
 
 ### User asks: "How do I configure settings?"
 
-1. Ensure dependencies: `cd scripts && bun install && cd ..`
-2. Sync: `bun scripts/sync_docs.ts`
-3. Read: `cat docs/settings.md`
-4. Reference specific configuration options
-5. Cite: "From docs/settings.md..."
+1. Read: `cat docs/settings.md`
+2. Reference specific configuration options
+3. Cite: "From docs/settings.md..."
 
 ### User asks: "How do I create a skill?"
 
-1. Ensure dependencies: `cd scripts && bun install && cd ..`
-2. Read: `cat docs/skill-creation-guide.md`
-3. For initialization: Use `bun scripts/skill-creator/init_skill.ts`
-4. For validation: Use `bun scripts/skill-creator/quick_validate.ts`
-5. For packaging: Use `bun scripts/skill-creator/package_skill.ts`
-6. Provide comprehensive guidance based on the documentation
+1. Read: `cat docs/skill-creation-guide.md`
+2. For initialization: Use `bun scripts/skill-creator/init_skill.ts`
+3. For validation: Use `bun scripts/skill-creator/quick_validate.ts`
+4. For packaging: Use `bun scripts/skill-creator/package_skill.ts`
+5. Provide comprehensive guidance based on the documentation
 
 ## Troubleshooting
 
-If documentation seems outdated or missing:
+If you can't find a topic:
 
-1. Ensure dependencies installed: `cd scripts && bun install && cd ..`
-2. Run `bun scripts/sync_docs.ts` to fetch latest
-3. Check if the topic exists: `bun scripts/list_topics.ts`
-4. Search across all docs: `grep -ri "topic" docs/`
-
-If scripts fail with module errors:
-
-1. Check dependencies are installed: `ls scripts/node_modules/`
-2. Reinstall if needed: `cd scripts && rm -rf node_modules bun.lockb && bun install && cd ..`
+1. Check if the topic exists: `bun scripts/list_topics.ts`
+2. Search across all docs: `grep -ri "topic" docs/`
 
 ## Additional Resources
 

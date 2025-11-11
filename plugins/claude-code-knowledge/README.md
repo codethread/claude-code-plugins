@@ -5,12 +5,14 @@ Official Claude Code documentation access with skill creation tools.
 ## What
 
 **Skill**: `claude-code-knowledge` - 45+ documentation topics (hooks, MCP, skills, settings, CLI, plugins)
+**Auto-sync**: Documentation automatically updates when skill loads (transparent, lazy)
 **Hook**: Auto-suggests skill when you ask Claude Code questions
 **Scripts**: Skill creation helpers (init, validate, package)
 
 ## Why
 
 - Official documentation at your fingertips
+- Automatically stays up-to-date (syncs transparently when loaded)
 - Claude automatically uses it when you ask about Claude Code
 - No guessing - authoritative answers
 - Skill creation tools included

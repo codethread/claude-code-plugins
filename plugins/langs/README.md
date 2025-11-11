@@ -1,10 +1,12 @@
 # Language-Specific Patterns
 
-OPINIONATED coding patterns for React and TypeScript.
+OPINIONATED coding patterns for React and TypeScript with automatic test file detection.
 
 ## What
 
 **Skills**: `lang-react`, `lang-typescript`
+
+**Hook**: Suggests test files for `.ts`/`.tsx` files
 
 ## Why
 

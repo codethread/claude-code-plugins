@@ -6,18 +6,20 @@ This skill provides Claude with access to official Claude Code documentation and
 
 ### Multi-Strategy Trigger Architecture
 
-This plugin uses **three complementary mechanisms** to ensure Claude has documentation access:
+This plugin uses **four complementary mechanisms** to ensure Claude has documentation access:
 
 1. **Model-Invoked Skill** - Claude decides based on SKILL.md description field
-2. **UserPromptSubmit Hook** - Proactively injects context before Claude processes prompts
-3. **skill-rules.json** - Pattern-based skill suggestion system
+2. **PreToolUse Hook** - Transparently syncs documentation when skill loads (auto-sync)
+3. **UserPromptSubmit Hook** - Proactively injects context before Claude processes prompts
+4. **skill-rules.json** - Pattern-based skill suggestion system
 
 Each mechanism serves different use cases:
 - **Model-invoked**: For explicit Claude Code questions when Claude recognizes the topic
-- **Hook**: Catches edge cases, adds redundancy, improves accuracy with contextual suggestions
+- **PreToolUse hook**: Automatic, transparent documentation sync when skill is loaded (lazy loading)
+- **UserPromptSubmit hook**: Catches edge cases, adds redundancy, improves accuracy with contextual suggestions
 - **skill-rules**: Framework-level prompt pattern matching with keywords and regex
 
-This redundancy ensures Claude rarely misses opportunities to use official documentation.
+This redundancy ensures Claude rarely misses opportunities to use official documentation, and documentation stays current without manual intervention.
 
 ### Data Storage
 
@@ -31,15 +33,18 @@ Documentation and dependencies:
 
 1. **SKILL.md** - Instructions for Claude on when and how to use the skill
 2. **reference.md** - Index of all available documentation
-3. **hooks/** - Hook subsystem for proactive context injection
+3. **hooks/** - Hook subsystem for both auto-sync and proactive context injection
+   - **hooks.json** - Hook registration (both PreToolUse and UserPromptSubmit)
+   - **sync-docs-on-skill-load.ts** - PreToolUse hook that transparently syncs docs when skill loads
    - **claude-code-prompt.ts** - UserPromptSubmit hook that detects Claude Code questions
-   - **hooks.json** - Hook registration and configuration
    - **package.json** - Hook dependencies
 4. **skill-rules.json** - Pattern-based triggers for skill suggestion (keywords and regex)
-5. **scripts/** - Helper scripts for maintenance and skill creation
-   - **sync_docs.ts**, **fetch_docs.ts**, **list_topics.ts** - Documentation maintenance (Bun TypeScript)
+5. **scripts/** - Helper scripts for skill creation and browsing
+   - **list_topics.ts** - List available documentation topics (Bun TypeScript)
    - **skill-creator/** - Helper scripts for creating and packaging skills (Bun TypeScript)
 6. **docs/** - Local cache of all documentation including skill-creation-guide.md
+   - Documentation is fetched and managed by the PreToolUse hook
+   - No manual maintenance scripts needed
 
 ## Development Workflow
 
@@ -63,30 +68,19 @@ To test if the skill works:
    - Check if Claude mentions specific documentation files
    - For skill creation, verify Claude uses the helper scripts in `scripts/skill-creator/`
 
-### Updating Documentation
+### Documentation Management
 
-To fetch latest documentation:
+Documentation is **fully automated** - no manual commands needed!
 
-```bash
-cd skills/claude-code-knowledge
-bun scripts/sync_docs.ts
-```
+The PreToolUse hook (`hooks/sync-docs-on-skill-load.ts`) handles everything:
+- Checks if docs are >3 hours old
+- Fetches from docs.anthropic.com automatically
+- Updates manifest with hashes and metadata
+- Runs transparently when skill loads
 
-This will:
-- Check if updates are available
-- Fetch new documentation if needed
-- Update the manifest
-
-### Manual Documentation Fetch
-
-To force a fresh fetch:
-
-```bash
-cd skills/claude-code-knowledge
-bun scripts/fetch_docs.ts
-```
-
-**Note**: The fetch script currently copies from the existing `~/.claude-code-docs` installation as the official docs have moved to `code.claude.com`. This needs to be updated to fetch from the new location.
+**Manual operations** (rarely needed):
+- View topics: `bun skills/claude-code-knowledge/scripts/list_topics.ts`
+- Force immediate sync: Load the skill, which triggers the hook
 
 ## File Structure
 
@@ -95,9 +89,10 @@ claude-code-knowledge/
 ├── .claude-plugin/
 │   └── plugin.json              # Plugin metadata for marketplace
 │
-├── hooks/                       # Hook subsystem for proactive context injection
+├── hooks/                       # Hook subsystem for auto-sync and context injection
+│   ├── hooks.json              # Hook registration (PreToolUse + UserPromptSubmit)
+│   ├── sync-docs-on-skill-load.ts  # PreToolUse hook for transparent doc sync (Bun TypeScript)
 │   ├── claude-code-prompt.ts   # UserPromptSubmit hook (Bun TypeScript)
-│   ├── hooks.json              # Hook configuration and registration
 │   ├── package.json            # Hook dependencies
 │   └── README.md               # Hook documentation and testing guide
 │
@@ -112,9 +107,7 @@ claude-code-knowledge/
 │       │
 │       ├── reference.md        # Index of all documentation topics
 │       │
-│       ├── scripts/            # Maintenance and helper scripts
-│       │   ├── fetch_docs.ts   # Fetch docs from source (Bun TypeScript)
-│       │   ├── sync_docs.ts    # Check and sync updates (Bun TypeScript)
+│       ├── scripts/            # Helper scripts for browsing and skill creation
 │       │   ├── list_topics.ts  # List available topics (Bun TypeScript)
 │       │   ├── package.json    # Dependencies for scripts
 │       │   └── skill-creator/  # Skill creation helper scripts
@@ -152,6 +145,70 @@ The most critical file. Contains:
 - Make it specific about when to use the skill
 - Include key trigger words (hooks, MCP, skills, etc.)
 - Emphasize using docs over guessing
+
+### hooks/sync-docs-on-skill-load.ts
+
+PreToolUse hook that transparently syncs documentation when the skill loads. **All documentation fetching logic is contained in this single file.**
+
+**How it works**:
+- Runs on `PreToolUse` event before the Skill tool executes
+- Reads JSON input from stdin to identify tool name and skill parameter
+- Matches on skill name "claude-code-knowledge" (with or without namespace)
+- Checks if documentation sync is needed (>3 hours old or missing)
+- If needed, fetches directly from docs.anthropic.com:
+  - Discovers sitemap and base URL
+  - Fetches all Claude Code documentation pages as markdown
+  - Validates content (ensures it's markdown, not HTML)
+  - Fetches CHANGELOG.md from GitHub
+  - Updates manifest with hashes and metadata
+- Uses smart caching (3-hour threshold) to avoid redundant fetches
+- Includes retry logic with exponential backoff
+- Always exits with code 0 (non-blocking, silent) even if sync fails
+- Completely transparent to users and Claude
+
+**Implementation details**:
+- **Hook trigger**: `PreToolUse` with matcher `"Skill"`
+- **Configuration**: Registered in `hooks/hooks.json` alongside UserPromptSubmit hook
+- **Language**: Bun TypeScript (self-contained, no external scripts)
+- **Timeout**: 30 seconds (handles first-time fetch which takes ~30 seconds)
+- **Path resolution**: Uses `${CLAUDE_PLUGIN_ROOT}` environment variable
+- **Dependencies**: `bun` runtime + `fast-xml-parser` (for sitemap parsing)
+
+**Behavior**:
+- **First time**: Downloads 45 documentation files (~30 seconds)
+- **Subsequent loads**: Instant (~1-2 seconds) if docs updated <3 hours ago
+- **On failure**: Silent, doesn't block skill loading
+- **Offline**: Skips sync, uses cached docs
+
+**Testing the hook**:
+
+Test the TypeScript hook manually:
+```bash
+cd plugins/claude-code-knowledge/hooks
+
+# Test with Skill tool call for claude-code-knowledge
+cat <<'EOF' | bun sync-docs-on-skill-load.ts
+{"session_id":"test","transcript_path":"/tmp","cwd":"/tmp","permission_mode":"auto","hook_event_name":"PreToolUse","tool_name":"Skill","tool_input":{"skill":"claude-code-knowledge"}}
+EOF
+
+# Test with different skill (should exit silently)
+cat <<'EOF' | bun sync-docs-on-skill-load.ts
+{"session_id":"test","transcript_path":"/tmp","cwd":"/tmp","permission_mode":"auto","hook_event_name":"PreToolUse","tool_name":"Skill","tool_input":{"skill":"other-skill"}}
+EOF
+```
+
+Test in Claude Code:
+```bash
+# Load the skill and observe timing
+claude --print "Please load the claude-code-knowledge skill and tell me about hooks"
+```
+
+**Troubleshooting**:
+- Hook only runs when claude-code-knowledge skill is loaded
+- Verify plugin is installed: `/plugin list`
+- Check `bun` is available: `which bun`
+- Enable debug mode: `claude --debug`
+- Check hook configuration: `cat hooks/hooks.json`
 
 ### hooks/claude-code-prompt.ts
 
@@ -219,24 +276,33 @@ Tracks all documentation:
 
 ### How Claude Uses the Skill
 
-The plugin uses three trigger mechanisms working together:
+The plugin uses four mechanisms working together:
 
 **Model-Invoked Path**:
 1. User asks: "How do I create a hook?" or "How do I create a skill?"
 2. Claude sees the question matches SKILL.md description
-3. Claude reads SKILL.md for instructions
-4. Claude optionally syncs docs: `bun scripts/sync_docs.ts`
-5. Claude reads relevant documentation
-6. For skill creation, Claude may use helper scripts from `scripts/skill-creator/`
-7. Claude provides answer with citation
+3. Claude invokes the skill using Skill tool
+4. **PreToolUse hook automatically syncs docs** (transparent, happens before step 5)
+5. Claude reads SKILL.md for instructions
+6. Claude reads relevant documentation from local cache
+7. For skill creation, Claude may use helper scripts from `scripts/skill-creator/`
+8. Claude provides answer with citation
 
-**Hook Path**:
+**PreToolUse Hook Path** (Auto-Sync):
+1. Claude invokes Skill tool with "claude-code-knowledge"
+2. PreToolUse hook (sync-docs-on-load.sh) intercepts the tool call
+3. Hook silently runs `bun scripts/sync_docs.ts` in background
+4. Documentation is updated if >3 hours old (or fetched if missing)
+5. Hook exits silently, Skill tool continues normally
+6. **Completely transparent** - neither user nor Claude aware of sync
+
+**UserPromptSubmit Hook Path** (Context Injection):
 1. User submits prompt with Claude Code keywords
 2. UserPromptSubmit hook (claude-code-prompt.ts) detects the question
 3. Hook injects contextual suggestion to load the skill
 4. Claude sees the suggestion and follows the model-invoked path above
 
-**skill-rules.json Path**:
+**skill-rules.json Path** (Pattern Matching):
 1. User prompt matches keywords or intentPatterns in skill-rules.json
 2. Framework suggests the skill based on pattern configuration
 3. Claude follows the model-invoked path above
@@ -282,16 +348,16 @@ If the skill-rules system isn't suggesting the skill:
 
 ### Adding New Documentation
 
-If new Claude Code docs are released:
+Documentation is automatically discovered from the sitemap! When new Claude Code docs are released:
 
-1. Update `scripts/fetch_docs.py` to include new topics
-2. Run the fetch script
-3. Verify new files appear in `docs/`
-4. Update `reference.md` if needed
+1. **Nothing to do** - The hook automatically discovers new pages via sitemap
+2. **Fallback list**: If sitemap fails, update the fallback list in `hooks/sync-docs-on-skill-load.ts` (function `getFallbackPages()`)
+3. **Verify**: Load the skill to trigger sync, then run `bun scripts/list_topics.ts` to see new topics
+4. **Update reference.md**: If needed, regenerate the topic index (currently manual)
 
 ### Updating Skill Creation Scripts
 
-The skill creation helper scripts are in `scripts/skill-creator/`:
+The skill creation helper scripts are in `skills/claude-code-knowledge/scripts/skill-creator/`:
 
 - **init_skill.ts** - Creates new skill template structure (Bun TypeScript)
 - **package_skill.ts** - Validates and packages skills into .zip (Bun TypeScript)
@@ -302,6 +368,8 @@ To update these scripts:
 2. Test with real skill creation workflows
 3. Update `docs/skill-creation-guide.md` if behavior changes
 4. Ensure backward compatibility with existing skills
+
+**Note**: Documentation fetching/syncing is handled by the hook, not by scripts in this directory.
 
 ### Debugging
 
@@ -366,9 +434,10 @@ Before considering the skill complete:
 
 ## Known Issues
 
-1. **Fetch script**: Currently copies from existing installation rather than fetching from source
-2. **URL changes**: Official docs moved to code.claude.com, fetch script not updated yet
-3. **No auto-sync**: Skill doesn't automatically check for updates, user must run sync script
+None currently! The hook automatically:
+- Discovers docs from sitemap (docs.anthropic.com or docs.claude.com)
+- Fetches markdown directly from source
+- Handles URL changes transparently
 
 ## Migration to Bun
 
@@ -380,6 +449,22 @@ All scripts have been migrated from Python and Bash to Bun TypeScript:
 - **Compatibility**: All scripts maintain the same CLI interface and functionality
 
 ## Version History
+
+- **2.3.0** (2025-11-11): Self-Contained Hook Architecture
+  - Merged all fetch/sync logic into single hook file
+  - Hook now fetches directly from docs.anthropic.com (no external scripts)
+  - Removed fetch_docs.ts and sync_docs.ts from scripts directory
+  - Skill directory only contains browsing tools (list_topics.ts) and skill-creator helpers
+  - Hook dependencies moved to hooks/package.json (fast-xml-parser)
+  - Cleaner separation: hooks handle fetching, skill handles reading
+
+- **2.2.0** (2025-11-11): Transparent Auto-Sync with PreToolUse Hook
+  - Added PreToolUse hook for automatic documentation syncing
+  - Hook transparently syncs docs when skill loads (lazy loading)
+  - Simplified SKILL.md by removing manual sync instructions
+  - Plugin-bundled hook configuration in hooks/hooks.json
+  - Silent failures - never blocks skill loading
+  - Smart caching with 3-hour threshold
 
 - **1.0.0** (2025-11-06): Initial release
   - Converted from original claude-code-docs repository

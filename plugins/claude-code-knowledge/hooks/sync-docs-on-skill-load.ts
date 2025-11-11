@@ -1,7 +1,17 @@
 #!/usr/bin/env bun
 /**
- * Claude Code Documentation Fetcher for claude-code-knowledge skill
- * Adapted from the original fetch_claude_docs.py
+ * PreToolUse Hook: Auto-sync claude-code-knowledge documentation when skill loads
+ *
+ * This hook combines all documentation fetching and syncing logic in one place.
+ * It runs transparently before the Skill tool executes, checking if docs need
+ * updating and fetching from docs.anthropic.com if necessary.
+ *
+ * Features:
+ * - Smart caching (3-hour threshold)
+ * - Automatic sitemap discovery
+ * - Retry logic with exponential backoff
+ * - Silent failures (never blocks skill loading)
+ * - Complete manifest tracking
  */
 
 import { existsSync } from 'fs';
@@ -10,7 +20,10 @@ import { join, dirname } from 'path';
 import { XMLParser } from 'fast-xml-parser';
 import { createHash } from 'crypto';
 
+// ============================================================================
 // Constants
+// ============================================================================
+
 const SITEMAP_URLS = [
   "https://docs.anthropic.com/sitemap.xml",
   "https://docs.claude.com/sitemap.xml",
@@ -25,13 +38,28 @@ const HEADERS = {
   'Expires': '0'
 };
 
-// Retry configuration
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 2000; // ms
 const MAX_RETRY_DELAY = 30000; // ms
 const RATE_LIMIT_DELAY = 500; // ms
 
+// ============================================================================
 // Types
+// ============================================================================
+
+interface HookInput {
+  session_id: string;
+  transcript_path: string;
+  cwd: string;
+  permission_mode: string;
+  hook_event_name: string;
+  tool_name: string;
+  tool_input: {
+    skill?: string;
+    [key: string]: any;
+  };
+}
+
 interface ManifestFile {
   original_url?: string;
   original_md_url?: string;
@@ -59,49 +87,96 @@ interface Manifest {
   };
 }
 
-// Logging utilities
-const log = {
-  info: (msg: string) => console.log(`[${new Date().toISOString()}] INFO: ${msg}`),
-  warning: (msg: string) => console.warn(`[${new Date().toISOString()}] WARNING: ${msg}`),
-  error: (msg: string) => console.error(`[${new Date().toISOString()}] ERROR: ${msg}`)
-};
+// ============================================================================
+// Path Resolution
+// ============================================================================
 
-// Utility: Sleep function
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const SCRIPT_DIR = dirname(new URL(import.meta.url).pathname);
+const PLUGIN_ROOT = join(SCRIPT_DIR, '..');
+const DOCS_DIR = join(PLUGIN_ROOT, 'skills/claude-code-knowledge/docs');
+const MANIFEST_PATH = join(DOCS_DIR, MANIFEST_FILE);
 
-// Load manifest
-async function loadManifest(docsDir: string): Promise<Manifest> {
-  const manifestPath = join(docsDir, MANIFEST_FILE);
+// ============================================================================
+// Hook Input Handling
+// ============================================================================
 
-  if (existsSync(manifestPath)) {
-    try {
-      const content = await readFile(manifestPath, 'utf-8');
-      const manifest = JSON.parse(content);
+async function readHookInput(): Promise<HookInput | null> {
+  try {
+    const input = await Bun.stdin.text();
+    return JSON.parse(input);
+  } catch {
+    return null;
+  }
+}
 
-      if (!manifest.files) {
-        manifest.files = {};
-      }
+function shouldSync(hookInput: HookInput | null): boolean {
+  if (!hookInput) return false;
+  if (hookInput.tool_name !== 'Skill') return false;
 
-      return manifest;
-    } catch (e) {
-      log.warning(`Failed to load manifest: ${e}`);
-    }
+  const skillName = hookInput.tool_input.skill || '';
+  return skillName === 'claude-code-knowledge' ||
+         skillName === 'claude-code-knowledge:claude-code-knowledge';
+}
+
+// ============================================================================
+// Sync Need Detection
+// ============================================================================
+
+async function checkIfSyncNeeded(): Promise<boolean> {
+  if (!existsSync(MANIFEST_PATH)) {
+    return true; // First time, need to fetch
   }
 
+  try {
+    const manifestContent = await readFile(MANIFEST_PATH, 'utf-8');
+    const manifest = JSON.parse(manifestContent);
+    const lastUpdate = manifest.last_updated || 'unknown';
+
+    if (lastUpdate === 'unknown') return true;
+
+    const lastUpdateDate = new Date(lastUpdate.slice(0, 19));
+    const currentDate = new Date();
+    const hoursSinceUpdate = Math.floor(
+      (currentDate.getTime() - lastUpdateDate.getTime()) / (1000 * 60 * 60)
+    );
+
+    return hoursSinceUpdate >= 3;
+  } catch {
+    return true; // Error reading manifest, re-fetch
+  }
+}
+
+// ============================================================================
+// Manifest Management
+// ============================================================================
+
+async function loadManifest(): Promise<Manifest> {
+  if (existsSync(MANIFEST_PATH)) {
+    try {
+      const content = await readFile(MANIFEST_PATH, 'utf-8');
+      const manifest = JSON.parse(content);
+      if (!manifest.files) manifest.files = {};
+      return manifest;
+    } catch {
+      // Ignore error, return empty manifest
+    }
+  }
   return { files: {}, last_updated: undefined };
 }
 
-// Save manifest
-async function saveManifest(docsDir: string, manifest: Manifest): Promise<void> {
-  const manifestPath = join(docsDir, MANIFEST_FILE);
+async function saveManifest(manifest: Manifest): Promise<void> {
   manifest.last_updated = new Date().toISOString();
   manifest.source = "https://docs.anthropic.com/en/docs/claude-code/";
   manifest.skill = "claude-code-knowledge";
-
-  await writeFile(manifestPath, JSON.stringify(manifest, null, 2));
+  await writeFile(MANIFEST_PATH, JSON.stringify(manifest, null, 2));
 }
 
-// Convert URL to safe filename
+// ============================================================================
+// Utility Functions
+// ============================================================================
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 function urlToSafeFilename(urlPath: string): string {
   const prefixes = ['/en/docs/claude-code/', '/docs/claude-code/', '/claude-code/'];
 
@@ -129,12 +204,18 @@ function urlToSafeFilename(urlPath: string): string {
   return safeName;
 }
 
-// Discover sitemap and base URL
+function contentHasChanged(content: string, oldHash: string): boolean {
+  const newHash = createHash('sha256').update(content, 'utf-8').digest('hex');
+  return newHash !== oldHash;
+}
+
+// ============================================================================
+// Sitemap and Page Discovery
+// ============================================================================
+
 async function discoverSitemapAndBaseUrl(): Promise<{ sitemapUrl: string; baseUrl: string }> {
   for (const sitemapUrl of SITEMAP_URLS) {
     try {
-      log.info(`Trying sitemap: ${sitemapUrl}`);
-
       const response = await fetch(sitemapUrl, { headers: HEADERS });
 
       if (response.status === 200) {
@@ -142,9 +223,7 @@ async function discoverSitemapAndBaseUrl(): Promise<{ sitemapUrl: string; baseUr
         const parser = new XMLParser();
         const result = parser.parse(content);
 
-        // Try to find first URL in sitemap
         let firstUrl: string | null = null;
-
         if (result.urlset?.url) {
           const urls = Array.isArray(result.urlset.url) ? result.urlset.url : [result.urlset.url];
           if (urls[0]?.loc) {
@@ -155,12 +234,10 @@ async function discoverSitemapAndBaseUrl(): Promise<{ sitemapUrl: string; baseUr
         if (firstUrl) {
           const url = new URL(firstUrl);
           const baseUrl = `${url.protocol}//${url.hostname}`;
-          log.info(`Found sitemap at ${sitemapUrl}, base URL: ${baseUrl}`);
           return { sitemapUrl, baseUrl };
         }
       }
-    } catch (e) {
-      log.warning(`Failed to fetch ${sitemapUrl}: ${e}`);
+    } catch {
       continue;
     }
   }
@@ -168,7 +245,6 @@ async function discoverSitemapAndBaseUrl(): Promise<{ sitemapUrl: string; baseUr
   throw new Error("Could not find a valid sitemap");
 }
 
-// Get fallback pages
 function getFallbackPages(): string[] {
   return [
     "/en/docs/claude-code/overview",
@@ -218,31 +294,21 @@ function getFallbackPages(): string[] {
   ];
 }
 
-// Discover Claude Code pages from sitemap
 async function discoverClaudeCodePages(sitemapUrl: string): Promise<string[]> {
-  log.info("Discovering documentation pages from sitemap...");
-
   try {
     const response = await fetch(sitemapUrl, { headers: HEADERS });
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
     const content = await response.text();
     const parser = new XMLParser();
     const result = parser.parse(content);
 
     let urls: string[] = [];
-
     if (result.urlset?.url) {
       const urlEntries = Array.isArray(result.urlset.url) ? result.urlset.url : [result.urlset.url];
       urls = urlEntries.map((entry: any) => entry.loc).filter((loc: any) => loc);
     }
 
-    log.info(`Found ${urls.length} total URLs in sitemap`);
-
-    // Filter for English Claude Code documentation pages
     const claudeCodePages: string[] = [];
     const englishPatterns = ['/en/docs/claude-code/'];
 
@@ -265,22 +331,21 @@ async function discoverClaudeCodePages(sitemapUrl: string): Promise<string[]> {
     }
 
     const uniquePages = [...new Set(claudeCodePages)].sort();
-    log.info(`Discovered ${uniquePages.length} Claude Code documentation pages`);
 
     if (uniquePages.length === 0) {
-      log.warning("No pages found in sitemap, using fallback list...");
       return getFallbackPages();
     }
 
     return uniquePages;
-  } catch (e) {
-    log.error(`Failed to discover pages from sitemap: ${e}`);
-    log.warning("Using fallback essential pages...");
+  } catch {
     return getFallbackPages();
   }
 }
 
-// Validate markdown content
+// ============================================================================
+// Content Fetching
+// ============================================================================
+
 function validateMarkdownContent(content: string, filename: string): void {
   if (!content || content.startsWith('<!DOCTYPE') || content.slice(0, 100).includes('<html')) {
     throw new Error("Received HTML instead of markdown");
@@ -304,15 +369,12 @@ function validateMarkdownContent(content: string, filename: string): void {
   }
 }
 
-// Fetch markdown content with retry logic
 async function fetchMarkdownContent(
   path: string,
   baseUrl: string
 ): Promise<{ filename: string; content: string }> {
   const markdownUrl = `${baseUrl}${path}.md`;
   const filename = urlToSafeFilename(path);
-
-  log.info(`Fetching: ${markdownUrl} -> ${filename}`);
 
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
@@ -323,7 +385,6 @@ async function fetchMarkdownContent(
 
       if (response.status === 429) {
         const retryAfter = parseInt(response.headers.get('Retry-After') || '60', 10);
-        log.warning(`Rate limited. Waiting ${retryAfter} seconds...`);
         await sleep(retryAfter * 1000);
         continue;
       }
@@ -335,15 +396,11 @@ async function fetchMarkdownContent(
       const content = await response.text();
       validateMarkdownContent(content, filename);
 
-      log.info(`Successfully fetched and validated ${filename} (${content.length} bytes)`);
       return { filename, content };
     } catch (e) {
-      log.warning(`Attempt ${attempt + 1}/${MAX_RETRIES} failed for ${filename}: ${e}`);
-
       if (attempt < MAX_RETRIES - 1) {
         const delay = Math.min(RETRY_DELAY * Math.pow(2, attempt), MAX_RETRY_DELAY);
         const jitteredDelay = delay * (0.5 + Math.random() * 0.5);
-        log.info(`Retrying in ${(jitteredDelay / 1000).toFixed(1)} seconds...`);
         await sleep(jitteredDelay);
       } else {
         throw new Error(`Failed to fetch ${filename} after ${MAX_RETRIES} attempts: ${e}`);
@@ -351,15 +408,12 @@ async function fetchMarkdownContent(
     }
   }
 
-  throw new Error(`Failed to fetch ${filename}`);
+  throw new Error(`Failed to fetch ${path}`);
 }
 
-// Fetch changelog from GitHub
 async function fetchChangelog(): Promise<{ filename: string; content: string }> {
   const changelogUrl = "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md";
   const filename = "changelog.md";
-
-  log.info(`Fetching Claude Code changelog: ${changelogUrl}`);
 
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
@@ -370,7 +424,6 @@ async function fetchChangelog(): Promise<{ filename: string; content: string }> 
 
       if (response.status === 429) {
         const retryAfter = parseInt(response.headers.get('Retry-After') || '60', 10);
-        log.warning(`Rate limited. Waiting ${retryAfter} seconds...`);
         await sleep(retryAfter * 1000);
         continue;
       }
@@ -396,15 +449,11 @@ async function fetchChangelog(): Promise<{ filename: string; content: string }> 
         throw new Error(`Changelog content too short (${fullContent.length} bytes)`);
       }
 
-      log.info(`Successfully fetched changelog (${fullContent.length} bytes)`);
       return { filename, content: fullContent };
     } catch (e) {
-      log.warning(`Attempt ${attempt + 1}/${MAX_RETRIES} failed for changelog: ${e}`);
-
       if (attempt < MAX_RETRIES - 1) {
         const delay = Math.min(RETRY_DELAY * Math.pow(2, attempt), MAX_RETRY_DELAY);
         const jitteredDelay = delay * (0.5 + Math.random() * 0.5);
-        log.info(`Retrying in ${(jitteredDelay / 1000).toFixed(1)} seconds...`);
         await sleep(jitteredDelay);
       } else {
         throw new Error(`Failed to fetch changelog after ${MAX_RETRIES} attempts: ${e}`);
@@ -415,44 +464,27 @@ async function fetchChangelog(): Promise<{ filename: string; content: string }> 
   throw new Error("Failed to fetch changelog");
 }
 
-// Save markdown file and return hash
-async function saveMarkdownFile(docsDir: string, filename: string, content: string): Promise<string> {
-  const filePath = join(docsDir, filename);
-
-  try {
-    await writeFile(filePath, content, 'utf-8');
-    const contentHash = createHash('sha256').update(content, 'utf-8').digest('hex');
-    log.info(`Saved: ${filename}`);
-    return contentHash;
-  } catch (e) {
-    log.error(`Failed to save ${filename}: ${e}`);
-    throw e;
-  }
+async function saveMarkdownFile(filename: string, content: string): Promise<string> {
+  const filePath = join(DOCS_DIR, filename);
+  await writeFile(filePath, content, 'utf-8');
+  const contentHash = createHash('sha256').update(content, 'utf-8').digest('hex');
+  return contentHash;
 }
 
-// Check if content has changed
-function contentHasChanged(content: string, oldHash: string): boolean {
-  const newHash = createHash('sha256').update(content, 'utf-8').digest('hex');
-  return newHash !== oldHash;
-}
+// ============================================================================
+// Main Fetch Logic
+// ============================================================================
 
-// Main function
-async function main() {
+async function runFetch(): Promise<void> {
   const startTime = Date.now();
-  log.info("Starting Claude Code documentation fetch for skill");
 
-  // Determine docs directory
-  const scriptDir = dirname(new URL(import.meta.url).pathname);
-  const docsDir = join(scriptDir, '../docs');
-
-  if (!existsSync(docsDir)) {
-    await mkdir(docsDir, { recursive: true });
+  // Create docs directory if needed
+  if (!existsSync(DOCS_DIR)) {
+    await mkdir(DOCS_DIR, { recursive: true });
   }
 
-  log.info(`Output directory: ${docsDir}`);
-
-  // Load manifest
-  const manifest = await loadManifest(docsDir);
+  // Load existing manifest
+  const manifest = await loadManifest();
 
   // Statistics
   let successful = 0;
@@ -469,45 +501,36 @@ async function main() {
     sitemapUrl = result.sitemapUrl;
     baseUrl = result.baseUrl;
   } catch (e) {
-    log.error(`Failed to discover sitemap: ${e}`);
-    process.exit(1);
+    throw new Error(`Failed to discover sitemap: ${e}`);
   }
 
   // Discover documentation pages
   const documentationPages = await discoverClaudeCodePages(sitemapUrl);
 
   if (documentationPages.length === 0) {
-    log.error("No documentation pages discovered!");
-    process.exit(1);
+    throw new Error("No documentation pages discovered!");
   }
 
   // Fetch each page
   for (let i = 0; i < documentationPages.length; i++) {
     const pagePath = documentationPages[i];
-    log.info(`Processing ${i + 1}/${documentationPages.length}: ${pagePath}`);
 
     try {
       const { filename, content } = await fetchMarkdownContent(pagePath, baseUrl);
 
       const oldHash = manifest.files[filename]?.hash || "";
       const oldEntry = manifest.files[filename] || {};
-      const filePath = join(docsDir, filename);
+      const filePath = join(DOCS_DIR, filename);
       const fileExists = existsSync(filePath);
 
       let contentHash: string;
       let lastUpdated: string;
 
       if (!fileExists || contentHasChanged(content, oldHash)) {
-        contentHash = await saveMarkdownFile(docsDir, filename, content);
-        if (!fileExists) {
-          log.info(`Created: ${filename}`);
-        } else {
-          log.info(`Updated: ${filename}`);
-        }
+        contentHash = await saveMarkdownFile(filename, content);
         lastUpdated = new Date().toISOString();
       } else {
         contentHash = oldHash;
-        log.info(`Unchanged: ${filename}`);
         lastUpdated = oldEntry.last_updated || new Date().toISOString();
       }
 
@@ -524,36 +547,28 @@ async function main() {
         await sleep(RATE_LIMIT_DELAY);
       }
     } catch (e) {
-      log.error(`Failed to process ${pagePath}: ${e}`);
       failed++;
       failedPages.push(pagePath);
     }
   }
 
   // Fetch changelog
-  log.info("Fetching Claude Code changelog...");
   try {
     const { filename, content } = await fetchChangelog();
 
     const oldHash = manifest.files[filename]?.hash || "";
     const oldEntry = manifest.files[filename] || {};
-    const filePath = join(docsDir, filename);
+    const filePath = join(DOCS_DIR, filename);
     const fileExists = existsSync(filePath);
 
     let contentHash: string;
     let lastUpdated: string;
 
     if (!fileExists || contentHasChanged(content, oldHash)) {
-      contentHash = await saveMarkdownFile(docsDir, filename, content);
-      if (!fileExists) {
-        log.info(`Created: ${filename}`);
-      } else {
-        log.info(`Updated: ${filename}`);
-      }
+      contentHash = await saveMarkdownFile(filename, content);
       lastUpdated = new Date().toISOString();
     } else {
       contentHash = oldHash;
-      log.info(`Unchanged: ${filename}`);
       lastUpdated = oldEntry.last_updated || new Date().toISOString();
     }
 
@@ -567,7 +582,6 @@ async function main() {
 
     successful++;
   } catch (e) {
-    log.error(`Failed to fetch changelog: ${e}`);
     failed++;
     failedPages.push("changelog");
   }
@@ -587,30 +601,47 @@ async function main() {
   };
 
   // Save manifest
-  await saveManifest(docsDir, newManifest);
+  await saveManifest(newManifest);
 
-  // Summary
-  log.info("\n" + "=".repeat(50));
-  log.info(`Fetch completed in ${duration.toFixed(2)}s`);
-  log.info(`Discovered pages: ${documentationPages.length}`);
-  log.info(`Successful: ${successful}/${documentationPages.length + 1}`);
-  log.info(`Failed: ${failed}`);
-
-  if (failedPages.length > 0) {
-    log.warning("\nFailed pages:");
-    failedPages.forEach(page => log.warning(`  - ${page}`));
-
-    if (successful === 0) {
-      log.error("No pages were fetched successfully!");
-      process.exit(1);
-    }
-  } else {
-    log.info("\nAll pages fetched successfully!");
+  // If no pages were fetched successfully, throw error
+  if (successful === 0) {
+    throw new Error("No pages were fetched successfully!");
   }
 }
 
+// ============================================================================
+// Main Hook Logic
+// ============================================================================
+
+async function main() {
+  // Read hook input
+  const hookInput = await readHookInput();
+
+  // Check if we should sync
+  if (!shouldSync(hookInput)) {
+    process.exit(0);
+  }
+
+  // Check if sync is needed
+  const syncNeeded = await checkIfSyncNeeded();
+
+  if (!syncNeeded) {
+    process.exit(0);
+  }
+
+  // Run fetch (blocks, but with timeout handled by hook system)
+  try {
+    await runFetch();
+  } catch {
+    // Silent failure - don't block skill loading
+  }
+
+  // Always exit 0 (non-blocking, silent)
+  process.exit(0);
+}
+
 // Run main function
-main().catch(error => {
-  log.error(`Unhandled error: ${error}`);
-  process.exit(1);
+main().catch(() => {
+  // Silent failure - always exit 0
+  process.exit(0);
 });

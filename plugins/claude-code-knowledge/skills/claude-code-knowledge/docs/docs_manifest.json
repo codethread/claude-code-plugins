@@ -63,8 +63,8 @@
     "output-styles.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/output-styles",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/output-styles.md",
-      "hash": "0ecc688a7fa0c15034f9ce8a9773605b21859c68a3f8239be34fd5262f342329",
-      "last_updated": "2025-11-09T20:17:19.862Z"
+      "hash": "88a2935b169e8bf8cd4b7b4c192d7a071c002b330a0b5448d20e7a4b6d20c064",
+      "last_updated": "2025-11-11T05:43:26.904Z"
     },
     "statusline.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/statusline",
@@ -75,8 +75,8 @@
     "hooks.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/hooks",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/hooks.md",
-      "hash": "73f0ceafe9d049601390b279bbd6c3426d0003add13bd3eeddc021d8720c0cf7",
-      "last_updated": "2025-11-09T20:17:21.078Z"
+      "hash": "43e4829c0f9b8d6cac21f6e00d0145392c0cccc8bd46af4169420dbecbbb468c",
+      "last_updated": "2025-11-11T05:43:28.372Z"
     },
     "hooks-guide.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/hooks-guide",
@@ -267,14 +267,14 @@
     "changelog.md": {
       "original_url": "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
       "original_raw_url": "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
-      "hash": "c36cbb3bc7f95f62a81646469d15e21aac24baee3237e329f3f730e6a2a55a0d",
-      "last_updated": "2025-11-09T20:17:40.061Z",
+      "hash": "0a0d47a24d07afce7a0625438b18abb4b8197984fbe35ce6894588c395d8461e",
+      "last_updated": "2025-11-11T05:43:51.800Z",
       "source": "claude-code-repository"
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-11-09T20:17:40.061Z",
-    "fetch_duration_seconds": 28.406,
+    "last_fetch_completed": "2025-11-11T05:43:51.800Z",
+    "fetch_duration_seconds": 34.553,
     "total_pages_discovered": 44,
     "pages_fetched_successfully": 45,
     "pages_failed": 0,
@@ -283,7 +283,7 @@
     "base_url": "https://docs.claude.com",
     "total_files": 45
   },
-  "last_updated": "2025-11-09T20:17:40.061Z",
+  "last_updated": "2025-11-11T05:43:51.800Z",
   "source": "https://docs.anthropic.com/en/docs/claude-code/",
   "skill": "claude-code-knowledge"
 }

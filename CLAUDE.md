@@ -8,13 +8,15 @@ This is a local Claude Code plugin marketplace repository. It contains plugin de
 
 **Progressive Disclosure**: Each plugin has its own `CLAUDE.md` with detailed plugin-specific guidance. This root file covers marketplace-level architecture and plugin creation patterns only.
 
+**IMPORTANT**: load the `doc-writer:writing-documentation` and `claude-code-knowledge:claude-code-knowledge` Skills to work on this repo
+
 ## Plugin Architecture
 
 ### Marketplace Structure
 
 - **`.claude-plugin/marketplace.json`** - Marketplace catalog that registers all available plugins
 - **`plugins/`** - Directory containing individual plugin implementations
-- **Each plugin has its own `README.md` (user guide) and `CLAUDE.md` (maintainer guide)**
+- **Each plugin has its own `README.md` (user guide - VERY brief) and `CLAUDE.md` (maintainer guide)**
 
 ### Plugin Components
 
@@ -29,48 +31,6 @@ Plugins can contain any combination of:
 ## Available Plugins
 
 When working within a specific plugin, **refer to that plugin's `CLAUDE.md`** for detailed architecture and maintenance guidance.
-
-### Development Workflow
-
-- **spec-dev** - Multi-agent spec-driven development workflow (see `plugins/spec-dev/CLAUDE.md`)
-- **doc-writer** - Technical documentation writing with industry best practices (see `plugins/doc-writer/CLAUDE.md`)
-- **claude-code-knowledge** - Official Claude Code documentation access with skill creation guide (see `plugins/claude-code-knowledge/CLAUDE.md`)
-
-### Plugin Development
-
-- **mcp-builder** - MCP server development guide (see `plugins/mcp-builder/CLAUDE.md`)
-
-### Document Processing
-
-See `plugins/document-skills/CLAUDE.md` for overview of document processing plugins:
-
-- **pdf** - PDF manipulation and form filling
-- **xlsx** - Excel spreadsheet operations
-- **pptx** - PowerPoint presentation creation
-- **docx** - Word document editing with tracked changes
-
-## Plugin Management Commands
-
-```bash
-# Register this marketplace locally
-/plugin marketplace add ./
-
-# Install plugins
-/plugin install spec-dev@personal-configs-plugins
-/plugin install doc-writer@personal-configs-plugins
-/plugin install claude-code-knowledge@personal-configs-plugins
-/plugin install mcp-builder@personal-configs-plugins
-/plugin install pdf@personal-configs-plugins
-/plugin install xlsx@personal-configs-plugins
-/plugin install pptx@personal-configs-plugins
-/plugin install docx@personal-configs-plugins
-
-# List installed plugins
-/plugin list
-
-# Remove plugin
-/plugin uninstall <plugin-name>
-```
 
 ## Creating New Plugins
 
@@ -163,6 +123,7 @@ allowed-tools: Bash(bash:*)
 ```
 
 This pattern ensures:
+
 - Arguments are clearly defined once and referenced consistently
 - Bash scripts use the full marketplace plugin path
 - Context from script execution is available throughout the command
@@ -172,9 +133,11 @@ This pattern ensures:
 Two-layer documentation model for reduced maintenance:
 
 ### README.md (User Quick Start)
+
 **Audience**: Developers using the plugin
 
 **Structure**: What / Why / How
+
 - **What**: Brief description of what the plugin provides (1-2 sentences)
 - **Why**: Key benefits (3-5 bullet points)
 - **How**: Installation and basic usage
@@ -183,22 +146,28 @@ Two-layer documentation model for reduced maintenance:
 **Keep it minimal**: ~30-50 lines. Direct users to ask Claude for comprehensive information.
 
 **Example**:
+
 ```markdown
 # Plugin Name
 
 Brief description.
 
 ## What
+
 - Bullet list of what it provides
 
 ## Why
+
 - Key benefits
 
 ## How
+
 ### Install
+
 /plugin install name@personal-configs-plugins
 
 ### Use
+
 Basic usage example
 
 **Ask Claude for details:**
@@ -207,9 +176,11 @@ Show me advanced workflows
 ```
 
 ### CLAUDE.md (Comprehensive Documentation)
+
 **Audience**: Maintainers AND Claude (when asked by users)
 
 **Should contain**:
+
 - Plugin architecture and design principles
 - Directory structure with detailed component descriptions
 - Component responsibilities (commands, skills, agents, scripts, hooks)
@@ -219,30 +190,28 @@ Show me advanced workflows
 - Architecture rationale
 - Common pitfalls to avoid
 
-**Key insight**: When users ask Claude for details, Claude reads CLAUDE.md. This eliminates the need for verbose READMEs.
-
 ### Workflow Context Files (Skills, Commands, Agents)
+
 **Audience**: Claude Code during execution
 
 **Commands** (`commands/*.md`):
+
 - Provide context (script outputs, arguments)
 - Load skills
 - Direct to workflows
 - Keep under 50 lines
 
 **Skills** (`skills/*/SKILL.md`):
+
 - Contain all workflow intelligence
 - Coordinate agents
 - Reference templates and documentation
 - Comprehensive and self-contained
 
 **Agents** (`agents/*.md`):
+
 - Specialized execution instructions
 - Concise descriptions (<50 words)
 - Detailed system prompts in body
 
 **Key principle**: All Claude Code operational context lives in commands/skills/agents, NOT in README.md or CLAUDE.md
-
-## Working with Plugins
-
-When working within a specific plugin directory, Claude Code should refer to that plugin's `CLAUDE.md` for detailed architecture and maintenance guidance. The root `CLAUDE.md` provides marketplace-level patterns only.

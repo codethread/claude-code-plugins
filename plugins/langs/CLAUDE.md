@@ -19,6 +19,10 @@ The `langs` plugin provides language-specific coding expertise through a collect
 plugins/langs/
 ├── README.md                    # End-user documentation
 ├── CLAUDE.md                   # This file - maintainer documentation
+├── hooks/                      # Auto-detection hooks
+│   ├── hooks.json             # Hook configuration
+│   ├── package.json           # Dependencies
+│   └── test-file-suggest.ts   # PostToolUse hook
 └── skills/
     ├── lang-react/
     │   └── SKILL.md            # React expert skill
@@ -29,6 +33,30 @@ plugins/langs/
 ```
 
 ### Component Responsibilities
+
+#### `hooks/test-file-suggest.ts`
+
+PostToolUse hook - suggests test files when `.ts`/`.tsx` source files are read.
+
+**Behavior:**
+- Triggers after Read tool on `.ts`/`.tsx` (excluding test files)
+- Searches for `.test.ts`, `.test.tsx`, `.spec.ts`, `.spec.tsx`
+- Injects context via `hookSpecificOutput.additionalContext`
+
+**Test:**
+```bash
+cd plugins/langs/hooks
+touch /tmp/example.ts /tmp/example.test.ts
+cat <<'EOF' | bun test-file-suggest.ts
+{"session_id":"test","transcript_path":"/tmp","cwd":"/tmp","permission_mode":"auto","hook_event_name":"PostToolUse","tool_name":"Read","tool_input":{"file_path":"/tmp/example.ts"},"tool_response":"file content"}
+EOF
+# Should output hookSpecificOutput JSON. Remove .test.ts to verify no output.
+```
+
+**Troubleshoot:**
+- Verify plugin installed: `/plugin list`
+- Check dependencies: `cd hooks && bun install`
+- Ask Claude: "What PostToolUse hook context did you receive?"
 
 #### `skills/lang-react/SKILL.md`
 **Purpose:** React development expertise focusing on external state management
@@ -89,6 +117,10 @@ The root `CLAUDE.md` instructs Claude to:
 - Load `lang-typescript` when writing TypeScript code
 
 This ensures skills are proactively loaded without user prompting.
+
+### Hook-Based Test File Detection
+
+PostToolUse hook suggests test files when `.ts`/`.tsx` source files are read. Non-intrusive context injection.
 
 ## Common Maintenance Tasks
 
@@ -184,6 +216,13 @@ When updating an existing skill:
 4. **Keep SKILL.md focused:**
    - Main skill should be scannable (~100-200 lines)
    - References contain deep dives
+
+### Maintaining Hooks
+
+**Test and modify:**
+1. Edit `hooks/test-file-suggest.ts`
+2. Test (see Component Responsibilities section for test commands)
+3. Reload plugin
 
 ## Architecture Rationale
 

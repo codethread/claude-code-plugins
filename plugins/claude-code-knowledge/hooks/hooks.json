@@ -1,5 +1,5 @@
 {
-  "description": "Auto-suggests claude-code-knowledge skill when user mentions Claude Code topics",
+  "description": "Auto-suggests skill and syncs docs transparently when skill loads",
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -7,6 +7,18 @@
           {
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/claude-code-prompt.ts",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/sync-docs-on-skill-load.ts",
             "timeout": 30
           }
         ]

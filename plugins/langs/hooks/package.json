@@ -1,0 +1,10 @@
+{
+  "name": "langs-hooks",
+  "version": "1.0.0",
+  "description": "Hooks for langs plugin",
+  "type": "module",
+  "scripts": {
+    "test": "bun test-file-suggest.ts"
+  },
+  "dependencies": {}
+}
