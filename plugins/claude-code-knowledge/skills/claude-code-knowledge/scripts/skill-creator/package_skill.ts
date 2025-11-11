@@ -30,7 +30,7 @@ async function packageSkill(skillPath: string, outputDir?: string): Promise<stri
   }
 
   // Validate SKILL.md exists
-  const skillMd = join(skillPathResolved, "SKILL.md");
+  const skillMd = join(skillPathResolved, 'SKILL.md');
 
   if (!existsSync(skillMd)) {
     console.log(`❌ Error: SKILL.md not found in ${skillPathResolved}`);
@@ -38,12 +38,12 @@ async function packageSkill(skillPath: string, outputDir?: string): Promise<stri
   }
 
   // Run validation before packaging
-  console.log("🔍 Validating skill...");
+  console.log('🔍 Validating skill...');
   const { valid, message } = await validateSkill(skillPathResolved);
 
   if (!valid) {
     console.log(`❌ Validation failed: ${message}`);
-    console.log("   Please fix the validation errors before packaging.");
+    console.log('   Please fix the validation errors before packaging.');
     return null;
   }
 
@@ -118,10 +118,10 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length < 1) {
-    console.log("Usage: bun package_skill.ts <path/to/skill-folder> [output-directory]");
-    console.log("\nExample:");
-    console.log("  bun package_skill.ts skills/public/my-skill");
-    console.log("  bun package_skill.ts skills/public/my-skill ./dist");
+    console.log('Usage: bun package_skill.ts <path/to/skill-folder> [output-directory]');
+    console.log('\nExample:');
+    console.log('  bun package_skill.ts skills/public/my-skill');
+    console.log('  bun package_skill.ts skills/public/my-skill ./dist');
     process.exit(1);
   }
 

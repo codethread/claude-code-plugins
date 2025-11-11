@@ -10,8 +10,8 @@
   ],
   "scripts": {
     "check": "bun run typecheck && bun run lint",
-    "lint": "biome check .",
-    "format": "biome format .",
+    "lint": "biome check --fix .",
+    "format": "biome format --fix .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

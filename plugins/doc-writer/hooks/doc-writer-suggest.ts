@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
-import { readFileSync, existsSync, mkdirSync, writeFileSync } from "fs";
-import { homedir } from "os";
-import { join } from "path";
+import { readFileSync, existsSync, mkdirSync, writeFileSync } from 'fs';
+import { homedir } from 'os';
+import { join } from 'path';
 
 interface HookInput {
   session_id: string;
@@ -23,31 +23,31 @@ interface SessionCache {
 async function main() {
   try {
     // Read input from stdin
-    const input = readFileSync(0, "utf-8");
+    const input = readFileSync(0, 'utf-8');
     const data: HookInput = JSON.parse(input);
 
     // Check if the tool was Write, Edit, or MultiEdit
-    const relevantTools = ["Write", "Edit", "MultiEdit"];
+    const relevantTools = ['Write', 'Edit', 'MultiEdit'];
     if (!relevantTools.includes(data.tool_name)) {
       process.exit(0);
     }
 
     // Check if any markdown files were modified
     let isMarkdownFile = false;
-    let filePath = "";
+    let filePath = '';
 
-    if (data.tool_name === "Write" || data.tool_name === "Edit") {
+    if (data.tool_name === 'Write' || data.tool_name === 'Edit') {
       // Single file operations
       filePath = data.tool_input.file_path as string;
-      if (filePath && filePath.toLowerCase().endsWith(".md")) {
+      if (filePath && filePath.toLowerCase().endsWith('.md')) {
         isMarkdownFile = true;
       }
-    } else if (data.tool_name === "MultiEdit") {
+    } else if (data.tool_name === 'MultiEdit') {
       // MultiEdit might have multiple files
       const edits = data.tool_input.edits as Array<{ file_path: string }>;
       if (edits && Array.isArray(edits)) {
         for (const edit of edits) {
-          if (edit.file_path && edit.file_path.toLowerCase().endsWith(".md")) {
+          if (edit.file_path && edit.file_path.toLowerCase().endsWith('.md')) {
             isMarkdownFile = true;
             filePath = edit.file_path;
             break;
@@ -59,37 +59,35 @@ async function main() {
     // If a markdown file was modified, suggest the doc-writer skill
     if (isMarkdownFile) {
       // Check session cache - only suggest once per session
-      const normalizedCwd = data.cwd.replace(/^\//, "").replace(/\//g, "-");
+      const normalizedCwd = data.cwd.replace(/^\//, '').replace(/\//g, '-');
       const cacheDir = join(
         homedir(),
-        ".local/cache/personal-configs-plugins/doc-writer",
-        normalizedCwd,
+        '.local/cache/personal-configs-plugins/doc-writer',
+        normalizedCwd
       );
       const sessionFile = join(cacheDir, `${data.session_id}.json`);
 
       // If already suggested this session, exit silently
       if (existsSync(sessionFile)) {
-        const session: SessionCache = JSON.parse(
-          readFileSync(sessionFile, "utf-8"),
-        );
+        const session: SessionCache = JSON.parse(readFileSync(sessionFile, 'utf-8'));
         if (session.doc_writer_suggested) {
           process.exit(0);
         }
       }
 
-      let context = "<plugin-doc-writer-suggestion>\n";
+      let context = '<plugin-doc-writer-suggestion>\n';
       context += `Detected markdown file modification: ${filePath}\n\n`;
-      context += "ESSENTIAL SKILL:\n";
-      context += "  → doc-writer:writing-documentation\n\n";
-      context += "RECOMMENDED AGENT:\n";
-      context += "  → doc-writer:docs-reviewer\n";
-      context += "</plugin-doc-writer-suggestion>";
+      context += 'ESSENTIAL SKILL:\n';
+      context += '  → doc-writer:writing-documentation\n\n';
+      context += 'RECOMMENDED AGENT:\n';
+      context += '  → doc-writer:docs-reviewer\n';
+      context += '</plugin-doc-writer-suggestion>';
 
       // Return JSON with hookSpecificOutput for PostToolUse
       // Note: decision is undefined (no blocking), but additionalContext should still be provided
       const output = {
         hookSpecificOutput: {
-          hookEventName: "PostToolUse",
+          hookEventName: 'PostToolUse',
           additionalContext: context,
         },
       };
@@ -109,12 +107,12 @@ async function main() {
     // Exit 0 = success, additionalContext is added to context if provided
     process.exit(0);
   } catch (err) {
-    console.error("Error in doc-writer-suggest hook:", err);
+    console.error('Error in doc-writer-suggest hook:', err);
     process.exit(1);
   }
 }
 
 main().catch((err) => {
-  console.error("Uncaught error:", err);
+  console.error('Uncaught error:', err);
   process.exit(1);
 });

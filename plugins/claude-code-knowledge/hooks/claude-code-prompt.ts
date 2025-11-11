@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
-import { readFileSync, existsSync, mkdirSync, writeFileSync } from "fs";
-import { homedir } from "os";
-import { join } from "path";
+import { readFileSync, existsSync, mkdirSync, writeFileSync } from 'fs';
+import { homedir } from 'os';
+import { join } from 'path';
 
 interface HookInput {
   session_id: string;
@@ -20,12 +20,12 @@ interface SessionCache {
 async function main() {
   try {
     // Read input from stdin
-    const input = readFileSync(0, "utf-8");
+    const input = readFileSync(0, 'utf-8');
     const data: HookInput = JSON.parse(input);
     const prompt = data.prompt.toLowerCase();
 
     // Check for Claude Code related keywords (case insensitive)
-    const claudeCodeKeywords = ["claude code", "claudecode", "claude-code"];
+    const claudeCodeKeywords = ['claude code', 'claudecode', 'claude-code'];
 
     // Check for standalone "claude" but be more selective to avoid false positives
     const standaloneClaudePatterns = [
@@ -52,7 +52,7 @@ async function main() {
     ];
 
     let isMatch = false;
-    let matchReason = "";
+    let matchReason = '';
 
     // Check for exact keyword matches
     for (const keyword of claudeCodeKeywords) {
@@ -68,7 +68,7 @@ async function main() {
       for (const pattern of standaloneClaudePatterns) {
         if (pattern.test(prompt)) {
           isMatch = true;
-          matchReason = "Detected Claude Code question";
+          matchReason = 'Detected Claude Code question';
           break;
         }
       }
@@ -79,7 +79,7 @@ async function main() {
       for (const pattern of claudeCodePatterns) {
         if (pattern.test(prompt)) {
           isMatch = true;
-          matchReason = "Detected Claude Code feature mention";
+          matchReason = 'Detected Claude Code feature mention';
           break;
         }
       }
@@ -88,35 +88,33 @@ async function main() {
     // Generate context injection if match found
     if (isMatch) {
       // Check session cache - only suggest once per session
-      const normalizedCwd = data.cwd.replace(/^\//, "").replace(/\//g, "-");
+      const normalizedCwd = data.cwd.replace(/^\//, '').replace(/\//g, '-');
       const cacheDir = join(
         homedir(),
-        ".local/cache/personal-configs-plugins/claude-code-knowledge",
+        '.local/cache/personal-configs-plugins/claude-code-knowledge',
         normalizedCwd
       );
       const sessionFile = join(cacheDir, `${data.session_id}.json`);
 
       // If already suggested this session, exit silently
       if (existsSync(sessionFile)) {
-        const session: SessionCache = JSON.parse(
-          readFileSync(sessionFile, "utf-8")
-        );
+        const session: SessionCache = JSON.parse(readFileSync(sessionFile, 'utf-8'));
         if (session.knowledge_suggested) {
           process.exit(0);
         }
       }
 
       // Use JSON output method for explicit control
-      let context = "<plugin-claude-code-knowledge-suggestion>\n";
+      let context = '<plugin-claude-code-knowledge-suggestion>\n';
       context += `Detected Claude Code question: ${matchReason}\n\n`;
-      context += "RECOMMENDED SKILL:\n";
-      context += "  → claude-code-knowledge:claude-code-knowledge\n";
-      context += "</plugin-claude-code-knowledge-suggestion>";
+      context += 'RECOMMENDED SKILL:\n';
+      context += '  → claude-code-knowledge:claude-code-knowledge\n';
+      context += '</plugin-claude-code-knowledge-suggestion>';
 
       // Return JSON with hookSpecificOutput for UserPromptSubmit
       const output = {
         hookSpecificOutput: {
-          hookEventName: "UserPromptSubmit",
+          hookEventName: 'UserPromptSubmit',
           additionalContext: context,
         },
       };
@@ -136,12 +134,12 @@ async function main() {
     // Exit 0 = success, additionalContext is added to context
     process.exit(0);
   } catch (err) {
-    console.error("Error in claude-code-prompt hook:", err);
+    console.error('Error in claude-code-prompt hook:', err);
     process.exit(1);
   }
 }
 
 main().catch((err) => {
-  console.error("Uncaught error:", err);
+  console.error('Uncaught error:', err);
   process.exit(1);
 });

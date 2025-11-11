@@ -17,21 +17,21 @@ async function validateSkill(skillPath: string): Promise<ValidationResult> {
   const skillMd = join(skillPath, 'SKILL.md');
 
   if (!existsSync(skillMd)) {
-    return { valid: false, message: "SKILL.md not found" };
+    return { valid: false, message: 'SKILL.md not found' };
   }
 
   // Read and validate frontmatter
   const content = await readFile(skillMd, 'utf-8');
 
   if (!content.startsWith('---')) {
-    return { valid: false, message: "No YAML frontmatter found" };
+    return { valid: false, message: 'No YAML frontmatter found' };
   }
 
   // Extract frontmatter
   const frontmatterMatch = content.match(/^---\n(.*?)\n---/s);
 
   if (!frontmatterMatch) {
-    return { valid: false, message: "Invalid frontmatter format" };
+    return { valid: false, message: 'Invalid frontmatter format' };
   }
 
   const frontmatter = frontmatterMatch[1];
@@ -55,14 +55,14 @@ async function validateSkill(skillPath: string): Promise<ValidationResult> {
     if (!/^[a-z0-9-]+$/.test(name)) {
       return {
         valid: false,
-        message: `Name '${name}' should be hyphen-case (lowercase letters, digits, and hyphens only)`
+        message: `Name '${name}' should be hyphen-case (lowercase letters, digits, and hyphens only)`,
       };
     }
 
     if (name.startsWith('-') || name.endsWith('-') || name.includes('--')) {
       return {
         valid: false,
-        message: `Name '${name}' cannot start/end with hyphen or contain consecutive hyphens`
+        message: `Name '${name}' cannot start/end with hyphen or contain consecutive hyphens`,
       };
     }
   }
@@ -75,18 +75,18 @@ async function validateSkill(skillPath: string): Promise<ValidationResult> {
 
     // Check for angle brackets
     if (description.includes('<') || description.includes('>')) {
-      return { valid: false, message: "Description cannot contain angle brackets (< or >)" };
+      return { valid: false, message: 'Description cannot contain angle brackets (< or >)' };
     }
   }
 
-  return { valid: true, message: "Skill is valid!" };
+  return { valid: true, message: 'Skill is valid!' };
 }
 
 async function main() {
   const args = process.argv.slice(2);
 
   if (args.length !== 1) {
-    console.log("Usage: bun quick_validate.ts <skill_directory>");
+    console.log('Usage: bun quick_validate.ts <skill_directory>');
     process.exit(1);
   }
 

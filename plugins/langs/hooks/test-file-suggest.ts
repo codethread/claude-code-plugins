@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
-import { existsSync } from "fs";
-import { readFileSync } from "fs";
-import { dirname, basename, join } from "path";
+import { existsSync } from 'fs';
+import { readFileSync } from 'fs';
+import { dirname, basename, join } from 'path';
 
 interface HookInput {
   session_id: string;
@@ -17,11 +17,11 @@ interface HookInput {
 async function main() {
   try {
     // Read input from stdin
-    const input = readFileSync(0, "utf-8");
+    const input = readFileSync(0, 'utf-8');
     const data: HookInput = JSON.parse(input);
 
     // Check if the tool was Read
-    if (data.tool_name !== "Read") {
+    if (data.tool_name !== 'Read') {
       process.exit(0);
     }
 
@@ -33,11 +33,11 @@ async function main() {
 
     // Check if it's a TypeScript file (but not already a test file)
     const isTypeScriptFile =
-      (filePath.endsWith(".ts") || filePath.endsWith(".tsx")) &&
-      !filePath.endsWith(".test.ts") &&
-      !filePath.endsWith(".test.tsx") &&
-      !filePath.endsWith(".spec.ts") &&
-      !filePath.endsWith(".spec.tsx");
+      (filePath.endsWith('.ts') || filePath.endsWith('.tsx')) &&
+      !filePath.endsWith('.test.ts') &&
+      !filePath.endsWith('.test.tsx') &&
+      !filePath.endsWith('.spec.ts') &&
+      !filePath.endsWith('.spec.tsx');
 
     if (!isTypeScriptFile) {
       process.exit(0);
@@ -46,7 +46,7 @@ async function main() {
     // Look for corresponding test files
     const dir = dirname(filePath);
     const file = basename(filePath);
-    const nameWithoutExt = file.replace(/\.tsx?$/, "");
+    const nameWithoutExt = file.replace(/\.tsx?$/, '');
 
     const testPatterns = [
       `${nameWithoutExt}.test.ts`,
@@ -65,18 +65,18 @@ async function main() {
 
     // If test files were found, suggest them
     if (foundTestFiles.length > 0) {
-      let context = "<plugin-langs-suggestion>\n";
+      let context = '<plugin-langs-suggestion>\n';
       context += `Source file: ${filePath}\n\n`;
-      context += "Related test file(s):\n";
+      context += 'Related test file(s):\n';
       for (const testFile of foundTestFiles) {
         context += `  → ${testFile}\n`;
       }
-      context += "</plugin-langs-suggestion>";
+      context += '</plugin-langs-suggestion>';
 
       // Return JSON with hookSpecificOutput for PostToolUse
       const output = {
         hookSpecificOutput: {
-          hookEventName: "PostToolUse",
+          hookEventName: 'PostToolUse',
           additionalContext: context,
         },
       };
@@ -87,12 +87,12 @@ async function main() {
     // Exit 0 = success
     process.exit(0);
   } catch (err) {
-    console.error("Error in test-file-suggest hook:", err);
+    console.error('Error in test-file-suggest hook:', err);
     process.exit(1);
   }
 }
 
 main().catch((err) => {
-  console.error("Uncaught error:", err);
+  console.error('Uncaught error:', err);
   process.exit(1);
 });

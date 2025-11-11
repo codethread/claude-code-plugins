@@ -25,17 +25,17 @@ import { createHash } from 'crypto';
 // ============================================================================
 
 const SITEMAP_URLS = [
-  "https://docs.anthropic.com/sitemap.xml",
-  "https://docs.claude.com/sitemap.xml",
+  'https://docs.anthropic.com/sitemap.xml',
+  'https://docs.claude.com/sitemap.xml',
 ];
 
-const MANIFEST_FILE = "docs_manifest.json";
+const MANIFEST_FILE = 'docs_manifest.json';
 
 const HEADERS = {
   'User-Agent': 'Claude-Code-Knowledge-Skill/1.0',
   'Cache-Control': 'no-cache, no-store, must-revalidate',
-  'Pragma': 'no-cache',
-  'Expires': '0'
+  Pragma: 'no-cache',
+  Expires: '0',
 };
 
 const MAX_RETRIES = 3;
@@ -114,8 +114,10 @@ function shouldSync(hookInput: HookInput | null): boolean {
   if (hookInput.tool_name !== 'Skill') return false;
 
   const skillName = hookInput.tool_input.skill || '';
-  return skillName === 'claude-code-knowledge' ||
-         skillName === 'claude-code-knowledge:claude-code-knowledge';
+  return (
+    skillName === 'claude-code-knowledge' ||
+    skillName === 'claude-code-knowledge:claude-code-knowledge'
+  );
 }
 
 // ============================================================================
@@ -166,8 +168,8 @@ async function loadManifest(): Promise<Manifest> {
 
 async function saveManifest(manifest: Manifest): Promise<void> {
   manifest.last_updated = new Date().toISOString();
-  manifest.source = "https://docs.anthropic.com/en/docs/claude-code/";
-  manifest.skill = "claude-code-knowledge";
+  manifest.source = 'https://docs.anthropic.com/en/docs/claude-code/';
+  manifest.skill = 'claude-code-knowledge';
   await writeFile(MANIFEST_PATH, JSON.stringify(manifest, null, 2));
 }
 
@@ -175,7 +177,7 @@ async function saveManifest(manifest: Manifest): Promise<void> {
 // Utility Functions
 // ============================================================================
 
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function urlToSafeFilename(urlPath: string): string {
   const prefixes = ['/en/docs/claude-code/', '/docs/claude-code/', '/claude-code/'];
@@ -242,55 +244,55 @@ async function discoverSitemapAndBaseUrl(): Promise<{ sitemapUrl: string; baseUr
     }
   }
 
-  throw new Error("Could not find a valid sitemap");
+  throw new Error('Could not find a valid sitemap');
 }
 
 function getFallbackPages(): string[] {
   return [
-    "/en/docs/claude-code/overview",
-    "/en/docs/claude-code/quickstart",
-    "/en/docs/claude-code/setup",
-    "/en/docs/claude-code/cli-reference",
-    "/en/docs/claude-code/common-workflows",
-    "/en/docs/claude-code/interactive-mode",
-    "/en/docs/claude-code/settings",
-    "/en/docs/claude-code/model-config",
-    "/en/docs/claude-code/network-config",
-    "/en/docs/claude-code/terminal-config",
-    "/en/docs/claude-code/output-styles",
-    "/en/docs/claude-code/statusline",
-    "/en/docs/claude-code/hooks",
-    "/en/docs/claude-code/hooks-guide",
-    "/en/docs/claude-code/mcp",
-    "/en/docs/claude-code/skills",
-    "/en/docs/claude-code/slash-commands",
-    "/en/docs/claude-code/plugins",
-    "/en/docs/claude-code/plugins-reference",
-    "/en/docs/claude-code/plugin-marketplaces",
-    "/en/docs/claude-code/sub-agents",
-    "/en/docs/claude-code/memory",
-    "/en/docs/claude-code/checkpointing",
-    "/en/docs/claude-code/analytics",
-    "/en/docs/claude-code/monitoring-usage",
-    "/en/docs/claude-code/costs",
-    "/en/docs/claude-code/github-actions",
-    "/en/docs/claude-code/gitlab-ci-cd",
-    "/en/docs/claude-code/vs-code",
-    "/en/docs/claude-code/jetbrains",
-    "/en/docs/claude-code/devcontainer",
-    "/en/docs/claude-code/claude-code-on-the-web",
-    "/en/docs/claude-code/third-party-integrations",
-    "/en/docs/claude-code/amazon-bedrock",
-    "/en/docs/claude-code/google-vertex-ai",
-    "/en/docs/claude-code/llm-gateway",
-    "/en/docs/claude-code/iam",
-    "/en/docs/claude-code/security",
-    "/en/docs/claude-code/sandboxing",
-    "/en/docs/claude-code/data-usage",
-    "/en/docs/claude-code/legal-and-compliance",
-    "/en/docs/claude-code/headless",
-    "/en/docs/claude-code/troubleshooting",
-    "/en/docs/claude-code/sdk/migration-guide",
+    '/en/docs/claude-code/overview',
+    '/en/docs/claude-code/quickstart',
+    '/en/docs/claude-code/setup',
+    '/en/docs/claude-code/cli-reference',
+    '/en/docs/claude-code/common-workflows',
+    '/en/docs/claude-code/interactive-mode',
+    '/en/docs/claude-code/settings',
+    '/en/docs/claude-code/model-config',
+    '/en/docs/claude-code/network-config',
+    '/en/docs/claude-code/terminal-config',
+    '/en/docs/claude-code/output-styles',
+    '/en/docs/claude-code/statusline',
+    '/en/docs/claude-code/hooks',
+    '/en/docs/claude-code/hooks-guide',
+    '/en/docs/claude-code/mcp',
+    '/en/docs/claude-code/skills',
+    '/en/docs/claude-code/slash-commands',
+    '/en/docs/claude-code/plugins',
+    '/en/docs/claude-code/plugins-reference',
+    '/en/docs/claude-code/plugin-marketplaces',
+    '/en/docs/claude-code/sub-agents',
+    '/en/docs/claude-code/memory',
+    '/en/docs/claude-code/checkpointing',
+    '/en/docs/claude-code/analytics',
+    '/en/docs/claude-code/monitoring-usage',
+    '/en/docs/claude-code/costs',
+    '/en/docs/claude-code/github-actions',
+    '/en/docs/claude-code/gitlab-ci-cd',
+    '/en/docs/claude-code/vs-code',
+    '/en/docs/claude-code/jetbrains',
+    '/en/docs/claude-code/devcontainer',
+    '/en/docs/claude-code/claude-code-on-the-web',
+    '/en/docs/claude-code/third-party-integrations',
+    '/en/docs/claude-code/amazon-bedrock',
+    '/en/docs/claude-code/google-vertex-ai',
+    '/en/docs/claude-code/llm-gateway',
+    '/en/docs/claude-code/iam',
+    '/en/docs/claude-code/security',
+    '/en/docs/claude-code/sandboxing',
+    '/en/docs/claude-code/data-usage',
+    '/en/docs/claude-code/legal-and-compliance',
+    '/en/docs/claude-code/headless',
+    '/en/docs/claude-code/troubleshooting',
+    '/en/docs/claude-code/sdk/migration-guide',
   ];
 }
 
@@ -313,7 +315,7 @@ async function discoverClaudeCodePages(sitemapUrl: string): Promise<string[]> {
     const englishPatterns = ['/en/docs/claude-code/'];
 
     for (const url of urls) {
-      if (englishPatterns.some(pattern => url.includes(pattern))) {
+      if (englishPatterns.some((pattern) => url.includes(pattern))) {
         const urlObj = new URL(url);
         let path = urlObj.pathname;
 
@@ -324,7 +326,7 @@ async function discoverClaudeCodePages(sitemapUrl: string): Promise<string[]> {
         }
 
         const skipPatterns = ['/tool-use/', '/examples/', '/legacy/', '/api/', '/reference/'];
-        if (!skipPatterns.some(skip => path.includes(skip))) {
+        if (!skipPatterns.some((skip) => path.includes(skip))) {
           claudeCodePages.push(path);
         }
       }
@@ -348,7 +350,7 @@ async function discoverClaudeCodePages(sitemapUrl: string): Promise<string[]> {
 
 function validateMarkdownContent(content: string, _filename: string): void {
   if (!content || content.startsWith('<!DOCTYPE') || content.slice(0, 100).includes('<html')) {
-    throw new Error("Received HTML instead of markdown");
+    throw new Error('Received HTML instead of markdown');
   }
 
   if (content.trim().length < 50) {
@@ -359,9 +361,12 @@ function validateMarkdownContent(content: string, _filename: string): void {
   const markdownIndicators = ['# ', '## ', '### ', '```', '- ', '* ', '1. ', '[', '**', '_', '> '];
 
   const indicatorCount = lines.slice(0, 50).reduce((count, line) => {
-    return count + markdownIndicators.filter(indicator =>
-      line.trim().startsWith(indicator) || line.includes(indicator)
-    ).length;
+    return (
+      count +
+      markdownIndicators.filter(
+        (indicator) => line.trim().startsWith(indicator) || line.includes(indicator)
+      ).length
+    );
   }, 0);
 
   if (indicatorCount < 3) {
@@ -380,7 +385,7 @@ async function fetchMarkdownContent(
     try {
       const response = await fetch(markdownUrl, {
         headers: HEADERS,
-        redirect: 'follow'
+        redirect: 'follow',
       });
 
       if (response.status === 429) {
@@ -412,14 +417,14 @@ async function fetchMarkdownContent(
 }
 
 async function fetchChangelog(): Promise<{ filename: string; content: string }> {
-  const changelogUrl = "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md";
-  const filename = "changelog.md";
+  const changelogUrl = 'https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md';
+  const filename = 'changelog.md';
 
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
       const response = await fetch(changelogUrl, {
         headers: HEADERS,
-        redirect: 'follow'
+        redirect: 'follow',
       });
 
       if (response.status === 429) {
@@ -461,7 +466,7 @@ async function fetchChangelog(): Promise<{ filename: string; content: string }> 
     }
   }
 
-  throw new Error("Failed to fetch changelog");
+  throw new Error('Failed to fetch changelog');
 }
 
 async function saveMarkdownFile(filename: string, content: string): Promise<string> {
@@ -508,7 +513,7 @@ async function runFetch(): Promise<void> {
   const documentationPages = await discoverClaudeCodePages(sitemapUrl);
 
   if (documentationPages.length === 0) {
-    throw new Error("No documentation pages discovered!");
+    throw new Error('No documentation pages discovered!');
   }
 
   // Fetch each page
@@ -518,7 +523,7 @@ async function runFetch(): Promise<void> {
     try {
       const { filename, content } = await fetchMarkdownContent(pagePath, baseUrl);
 
-      const oldHash = manifest.files[filename]?.hash || "";
+      const oldHash = manifest.files[filename]?.hash || '';
       const oldEntry = manifest.files[filename] || {};
       const filePath = join(DOCS_DIR, filename);
       const fileExists = existsSync(filePath);
@@ -538,7 +543,7 @@ async function runFetch(): Promise<void> {
         original_url: `${baseUrl}${pagePath}`,
         original_md_url: `${baseUrl}${pagePath}.md`,
         hash: contentHash,
-        last_updated: lastUpdated
+        last_updated: lastUpdated,
       };
 
       successful++;
@@ -556,7 +561,7 @@ async function runFetch(): Promise<void> {
   try {
     const { filename, content } = await fetchChangelog();
 
-    const oldHash = manifest.files[filename]?.hash || "";
+    const oldHash = manifest.files[filename]?.hash || '';
     const oldEntry = manifest.files[filename] || {};
     const filePath = join(DOCS_DIR, filename);
     const fileExists = existsSync(filePath);
@@ -573,17 +578,18 @@ async function runFetch(): Promise<void> {
     }
 
     newManifest.files[filename] = {
-      original_url: "https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md",
-      original_raw_url: "https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md",
+      original_url: 'https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md',
+      original_raw_url:
+        'https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md',
       hash: contentHash,
       last_updated: lastUpdated,
-      source: "claude-code-repository"
+      source: 'claude-code-repository',
     };
 
     successful++;
   } catch (e) {
     failed++;
-    failedPages.push("changelog");
+    failedPages.push('changelog');
   }
 
   // Add metadata
@@ -597,7 +603,7 @@ async function runFetch(): Promise<void> {
     failed_pages: failedPages,
     sitemap_url: sitemapUrl,
     base_url: baseUrl,
-    total_files: successful
+    total_files: successful,
   };
 
   // Save manifest
@@ -605,7 +611,7 @@ async function runFetch(): Promise<void> {
 
   // If no pages were fetched successfully, throw error
   if (successful === 0) {
-    throw new Error("No pages were fetched successfully!");
+    throw new Error('No pages were fetched successfully!');
   }
 }
 
