@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
-import { readFileSync } from "fs";
+import { readFileSync, existsSync, mkdirSync, writeFileSync } from "fs";
+import { homedir } from "os";
+import { join } from "path";
 
 interface HookInput {
   session_id: string;
@@ -7,6 +9,12 @@ interface HookInput {
   cwd: string;
   permission_mode: string;
   prompt: string;
+}
+
+interface SessionCache {
+  knowledge_suggested: boolean;
+  first_triggered: string;
+  match_reason: string;
 }
 
 async function main() {
@@ -79,10 +87,28 @@ async function main() {
 
     // Generate context injection if match found
     if (isMatch) {
+      // Check session cache - only suggest once per session
+      const normalizedCwd = data.cwd.replace(/^\//, "").replace(/\//g, "-");
+      const cacheDir = join(
+        homedir(),
+        ".local/cache/personal-configs-plugins/claude-code-knowledge",
+        normalizedCwd
+      );
+      const sessionFile = join(cacheDir, `${data.session_id}.json`);
+
+      // If already suggested this session, exit silently
+      if (existsSync(sessionFile)) {
+        const session: SessionCache = JSON.parse(
+          readFileSync(sessionFile, "utf-8")
+        );
+        if (session.knowledge_suggested) {
+          process.exit(0);
+        }
+      }
+
       // Use JSON output method for explicit control
-      let context = "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-      context += "📚 CLAUDE CODE DOCUMENTATION CONTEXT\n";
-      context += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
+      let context = "<plugin-claude-code-knowledge-suggestion>\n";
+      context += "📚 CLAUDE CODE DOCUMENTATION CONTEXT\n\n";
       context += `💡 Detection: ${matchReason}\n\n`;
       context += "📖 RECOMMENDED SKILL:\n";
       context += "  → claude-code-knowledge:claude-code-knowledge\n\n";
@@ -94,7 +120,7 @@ async function main() {
       context +=
         "IMPORTANT: Use the Skill tool to load claude-code-knowledge\n";
       context += "before answering questions about Claude Code features.\n";
-      context += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+      context += "</plugin-claude-code-knowledge-suggestion>";
 
       // Return JSON with hookSpecificOutput for UserPromptSubmit
       const output = {
@@ -105,6 +131,15 @@ async function main() {
       };
 
       console.log(JSON.stringify(output));
+
+      // Mark as suggested in session cache
+      mkdirSync(cacheDir, { recursive: true });
+      const sessionCache: SessionCache = {
+        knowledge_suggested: true,
+        first_triggered: new Date().toISOString(),
+        match_reason: matchReason,
+      };
+      writeFileSync(sessionFile, JSON.stringify(sessionCache, null, 2));
     }
 
     // Exit 0 = success, additionalContext is added to context

@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
-import { readFileSync } from "fs";
+import { readFileSync, existsSync, mkdirSync, writeFileSync } from "fs";
+import { homedir } from "os";
+import { join } from "path";
 
 interface HookInput {
   session_id: string;
@@ -10,6 +12,12 @@ interface HookInput {
   tool_name: string;
   tool_input: Record<string, unknown>;
   tool_response: unknown;
+}
+
+interface SessionCache {
+  doc_writer_suggested: boolean;
+  first_triggered: string;
+  triggered_by: string;
 }
 
 async function main() {
@@ -50,9 +58,27 @@ async function main() {
 
     // If a markdown file was modified, suggest the doc-writer skill
     if (isMarkdownFile) {
-      let context = "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-      context += "📝 DOCUMENTATION QUALITY SUGGESTION\n";
-      context += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
+      // Check session cache - only suggest once per session
+      const normalizedCwd = data.cwd.replace(/^\//, "").replace(/\//g, "-");
+      const cacheDir = join(
+        homedir(),
+        ".local/cache/personal-configs-plugins/doc-writer",
+        normalizedCwd
+      );
+      const sessionFile = join(cacheDir, `${data.session_id}.json`);
+
+      // If already suggested this session, exit silently
+      if (existsSync(sessionFile)) {
+        const session: SessionCache = JSON.parse(
+          readFileSync(sessionFile, "utf-8")
+        );
+        if (session.doc_writer_suggested) {
+          process.exit(0);
+        }
+      }
+
+      let context = "<plugin-doc-writer-suggestion>\n";
+      context += "📝 DOCUMENTATION QUALITY SUGGESTION\n\n";
       context += `💡 Detected markdown file modification: ${filePath}\n\n`;
       context += "📖 RECOMMENDED SKILL:\n";
       context += "  → doc-writer:writing-documentation\n\n";
@@ -68,7 +94,7 @@ async function main() {
       context += "for API verification, security checks, and production-ready\n";
       context += "examples. For existing docs, use docs-reviewer agent to\n";
       context += "ruthlessly simplify and improve.\n";
-      context += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+      context += "</plugin-doc-writer-suggestion>";
 
       // Return JSON with hookSpecificOutput for PostToolUse
       // Note: decision is undefined (no blocking), but additionalContext should still be provided
@@ -80,6 +106,15 @@ async function main() {
       };
 
       console.log(JSON.stringify(output));
+
+      // Mark as suggested in session cache
+      mkdirSync(cacheDir, { recursive: true });
+      const sessionCache: SessionCache = {
+        doc_writer_suggested: true,
+        first_triggered: new Date().toISOString(),
+        triggered_by: filePath,
+      };
+      writeFileSync(sessionFile, JSON.stringify(sessionCache, null, 2));
     }
 
     // Exit 0 = success, additionalContext is added to context if provided

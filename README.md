@@ -1,6 +1,6 @@
 # Claude Code Plugin Marketplace
 
-Local plugin marketplace for Claude Code providing development workflows and document processing.
+A local plugin marketplace for Claude Code providing development workflows and document processing.
 
 ## What
 
@@ -60,6 +60,38 @@ Show me the plugin directory structure
 ```
 
 Claude will reference CLAUDE.md files for comprehensive architecture details.
+
+## Plugin Suggestions
+
+Plugins provide automatic suggestions via hooks using structured XML tags. All plugin suggestions follow the pattern `<plugin-PLUGINNAME-suggestion>`, allowing you to control Claude's attention to these recommendations in your project's `CLAUDE.md`.
+
+**Example 1: Emphasize all plugin suggestions**
+```markdown
+# CLAUDE.md
+
+ALWAYS follow `<plugin-*-suggestion>` tags closely. These provide
+context-specific recommendations from installed plugins.
+```
+
+**Example 2: Emphasize specific plugins**
+```markdown
+# CLAUDE.md
+
+- ALWAYS follow `<plugin-doc-writer-suggestion>` recommendations when
+  writing documentation
+- ALWAYS follow `<plugin-langs-suggestion>` when test files are detected
+- Consider `<plugin-claude-code-knowledge-suggestion>` for Claude Code questions
+```
+
+**Example 3: Ignore specific suggestions**
+```markdown
+# CLAUDE.md
+
+Follow all `<plugin-*-suggestion>` tags except `<plugin-langs-suggestion>`
+(I prefer to manage test files manually).
+```
+
+The XML tag format ensures Claude treats these suggestions as structured prompts rather than visual formatting, improving reliability with Anthropic models.
 
 ## Attribution
 

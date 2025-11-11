@@ -109,10 +109,8 @@ const modifiedList = modifiedFiles
   .map((file) => `  - ${file}`)
   .join("\n");
 
-const additionalContext = `
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const additionalContext = `<project-stop-doc-check-suggestion>
 📚 Documentation Check
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Before stopping: Review documentation for any files you modified this session.
 
@@ -126,9 +124,7 @@ Action required:
 • Identify which files you changed this session (ignore pre-existing changes)
 • Update relevant docs above to reflect your changes only
 • Once docs match your changes, you may stop
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-`;
+</project-stop-doc-check-suggestion>`;
 
 const output: HookOutput = {
   decision: "block",

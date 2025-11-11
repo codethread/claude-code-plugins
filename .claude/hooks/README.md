@@ -41,29 +41,27 @@ Ensures all relevant documentation is updated before ending a Claude Code sessio
 #### Example Output
 
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📚 DOCUMENTATION CHECK REQUIRED
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<project-stop-doc-check-suggestion>
+📚 Documentation Check
 
-⚠️  Before stopping, verify all relevant documentation is updated.
+Before stopping: Review documentation for any files you modified this session.
 
-MODIFIED FILES (3):
+Files changed in repo (3):
   - plugins/spec-dev/commands/build.md
   - plugins/spec-dev/skills/spec-architect/SKILL.md
   - plugins/spec-dev/README.md
 
-DOCUMENTATION TO CHECK (3):
+Documentation files (4):
   - CLAUDE.md
   - README.md
   - plugins/spec-dev/CLAUDE.md
   - plugins/spec-dev/README.md
 
-INSTRUCTIONS:
-1. Review each documentation file listed above
-2. Ensure it accurately reflects changes in modified files
-3. Update any outdated information, examples, or instructions
-4. Verify cross-references and links are still valid
-5. Once all documentation is verified/updated, you may stop
+Action required:
+• Identify which files you changed this session (ignore pre-existing changes)
+• Update relevant docs above to reflect your changes only
+• Once docs match your changes, you may stop
+</project-stop-doc-check-suggestion>
 ```
 
 #### Behavior Details

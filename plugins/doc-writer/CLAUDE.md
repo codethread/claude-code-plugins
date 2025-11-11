@@ -43,6 +43,8 @@ plugins/doc-writer/
 **Hook behavior:**
 - Runs on `PostToolUse` event after Write, Edit, or MultiEdit tools execute
 - Detects `.md` file modifications (case-insensitive)
+- **Only suggests once per session** using session cache tracking
+- Session cache stored at `~/.local/cache/personal-configs-plugins/doc-writer/<normalized-cwd>/<session-id>.json`
 - Provides contextual suggestions to Claude via `hookSpecificOutput.additionalContext`
 - Suggests `doc-writer:writing-documentation` skill for writing
 - Suggests `doc-writer:docs-reviewer` agent for review
@@ -70,12 +72,29 @@ Test in Claude Code:
 claude --print --model haiku "Create /tmp/test.md with '# Test'. After completing, tell me what PostToolUse hook context you received."
 ```
 
+**Testing session tracking:**
+
+```bash
+cd plugins/doc-writer/hooks
+
+# First invocation - should output suggestion
+cat <<'EOF' | bun doc-writer-suggest.ts
+{"session_id":"test-session","transcript_path":"/tmp","cwd":"/tmp","permission_mode":"auto","hook_event_name":"PostToolUse","tool_name":"Write","tool_input":{"file_path":"/tmp/test.md","content":"# Test"},"tool_response":{"filePath":"/tmp/test.md","success":true}}
+EOF
+
+# Second invocation (same session) - should produce no output
+cat <<'EOF' | bun doc-writer-suggest.ts
+{"session_id":"test-session","transcript_path":"/tmp","cwd":"/tmp","permission_mode":"auto","hook_event_name":"PostToolUse","tool_name":"Write","tool_input":{"file_path":"/tmp/another.md","content":"# Another"},"tool_response":{"filePath":"/tmp/another.md","success":true}}
+EOF
+```
+
 **Troubleshooting:**
 - Hook only triggers on `.md` files with Write/Edit/MultiEdit
 - Verify plugin is installed: `/plugin list`
 - Check hook dependencies: `cd hooks && bun install`
 - Hook provides context to Claude - doesn't force announcements
 - Ask Claude explicitly what context it received to verify hook is working
+- Session cache prevents repeated suggestions within same session
 
 #### `agents/docs-reviewer.md`
 **Purpose:** Specialized agent for ruthlessly simplifying documentation

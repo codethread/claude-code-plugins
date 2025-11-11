@@ -218,6 +218,8 @@ UserPromptSubmit hook that proactively suggests the skill when Claude Code topic
 - Runs on `UserPromptSubmit` event before Claude processes prompts
 - Analyzes user prompts for Claude Code-related keywords
 - Detects Claude Code-related questions using pattern matching
+- **Only suggests once per session** using session cache tracking
+- Session cache stored at `~/.local/cache/personal-configs-plugins/claude-code-knowledge/<normalized-cwd>/<session-id>.json`
 - Injects contextual suggestion to load the skill via stdout
 - Improves accuracy by catching edge cases the model might miss
 
@@ -248,12 +250,29 @@ Test in Claude Code:
 claude --print --model haiku "How do I create a hook? After answering, tell me if you received UserPromptSubmit hook context."
 ```
 
+**Testing session tracking:**
+
+```bash
+cd plugins/claude-code-knowledge/hooks
+
+# First invocation - should output suggestion
+cat <<'EOF' | bun claude-code-prompt.ts
+{"session_id":"test-session","transcript_path":"/tmp","cwd":"/tmp","permission_mode":"auto","hook_event_name":"UserPromptSubmit","prompt":"How do I create a hook?"}
+EOF
+
+# Second invocation (same session) - should produce no output
+cat <<'EOF' | bun claude-code-prompt.ts
+{"session_id":"test-session","transcript_path":"/tmp","cwd":"/tmp","permission_mode":"auto","hook_event_name":"UserPromptSubmit","prompt":"What are hooks?"}
+EOF
+```
+
 **Troubleshooting**:
 - Hook only triggers on Claude Code-related prompts
 - Verify plugin is installed: `/plugin list`
 - Check hook dependencies: `cd hooks && bun install`
 - Enable debug mode: `claude --debug`
 - Context is injected to Claude automatically, doesn't interrupt user flow
+- Session cache prevents repeated suggestions within same session
 
 ### skill-rules.json
 

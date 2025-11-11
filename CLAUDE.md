@@ -215,3 +215,89 @@ Show me advanced workflows
 - Detailed system prompts in body
 
 **Key principle**: All Claude Code operational context lives in commands/skills/agents, NOT in README.md or CLAUDE.md
+
+## Writing Hook Suggestions
+
+When creating hooks that provide suggestions via `additionalContext` or `reason` fields, **ALWAYS use XML tags** instead of visual formatting (box-drawing characters, headers, footers).
+
+### Standard Pattern: XML Tags
+
+**Use structured XML tags:**
+
+```typescript
+// ✅ CORRECT: XML tag pattern
+let context = "<plugin-PLUGINNAME-suggestion>\n";
+context += "📝 SUGGESTION TITLE\n\n";
+context += "💡 Key information\n\n";
+context += "Suggestion content...\n";
+context += "</plugin-PLUGINNAME-suggestion>";
+```
+
+**Don't use visual formatting:**
+
+```typescript
+// ❌ INCORRECT: Box-drawing characters
+let context = "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+context += "📝 SUGGESTION TITLE\n";
+context += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
+```
+
+### Naming Convention
+
+Follow this pattern for tag names:
+
+- **Plugin hooks**: `<plugin-PLUGINNAME-suggestion>` (e.g., `<plugin-doc-writer-suggestion>`)
+- **Project hooks**: `<project-HOOKNAME-suggestion>` (e.g., `<project-stop-doc-check-suggestion>`)
+
+### Benefits
+
+1. **Anthropic model attention**: XML tags are treated as structural elements, ensuring Claude pays proper attention
+2. **User control**: Users can write precise CLAUDE.md rules like `"ALWAYS follow <plugin-*-suggestion> tags"`
+3. **Wildcard matching**: Pattern `<plugin-*-suggestion>` allows users to control all plugin suggestions at once
+4. **Parseable**: Future tooling can extract and process structured suggestions
+5. **Referenceable**: Clear boundaries make suggestions easier to cite and follow
+
+### Examples
+
+**Plugin hook (PostToolUse):**
+```typescript
+const context = "<plugin-doc-writer-suggestion>\n" +
+  "📝 DOCUMENTATION QUALITY SUGGESTION\n\n" +
+  "IMPORTANT: Use the Skill tool to load writing-documentation\n" +
+  "</plugin-doc-writer-suggestion>";
+
+const output = {
+  hookSpecificOutput: {
+    hookEventName: "PostToolUse",
+    additionalContext: context
+  }
+};
+```
+
+**Project hook (Stop with blocking):**
+```typescript
+const context = "<project-stop-doc-check-suggestion>\n" +
+  "📚 Documentation Check\n\n" +
+  "Before stopping: Review documentation files...\n" +
+  "</project-stop-doc-check-suggestion>";
+
+const output = {
+  decision: "block",
+  reason: context.trim()
+};
+```
+
+### User CLAUDE.md Integration
+
+Users can control suggestions in their project CLAUDE.md:
+
+```markdown
+# CLAUDE.md
+
+# Emphasize all plugin suggestions
+ALWAYS follow `<plugin-*-suggestion>` tags closely.
+
+# Or be selective
+- ALWAYS follow `<plugin-doc-writer-suggestion>` recommendations
+- Consider `<plugin-langs-suggestion>` when appropriate
+```
