@@ -4,8 +4,8 @@
  * This script lists all .md files in the docs directory
  */
 
-import { existsSync, readdirSync } from 'fs';
-import { join, dirname, basename } from 'path';
+import { existsSync, readdirSync } from 'node:fs';
+import { basename, dirname, join } from 'node:path';
 
 const SCRIPT_DIR = dirname(new URL(import.meta.url).pathname);
 const DOCS_DIR = join(SCRIPT_DIR, '../docs');

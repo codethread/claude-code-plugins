@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
-import { readFileSync, existsSync, mkdirSync, writeFileSync } from 'fs';
-import { homedir } from 'os';
-import { join } from 'path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { join } from 'node:path';
 
 interface HookInput {
   session_id: string;
@@ -39,7 +39,7 @@ async function main() {
     if (data.tool_name === 'Write' || data.tool_name === 'Edit') {
       // Single file operations
       filePath = data.tool_input.file_path as string;
-      if (filePath && filePath.toLowerCase().endsWith('.md')) {
+      if (filePath?.toLowerCase().endsWith('.md')) {
         isMarkdownFile = true;
       }
     } else if (data.tool_name === 'MultiEdit') {
@@ -47,7 +47,7 @@ async function main() {
       const edits = data.tool_input.edits as Array<{ file_path: string }>;
       if (edits && Array.isArray(edits)) {
         for (const edit of edits) {
-          if (edit.file_path && edit.file_path.toLowerCase().endsWith('.md')) {
+          if (edit.file_path?.toLowerCase().endsWith('.md')) {
             isMarkdownFile = true;
             filePath = edit.file_path;
             break;

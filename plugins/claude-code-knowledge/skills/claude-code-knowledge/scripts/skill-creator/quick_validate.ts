@@ -3,9 +3,9 @@
  * Quick validation script for skills - minimal version
  */
 
-import { existsSync } from 'fs';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
+import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
 interface ValidationResult {
   valid: boolean;

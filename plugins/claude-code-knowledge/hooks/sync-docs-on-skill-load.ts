@@ -14,11 +14,11 @@
  * - Complete manifest tracking
  */
 
-import { existsSync } from 'fs';
-import { mkdir, writeFile, readFile } from 'fs/promises';
-import { join, dirname } from 'path';
+import { createHash } from 'node:crypto';
+import { existsSync } from 'node:fs';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 import { XMLParser } from 'fast-xml-parser';
-import { createHash } from 'crypto';
 
 // ============================================================================
 // Constants
@@ -239,9 +239,7 @@ async function discoverSitemapAndBaseUrl(): Promise<{ sitemapUrl: string; baseUr
           return { sitemapUrl, baseUrl };
         }
       }
-    } catch {
-      continue;
-    }
+    } catch {}
   }
 
   throw new Error('Could not find a valid sitemap');
@@ -389,7 +387,7 @@ async function fetchMarkdownContent(
       });
 
       if (response.status === 429) {
-        const retryAfter = parseInt(response.headers.get('Retry-After') || '60', 10);
+        const retryAfter = Number.parseInt(response.headers.get('Retry-After') || '60', 10);
         await sleep(retryAfter * 1000);
         continue;
       }
@@ -404,7 +402,7 @@ async function fetchMarkdownContent(
       return { filename, content };
     } catch (e) {
       if (attempt < MAX_RETRIES - 1) {
-        const delay = Math.min(RETRY_DELAY * Math.pow(2, attempt), MAX_RETRY_DELAY);
+        const delay = Math.min(RETRY_DELAY * 2 ** attempt, MAX_RETRY_DELAY);
         const jitteredDelay = delay * (0.5 + Math.random() * 0.5);
         await sleep(jitteredDelay);
       } else {
@@ -428,7 +426,7 @@ async function fetchChangelog(): Promise<{ filename: string; content: string }> 
       });
 
       if (response.status === 429) {
-        const retryAfter = parseInt(response.headers.get('Retry-After') || '60', 10);
+        const retryAfter = Number.parseInt(response.headers.get('Retry-After') || '60', 10);
         await sleep(retryAfter * 1000);
         continue;
       }
@@ -457,7 +455,7 @@ async function fetchChangelog(): Promise<{ filename: string; content: string }> 
       return { filename, content: fullContent };
     } catch (e) {
       if (attempt < MAX_RETRIES - 1) {
-        const delay = Math.min(RETRY_DELAY * Math.pow(2, attempt), MAX_RETRY_DELAY);
+        const delay = Math.min(RETRY_DELAY * 2 ** attempt, MAX_RETRY_DELAY);
         const jitteredDelay = delay * (0.5 + Math.random() * 0.5);
         await sleep(jitteredDelay);
       } else {

@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
-import { existsSync } from 'fs';
-import { readFileSync } from 'fs';
-import { dirname, basename, join } from 'path';
+import { existsSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
+import { basename, dirname, join } from 'node:path';
 
 interface HookInput {
   session_id: string;

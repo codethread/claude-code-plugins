@@ -10,9 +10,9 @@
  *   bun package_skill.ts skills/public/my-skill ./dist
  */
 
-import { existsSync, statSync, readdirSync } from 'fs';
-import { mkdir } from 'fs/promises';
-import { join, basename, relative, resolve } from 'path';
+import { existsSync, readdirSync, statSync } from 'node:fs';
+import { mkdir } from 'node:fs/promises';
+import { basename, join, relative, resolve } from 'node:path';
 import { validateSkill } from './quick_validate';
 
 async function packageSkill(skillPath: string, outputDir?: string): Promise<string | null> {
@@ -68,7 +68,7 @@ async function packageSkill(skillPath: string, outputDir?: string): Promise<stri
   try {
     // Remove existing zip file if it exists
     if (existsSync(zipFilename)) {
-      const { unlinkSync } = require('fs');
+      const { unlinkSync } = require('node:fs');
       unlinkSync(zipFilename);
     }
 

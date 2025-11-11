@@ -11,9 +11,9 @@
  *   init_skill.ts custom-skill --path /custom/location
  */
 
-import { existsSync } from 'fs';
-import { mkdir, writeFile, chmod } from 'fs/promises';
-import { join } from 'path';
+import { existsSync } from 'node:fs';
+import { chmod, mkdir, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
 const SKILL_TEMPLATE = (skillName: string, skillTitle: string) => `---
 name: ${skillName}
