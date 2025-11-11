@@ -56,7 +56,7 @@ interface HookInput {
   tool_name: string;
   tool_input: {
     skill?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -85,6 +85,11 @@ interface Manifest {
     base_url: string;
     total_files: number;
   };
+}
+
+interface SitemapUrlEntry {
+  loc?: string;
+  [key: string]: unknown;
 }
 
 // ============================================================================
@@ -306,7 +311,9 @@ async function discoverClaudeCodePages(sitemapUrl: string): Promise<string[]> {
     let urls: string[] = [];
     if (result.urlset?.url) {
       const urlEntries = Array.isArray(result.urlset.url) ? result.urlset.url : [result.urlset.url];
-      urls = urlEntries.map((entry: any) => entry.loc).filter((loc: any) => loc);
+      urls = urlEntries
+        .map((entry: SitemapUrlEntry) => entry.loc)
+        .filter((loc: unknown): loc is string => typeof loc === 'string');
     }
 
     const claudeCodePages: string[] = [];

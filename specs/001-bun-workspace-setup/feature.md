@@ -99,26 +99,22 @@ Biome SHALL be configured for consistent linting and formatting across all TypeS
 **Acceptance Criteria:**
 - biome.json configuration file exists at root
 - Configuration enforces consistent code style
-- Lint script in root package.json runs successfully (command executes, may report issues)
-- Format script in root package.json is available (but NOT executed with --write in this phase)
-- Biome can successfully analyze all TypeScript files (execution completes without crashes)
+- Lint script in root package.json runs successfully with zero errors
+- Format script in root package.json is available
+- All TypeScript files pass linting without errors
 - Configuration follows Biome best practices for TypeScript/Node.js projects
-
-**Note:** This phase establishes Biome tooling but does NOT fix existing linting/formatting issues. Fixing issues will be addressed in a follow-up specification to avoid large formatting diffs during workspace setup.
 
 ### FR-5: Quality Assurance Scripts
 
 Root package.json SHALL provide scripts for quality assurance checks.
 
 **Acceptance Criteria:**
-- `bun run check` script runs all quality checks (lint + typecheck) - may report lint issues but should complete
-- `bun run format` script available for checking formatting (dry-run mode, NO --write flag)
-- `bun run lint` script lints all TypeScript files - may report issues but should complete
-- `bun run typecheck` script validates TypeScript types - should pass without errors
-- All scripts execute without crashing (exit code 0 or predictable non-zero for reportable issues)
+- `bun run check` script runs all quality checks (lint + typecheck) and passes without errors
+- `bun run format` script available for checking formatting
+- `bun run lint` script lints all TypeScript files and passes without errors
+- `bun run typecheck` script validates TypeScript types and passes without errors
+- All scripts execute successfully (exit code 0)
 - Scripts use appropriate file glob patterns to target only relevant files
-
-**Note:** Scripts establish the quality tooling infrastructure. Fixing reported lint/format issues is deferred to a follow-up specification.
 
 ### FR-6: Updated Documentation
 

@@ -26,9 +26,9 @@ try {
     .map((file) => basename(file, '.md'))
     .sort();
 
-  files.forEach((topic) => {
+  for (const topic of files) {
     console.log(`  • ${topic}`);
-  });
+  }
 
   console.log('');
   console.log(`Total: ${files.length} topics`);
