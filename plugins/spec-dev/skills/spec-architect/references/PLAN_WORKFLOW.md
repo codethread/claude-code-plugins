@@ -194,7 +194,7 @@ When creating the `tech.md`, structure tasks to enable tight build-test cycles:
 
 8. **Specification Review (Pre-Implementation Quality Gate)**:
 
-Delegate to **spec-reviewer agent** for design-level review BEFORE implementation begins:
+Delegate to **spec-signoff agent** for design-level review BEFORE implementation begins:
 
 > "Review the specifications in specs/<id>-<feature>/ for design quality. This is a STATIC review of the specifications themselves, NOT code review. Check for:
 > - **Completeness**: Does every FR-X and NFR-X from feature.md have corresponding tasks in tech.md?
@@ -212,7 +212,7 @@ Delegate to **spec-reviewer agent** for design-level review BEFORE implementatio
 >
 > Report any gaps, ambiguities, over-specification, or missing information. The spec must be complete before implementation begins."
 
-**If the reviewer finds issues**:
+**If spec-signoff finds issues**:
 - Address all gaps and ambiguities in the specifications
 - Update feature.md or tech.md as needed
 - Re-review until specifications are complete and consistent

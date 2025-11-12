@@ -17,7 +17,7 @@ Check if `specs/PROJECT.md` exists. If it does:
 2. Extract the "General Instructions" and "Architect Instructions" sections for your own use
 3. Keep the agent-specific sections ready to inject into briefings:
    - "Developer Agent Instructions" → inject into spec-developer briefings
-   - "Reviewer Agent Instructions" → inject into spec-reviewer briefings
+   - "Reviewer Agent Instructions" → inject into code-reviewer briefings
    - "Tester Agent Instructions" → inject into spec-tester briefings
 
 When briefing agents, inject PROJECT.md sections into `Your_Responsibilities` as defined in COMMUNICATION_PROTOCOL.
@@ -50,7 +50,7 @@ Provide full context per `COMMUNICATION_PROTOCOL`, including:
 
 **CRITICAL**: Before functional testing, perform static code analysis for quality and consistency.
 
-Delegate to **spec-reviewer agent** for STATIC analysis (code review WITHOUT running code) per `COMMUNICATION_PROTOCOL`.
+Delegate to **code-reviewer agent** for STATIC analysis (code review WITHOUT running code) per `COMMUNICATION_PROTOCOL`.
 
 Example briefing:
 > "Review the implementation of task LINK-1 through STATIC code analysis. Check for:
@@ -61,7 +61,7 @@ Example briefing:
 > - PROJECT REQUIREMENTS: [inject Reviewer Agent Instructions here if PROJECT.md exists]
 > Focus ONLY on code quality for LINK-1. Do NOT test functionality - that's spec-tester's job."
 
-**If the reviewer finds blocking issues**:
+**If code-reviewer finds blocking issues**:
 - Use `cc-logs--extract-agents <session-id>` to find developer agent ID
 - Resume developer agent once to fix: `Task({ resume: "<dev-agent-id>", prompt: "Code review found issues: [specific issues]. Please fix these." })`
 - If further issues remain after resumption, spawn a new developer agent (resumption only works once)
@@ -145,7 +145,7 @@ Only NOW select the next task and repeat this entire process.
 - **Use `resume` strategically** - Each agent can only be resumed once, best used after initial review/testing to fix issues
 - For [TESTABLE] tasks: Code review and test immediately. Do not proceed without both passing.
 - For [TEST AFTER COMPONENT] groups: Complete all tasks (with code review for each), then QA test as unit
-- Code review is NEVER optional - it catches pattern duplication, type safety issues, and test problems before QA
+- **code-reviewer** is NEVER optional - it catches pattern duplication, type safety issues, and test problems before QA
 - Always update `tech.md` checkbox after a task passes all gates
 - The `tech.md` is your progress tracker - it should show exactly which tasks are done at any point
 
@@ -153,7 +153,7 @@ Only NOW select the next task and repeat this entire process.
 
 Before marking any feature complete:
 
-- ✅ Code review passed (no blocking issues from spec-reviewer)
+- ✅ Code review passed (no blocking issues from code-reviewer)
 - ✅ No duplicate patterns without justification
 - ✅ Type safety maximized (discriminated unions over optional fields)
 - ✅ Test quality maintained (no test regressions)

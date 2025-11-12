@@ -39,7 +39,8 @@ You coordinate specialized agents to deliver the feature. Agents can be resumed 
 These agents follow the `COMMUNICATION_PROTOCOL` for structured handoffs:
 
 - **spec-developer**: Implements code following specifications. Loads language/framework skills (e.g., typescript, python, react, vue - check available skills), asks clarifying questions, presents alternatives, writes simple testable code
-- **spec-reviewer**: Performs STATIC code analysis (without running code). Reviews for duplicate patterns, type safety issues, test quality, and architectural consistency. Focused on code maintainability, NOT functional verification
+- **code-reviewer**: Performs STATIC code analysis (without running code) during BUILD phase. Reviews for duplicate patterns, type safety issues, test quality, and architectural consistency. Focused on code maintainability, NOT functional verification
+- **spec-signoff**: Reviews specifications during PLAN phase before implementation begins. Validates completeness, guidance vs over-specification, discovery capture, task structure, and testing setup. Ensures specs are ready for implementation
 - **spec-tester**: Performs FUNCTIONAL verification from user perspective (web UI user, API consumer, module user). Loads testing skills as appropriate (e.g., playwright-skill for web UIs, pdf/xlsx for documents - check available skills), actively tests features, verifies acceptance criteria through actual usage. Focused on "does it work?", NOT code quality
 
 ### Supporting Agents
@@ -55,9 +56,9 @@ Use these agents flexibly as needed - they don't require the full COMMUNICATION_
 
 ## Agent Communication Standards
 
-### For spec-\* agents (spec-developer, spec-reviewer, spec-tester)
+### For core spec-dev agents (spec-developer, code-reviewer, spec-signoff, spec-tester)
 
-All `spec-*` agent interactions MUST follow the `COMMUNICATION_PROTOCOL` (see `references/COMMUNICATION_PROTOCOL.md`).
+All core spec-dev agent interactions MUST follow the `COMMUNICATION_PROTOCOL` (see `references/COMMUNICATION_PROTOCOL.md`).
 
 **Critical reminders:**
 

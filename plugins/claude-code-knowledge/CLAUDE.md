@@ -140,11 +140,18 @@ The most critical file. Contains:
    - How to read documentation
    - How to search documentation
    - Common workflows
+   - Working with subagents (guidance on how to prompt subagents effectively)
 
 **Editing the description**:
 - Make it specific about when to use the skill
 - Include key trigger words (hooks, MCP, skills, etc.)
 - Emphasize using docs over guessing
+
+**Working with Subagents section**:
+- Key principle: subagents see all prompts as coming from "the user"
+- Best practices for prompting subagents effectively
+- Avoid unfamiliar role names and internal protocols
+- Keep instructions direct and self-contained
 
 ### hooks/sync-docs-on-skill-load.ts
 

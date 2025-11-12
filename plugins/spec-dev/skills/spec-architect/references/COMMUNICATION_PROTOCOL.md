@@ -129,7 +129,7 @@ If `specs/PROJECT.md` exists, architect loads it once at workflow start and inje
 - **General Instructions** → All agents
 - **Architect Instructions** → Architect only (not passed to agents)
 - **Developer Agent Instructions** → spec-developer
-- **Reviewer Agent Instructions** → spec-reviewer
+- **Reviewer Agent Instructions** → code-reviewer and spec-signoff
 - **Tester Agent Instructions** → spec-tester
 
 Agents never read PROJECT.md directly.

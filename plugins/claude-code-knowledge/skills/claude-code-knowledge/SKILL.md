@@ -113,6 +113,10 @@ Each documentation file includes:
 - When answering user questions, cite specific documentation
 - Include file references like `docs/hooks.md:123` when possible
 
+## Writing effective agents
+
+When writing agent files, subagents don't distinguish between claude code invoking them and the user. From their perspective, all prompts come from "the user."
+
 ## Examples
 
 ### User asks: "How do I create a hook?"

@@ -15,7 +15,7 @@ Commands provide context → Skills provide intelligence → Agents execute task
 plugins/spec-dev/
 ├── .claude-plugin/     # plugin.json metadata
 ├── commands/           # build.md, iterate.md
-├── agents/             # spec-developer.md, spec-reviewer.md, spec-tester.md
+├── agents/             # spec-developer.md, code-reviewer.md, spec-signoff.md, spec-tester.md
 ├── hooks/              # Session tracking and auto-resumption
 │   ├── hooks.json      # Hook registration (PreToolUse, PreCompact, SessionStart)
 │   └── *.sh            # Hook handler scripts
@@ -36,7 +36,8 @@ plugins/spec-dev/
 **Project Configuration** (optional): `specs/PROJECT.md` contains project-specific instructions for all agents. Created from `references/PROJECT_TEMPLATE.md`.
 
 **Agents**:
-- `spec-*` agents follow COMMUNICATION_PROTOCOL (structured briefings, agent resumption, vimgrep references)
+- `spec-*` agents receive structured briefings per COMMUNICATION_PROTOCOL (enforced by architect, not documented in agent prompts)
+- Agent prompts focus on behavior and workflow, not input format (reduces confusion and token usage)
 - Supporting agents (Explore, researcher) use flexible delegation
 - Repository-specific agents encouraged for domain expertise
 - Keep descriptions under 50 words
@@ -91,9 +92,9 @@ echo '{"session_id":"test-123","cwd":"'$(pwd)'","source":"startup"}' | \
 
 **Testing Setup**: Spec template includes exact commands to start systems, environment setup, test data, access points, cleanup. Validated before implementation.
 
-**Protocol Scope**: COMMUNICATION_PROTOCOL applies to `spec-*` agents only. Flexible delegation for others encourages using domain-specific agents.
+**Protocol Scope**: COMMUNICATION_PROTOCOL applies to core spec-dev agents (spec-developer, code-reviewer, spec-signoff, spec-tester), enforced by architect in workflows. Agent prompts don't document the protocol format - they simply state they'll receive structured instructions and should follow them. This reduces token usage (~1200-1500 tokens) and confusion (agents don't understand "architect" terminology from their perspective). Flexible delegation for other agents encourages using domain-specific agents.
 
-**Spec Review Gate**: After technical design, spec-reviewer validates completeness, guidance vs over-specification, discovery capture, contradictions, dependencies, self-containment, testability, and testing setup. The reviewer operates in two modes: specification review during PLAN phase (checking for over-specification) and code review during BUILD phase (checking for patterns, types, tests).
+**Spec Review Gate**: After technical design, spec-signoff validates completeness, guidance vs over-specification, discovery capture, contradictions, dependencies, self-containment, testability, and testing setup. During BUILD phase, code-reviewer validates patterns, types, and test quality for each task implementation.
 
 **Session Resumption**: Hooks enable automatic workflow continuation:
 - When spec-architect skill loads, session tracking initializes
@@ -107,9 +108,9 @@ echo '{"session_id":"test-123","cwd":"'$(pwd)'","source":"startup"}' | \
 
 **Update templates**: Edit `references/*_TEMPLATE.md` (SPEC_TEMPLATE, TECH_SPEC_TEMPLATE, PROJECT_TEMPLATE). Note: TECH_SPEC_TEMPLATE.md follows MAP approach (guidance) not BLUEPRINT approach (implementation details)
 
-**Change agent behavior**: Edit `agents/spec-*.md` system prompt. Note: spec-reviewer has dual modes (specification review in PLAN, code review in BUILD)
+**Change agent behavior**: Edit `agents/*.md` system prompt. Note: spec-signoff reviews specs in PLAN, code-reviewer reviews code in BUILD
 
-**Add quality gates**: Update workflow file, update spec-reviewer briefing if needed, document in COMMUNICATION_PROTOCOL if affects all agents
+**Add quality gates**: Update workflow file, update agent briefings if needed, document in COMMUNICATION_PROTOCOL if affects all agents
 
 **Update hooks**: Edit `hooks/*.sh` and test with hook debugging commands (see `hooks/README.md`)
 
