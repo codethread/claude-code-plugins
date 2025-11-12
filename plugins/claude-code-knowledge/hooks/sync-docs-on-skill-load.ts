@@ -42,7 +42,7 @@ const HEADERS = {
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 2000; // ms
 const MAX_RETRY_DELAY = 30000; // ms
-const RATE_LIMIT_DELAY = 500; // ms
+const MAX_CONCURRENT_FETCHES = 10; // parallel fetch limit
 
 // ============================================================================
 // Types
@@ -78,6 +78,13 @@ interface Manifest {
 interface SitemapUrlEntry {
   loc?: string;
   [key: string]: unknown;
+}
+
+interface FetchResult {
+  success: boolean;
+  filename?: string;
+  pagePath?: string;
+  manifestEntry?: ManifestFile;
 }
 
 // ============================================================================
@@ -471,6 +478,123 @@ async function saveMarkdownFile(filename: string, content: string): Promise<stri
 }
 
 // ============================================================================
+// Parallel Fetch Helpers
+// ============================================================================
+
+async function fetchAndSavePage(
+  pagePath: string,
+  baseUrl: string,
+  manifest: Manifest
+): Promise<FetchResult> {
+  try {
+    const { filename, content } = await fetchMarkdownContent(pagePath, baseUrl);
+
+    const oldHash = manifest.files[filename]?.hash || '';
+    const oldEntry = manifest.files[filename] || {};
+    const filePath = join(DOCS_DIR, filename);
+    const fileExists = existsSync(filePath);
+
+    let contentHash: string;
+    let lastUpdated: string;
+
+    if (!fileExists || contentHasChanged(content, oldHash)) {
+      contentHash = await saveMarkdownFile(filename, content);
+      lastUpdated = new Date().toISOString();
+    } else {
+      contentHash = oldHash;
+      lastUpdated = oldEntry.last_updated || new Date().toISOString();
+    }
+
+    return {
+      success: true,
+      filename,
+      pagePath,
+      manifestEntry: {
+        original_url: `${baseUrl}${pagePath}`,
+        original_md_url: `${baseUrl}${pagePath}.md`,
+        hash: contentHash,
+        last_updated: lastUpdated,
+      },
+    };
+  } catch (e) {
+    return { success: false, pagePath };
+  }
+}
+
+async function fetchAndSaveChangelog(manifest: Manifest): Promise<FetchResult> {
+  try {
+    const { filename, content } = await fetchChangelog();
+
+    const oldHash = manifest.files[filename]?.hash || '';
+    const oldEntry = manifest.files[filename] || {};
+    const filePath = join(DOCS_DIR, filename);
+    const fileExists = existsSync(filePath);
+
+    let contentHash: string;
+    let lastUpdated: string;
+
+    if (!fileExists || contentHasChanged(content, oldHash)) {
+      contentHash = await saveMarkdownFile(filename, content);
+      lastUpdated = new Date().toISOString();
+    } else {
+      contentHash = oldHash;
+      lastUpdated = oldEntry.last_updated || new Date().toISOString();
+    }
+
+    return {
+      success: true,
+      filename,
+      pagePath: 'changelog',
+      manifestEntry: {
+        original_url: 'https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md',
+        original_raw_url:
+          'https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md',
+        hash: contentHash,
+        last_updated: lastUpdated,
+        source: 'claude-code-repository',
+      },
+    };
+  } catch (e) {
+    return { success: false, pagePath: 'changelog' };
+  }
+}
+
+async function fetchAllPagesInParallel(
+  documentationPages: string[],
+  baseUrl: string,
+  manifest: Manifest
+): Promise<FetchResult[]> {
+  // Create all fetch tasks (documentation pages + changelog)
+  const pageTasks = documentationPages.map(
+    (pagePath) => () => fetchAndSavePage(pagePath, baseUrl, manifest)
+  );
+  const allTasks = [...pageTasks, () => fetchAndSaveChangelog(manifest)];
+
+  const results: FetchResult[] = [];
+
+  // Process in batches to limit concurrency
+  for (let i = 0; i < allTasks.length; i += MAX_CONCURRENT_FETCHES) {
+    const batch = allTasks.slice(i, i + MAX_CONCURRENT_FETCHES);
+    const batchResults = await Promise.allSettled(batch.map((task) => task()));
+
+    for (const result of batchResults) {
+      if (result.status === 'fulfilled') {
+        results.push(result.value);
+      } else {
+        results.push({ success: false, pagePath: 'unknown' });
+      }
+    }
+
+    // Small delay between batches to be respectful to the server
+    if (i + MAX_CONCURRENT_FETCHES < allTasks.length) {
+      await sleep(500);
+    }
+  }
+
+  return results;
+}
+
+// ============================================================================
 // Main Fetch Logic
 // ============================================================================
 
@@ -510,80 +634,18 @@ async function runFetch(): Promise<void> {
     throw new Error('No documentation pages discovered!');
   }
 
-  // Fetch each page
-  for (let i = 0; i < documentationPages.length; i++) {
-    const pagePath = documentationPages[i];
+  // Fetch all pages in parallel (including changelog)
+  const results = await fetchAllPagesInParallel(documentationPages, baseUrl, manifest);
 
-    try {
-      const { filename, content } = await fetchMarkdownContent(pagePath, baseUrl);
-
-      const oldHash = manifest.files[filename]?.hash || '';
-      const oldEntry = manifest.files[filename] || {};
-      const filePath = join(DOCS_DIR, filename);
-      const fileExists = existsSync(filePath);
-
-      let contentHash: string;
-      let lastUpdated: string;
-
-      if (!fileExists || contentHasChanged(content, oldHash)) {
-        contentHash = await saveMarkdownFile(filename, content);
-        lastUpdated = new Date().toISOString();
-      } else {
-        contentHash = oldHash;
-        lastUpdated = oldEntry.last_updated || new Date().toISOString();
-      }
-
-      newManifest.files[filename] = {
-        original_url: `${baseUrl}${pagePath}`,
-        original_md_url: `${baseUrl}${pagePath}.md`,
-        hash: contentHash,
-        last_updated: lastUpdated,
-      };
-
+  // Process results
+  for (const result of results) {
+    if (result.success && result.filename && result.manifestEntry) {
+      newManifest.files[result.filename] = result.manifestEntry;
       successful++;
-
-      if (i < documentationPages.length - 1) {
-        await sleep(RATE_LIMIT_DELAY);
-      }
-    } catch (e) {
-      failed++;
-      failedPages.push(pagePath);
-    }
-  }
-
-  // Fetch changelog
-  try {
-    const { filename, content } = await fetchChangelog();
-
-    const oldHash = manifest.files[filename]?.hash || '';
-    const oldEntry = manifest.files[filename] || {};
-    const filePath = join(DOCS_DIR, filename);
-    const fileExists = existsSync(filePath);
-
-    let contentHash: string;
-    let lastUpdated: string;
-
-    if (!fileExists || contentHasChanged(content, oldHash)) {
-      contentHash = await saveMarkdownFile(filename, content);
-      lastUpdated = new Date().toISOString();
     } else {
-      contentHash = oldHash;
-      lastUpdated = oldEntry.last_updated || new Date().toISOString();
+      failed++;
+      failedPages.push(result.pagePath || 'unknown');
     }
-
-    newManifest.files[filename] = {
-      original_url: 'https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md',
-      original_raw_url:
-        'https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md',
-      hash: contentHash,
-      last_updated: lastUpdated,
-      source: 'claude-code-repository',
-    };
-
-    successful++;
-  } catch (e) {
-    failed++;
-    failedPages.push('changelog');
   }
 
   // Add metadata

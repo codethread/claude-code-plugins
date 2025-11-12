@@ -157,9 +157,9 @@ PreToolUse hook that transparently syncs documentation when the skill loads. **A
 - Checks if documentation sync is needed (>3 hours old or missing)
 - If needed, fetches directly from docs.anthropic.com:
   - Discovers sitemap and base URL
-  - Fetches all Claude Code documentation pages as markdown
+  - Fetches all Claude Code documentation pages in parallel (10 concurrent downloads)
   - Validates content (ensures it's markdown, not HTML)
-  - Fetches CHANGELOG.md from GitHub
+  - Fetches CHANGELOG.md from GitHub (included in parallel batch)
   - Updates manifest with hashes and metadata
 - Uses smart caching (3-hour threshold) to avoid redundant fetches
 - Includes retry logic with exponential backoff
@@ -170,15 +170,16 @@ PreToolUse hook that transparently syncs documentation when the skill loads. **A
 - **Hook trigger**: `PreToolUse` with matcher `"Skill"`
 - **Configuration**: Registered in `hooks/hooks.json` alongside UserPromptSubmit hook
 - **Language**: Bun TypeScript (self-contained, no external scripts)
-- **Timeout**: 30 seconds (handles first-time fetch which takes ~30 seconds)
+- **Timeout**: 30 seconds (handles first-time parallel fetch which takes ~5-10 seconds)
 - **Path resolution**: Uses `${CLAUDE_PLUGIN_ROOT}` environment variable
 - **Dependencies**: `bun` runtime + `fast-xml-parser` (for sitemap parsing)
 
 **Behavior**:
-- **First time**: Downloads 45 documentation files (~30 seconds)
+- **First time**: Downloads 45 documentation files in parallel (~5-10 seconds)
 - **Subsequent loads**: Instant (~1-2 seconds) if docs updated <3 hours ago
 - **On failure**: Silent, doesn't block skill loading
 - **Offline**: Skips sync, uses cached docs
+- **Concurrency**: Fetches up to 10 pages simultaneously with 500ms delay between batches
 
 **Testing the hook**:
 
@@ -468,6 +469,14 @@ All scripts have been migrated from Python and Bash to Bun TypeScript:
 - **Compatibility**: All scripts maintain the same CLI interface and functionality
 
 ## Version History
+
+- **2.4.0** (2025-11-11): Parallel Documentation Fetching
+  - Refactored hook to fetch all documentation pages in parallel
+  - Added concurrency control (10 concurrent downloads)
+  - Significantly faster initial sync (~5-10 seconds vs ~30 seconds)
+  - Batch processing with respectful delays between batches
+  - Improved error handling with Promise.allSettled
+  - Changelog now fetched in parallel with documentation pages
 
 - **2.3.0** (2025-11-11): Self-Contained Hook Architecture
   - Merged all fetch/sync logic into single hook file
