@@ -11,9 +11,15 @@ Use this workflow to create specifications for a new feature from a user briefin
 **FIRST STEP: Load Project Configuration**
 
 Check if `specs/PROJECT.md` exists. If it does:
+
 1. Read the entire file
-2. Extract the "General Instructions" and "Architect Instructions" sections for your own use
-3. Keep the agent-specific sections (Developer, Reviewer, Tester) ready to inject into agent briefings later
+2. Check the version metadata at the bottom:
+   - Extract `template_version` and compare with current PROJECT_TEMPLATE.md version
+   - If PROJECT_TEMPLATE.md has a newer version, offer to show the user what's new:
+     "Your PROJECT.md was created from template version X.X.X, but version Y.Y.Y is now available. Would you like me to show you the changes so you can decide if you want to adopt any new features?"
+   - If user wants to see changes, read PROJECT_TEMPLATE.md and explain the differences
+3. Extract the "General Instructions" and "Architect Instructions" sections for your own use
+4. Keep the agent-specific sections (Developer, Reviewer, Tester) ready to inject into agent briefings later
 
 **Actions**:
 
@@ -50,7 +56,30 @@ Check if `specs/PROJECT.md` exists. If it does:
    - Create `specs/<id>-<feature>/` directory
    - Create `feature.md` from `references/SPEC_TEMPLATE.md`
 
-2. **Document Requirements**:
+2. **Create `interview.md` in spec directory**:
+   - Document the user's original prompt verbatim in "Original Brief" section
+   - Record ALL Q&A exchanges, clarifications, and decisions
+   - Format:
+
+     ```markdown
+     # Feature Interview
+
+     ## Original Brief
+
+     [User's exact prompt]
+
+     ## Discovery Q&A
+
+     ### Q: [Question]
+
+     A: [Answer]
+
+     ## Key Decisions
+
+     - [Decision with rationale]
+     ```
+
+3. **Document Requirements**:
    - Problem statement and value proposition
    - Functional requirements (FR-1, FR-2, ...) with testable ACs
    - Non-functional requirements (NFR-1, NFR-2, ...)
@@ -64,7 +93,7 @@ Check if `specs/PROJECT.md` exists. If it does:
    - External dependency validation (pre-flight checks)
    - Follow PROJECT.md guidelines if loaded earlier
 
-3. **User Review and Approval**:
+4. **User Review and Approval**:
    - Present draft specification for review
    - Highlight assumptions and technical discoveries
    - Ask structured review questions:
@@ -75,13 +104,15 @@ Check if `specs/PROJECT.md` exists. If it does:
    - Iterate based on feedback
    - Get explicit user approval
 
-4. **Final Architectural Review**:
+5. **Final Architectural Review**:
    - Think deeply about edge cases
    - Identify implicit assumptions
    - Verify specification completeness
 
 **Outputs**:
+
 - `specs/<id>-<feature>/feature.md` with numbered requirements
+- `specs/<id>-<feature>/interview.md` with user's original prompt and Q&A
 - `specs/<id>-<feature>/notes.md` if spike work was performed
 
 ## Phase 3: Technical Design
@@ -143,7 +174,6 @@ Check if `specs/PROJECT.md` exists. If it does:
    **Quality check:**
    If a developer could copy-paste from tech.md to create the implementation, you've over-specified.
    The developer should still need to make design decisions, just informed ones.
-
    - Structure tasks for testability:
 
 **CRITICAL: Task Decomposition for Testability**
@@ -151,6 +181,7 @@ Check if `specs/PROJECT.md` exists. If it does:
 When creating the `tech.md`, structure tasks to enable tight build-test cycles:
 
 **Pattern A: Task-Level Testing (Preferred)**
+
 ```markdown
 ### Component: User Validation
 
@@ -160,6 +191,7 @@ When creating the `tech.md`, structure tasks to enable tight build-test cycles:
 ```
 
 **Pattern B: Component-Level Testing (When Tasks are Interdependent)**
+
 ```markdown
 ### Component: OAuth Integration [TEST AFTER COMPONENT]
 
@@ -170,12 +202,14 @@ When creating the `tech.md`, structure tasks to enable tight build-test cycles:
 ```
 
 **Task Sizing Guidelines**:
+
 - Task completable in 1-2 hours
 - Clear deliverable (function, endpoint, component)
 - If larger, break down further
 - Each task references FR-X or NFR-X it delivers
 
 **Avoid These Anti-Patterns**:
+
 - ❌ "Implement entire authentication system" (too large)
 - ❌ "Add a comment" (too trivial)
 - ❌ Tasks with no clear testable outcome
@@ -194,28 +228,14 @@ When creating the `tech.md`, structure tasks to enable tight build-test cycles:
 
 8. **Specification Review (Pre-Implementation Quality Gate)**:
 
-Delegate to **spec-signoff agent** for design-level review BEFORE implementation begins:
+Delegate to **spec-signoff agent**:
 
-> "Review the specifications in specs/<id>-<feature>/ for design quality. This is a STATIC review of the specifications themselves, NOT code review. Check for:
-> - **Completeness**: Does every FR-X and NFR-X from feature.md have corresponding tasks in tech.md?
-> - **Guidance vs Implementation**: Is tech.md a guide (good) or a blueprint (bad)?
->   - ✅ GOOD: References to existing patterns, file paths to similar code, integration points, technology rationale, discovered constraints
->   - ❌ BAD: Exact function signatures, complete API schemas with all fields, detailed algorithms, step-by-step implementation logic
->   - Quality check: Could a developer copy-paste from tech.md to create implementation? If yes, it's over-specified.
-> - **Discovery Capture**: Are findings from Explore/researcher agents documented (similar patterns, integration points, gotchas)?
-> - **Contradictions**: Are there conflicts between feature.md and tech.md requirements?
-> - **Missing dependencies**: Are task dependencies and sequencing clear?
-> - **Self-containment**: Can a developer implement from tech.md with the guidance provided?
-> - **Testability**: Are all tasks marked appropriately ([TESTABLE] or [TEST AFTER COMPONENT])?
-> - **Testing Setup**: Is the Testing Setup section in feature.md complete with system startup commands, environment requirements, test data setup, access points, and cleanup procedures?
-> - **Clarity**: Are all task descriptions unambiguous and actionable?
->
-> Report any gaps, ambiguities, over-specification, or missing information. The spec must be complete before implementation begins."
+> "Review the specifications in specs/<id>-<feature>/ for design quality before implementation begins"
 
 **If spec-signoff finds issues**:
-- Address all gaps and ambiguities in the specifications
-- Update feature.md or tech.md as needed
-- Re-review until specifications are complete and consistent
+
+- Address all gaps and ambiguities
+- Re-review until specifications are complete
 - Do NOT proceed to implementation with incomplete specs
 
 This review ensures implementation can proceed smoothly without constant backtracking to clarify requirements.

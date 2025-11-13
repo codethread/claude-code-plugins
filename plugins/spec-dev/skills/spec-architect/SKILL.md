@@ -82,7 +82,7 @@ specs/
 └── <numerical-id>-<kebab-cased-feature>/
     ├── feature.md      # WHAT needs to be built (FR-X, NFR-X)
     ├── notes.md        # Technical discoveries from spike work (optional)
-    └── tech.md         # HOW to build it (COMPONENT-N tasks)
+    └── tech.md         # HOW to build it (implementation tasks like AUTH-1, COMP-1, etc.)
 ```
 
 ### Project Configuration (PROJECT.md)
@@ -92,7 +92,7 @@ Optional project-wide agent instructions (General, Architect, Developer, Reviewe
 ### Requirement Numbering
 
 - **Feature Spec**: FR-1, FR-2 (functional), NFR-1, NFR-2 (non-functional)
-- **Tech Spec**: COMPONENT-1, COMPONENT-2 (implementation tasks linked to FR/NFR)
+- **Tech Spec**: Component-prefixed tasks (e.g., AUTH-1, COMP-1, API-1) linked to FR/NFR requirements
 
 ### Templates Available
 

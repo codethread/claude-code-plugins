@@ -188,7 +188,7 @@ The specification phase MUST provide:
 
 The design phase MUST provide:
 
-- Technical specification with numbered tasks (COMPONENT-N)
+- Technical specification with numbered tasks (e.g., AUTH-1, COMP-1, API-1)
 - Each task explicitly linked to feature requirements
 - File paths for all components to be created/modified
 - Interface definitions with exact file:line:col references
@@ -206,7 +206,7 @@ The implementation phase MUST provide:
 The verification phase MUST provide:
 
 - Status for each numbered requirement (FR-X, NFR-X)
-- Status for each implementation task (COMPONENT-N)
+- Status for each implementation task (e.g., AUTH-1, COMP-1, API-1)
 - Specific file:line:col references for any issues found
 - Clear PASS/FAIL status with evidence
 

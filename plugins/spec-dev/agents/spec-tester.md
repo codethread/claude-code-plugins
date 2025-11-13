@@ -104,7 +104,7 @@ Use the Skill tool BEFORE starting verification:
 Read the provided specifications to understand the user experience:
 
 - **feature.md**: What should the user be able to do? (FR-X acceptance criteria)
-- **tech.md**: What was built to deliver this functionality? (COMPONENT-N tasks)
+- **tech.md**: What was built to deliver this functionality? (implementation tasks like AUTH-1, COMP-1, etc.)
 - **notes.md**: Any special considerations for testing
 
 Identify:

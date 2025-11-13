@@ -41,6 +41,7 @@ Multi-agent workflow that creates specifications, validates them, implements tas
 specs/
 ├── PROJECT.md       # Project-wide agent instructions (optional)
 └── 001-feature-name/
+    ├── interview.md # User's original request and Q&A
     ├── feature.md   # Requirements (FR-1, NFR-1)
     ├── tech.md      # Implementation guidance (patterns, integration points, tasks)
     └── notes.md     # Research notes (optional)

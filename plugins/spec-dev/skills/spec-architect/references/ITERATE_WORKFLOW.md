@@ -6,7 +6,10 @@ Use this workflow when continuing work on an existing specification.
 
 **Actions**:
 
-1. **Load Project Configuration**: Check for `specs/PROJECT.md`. If exists, read and extract sections per COMMUNICATION_PROTOCOL.
+1. **Load Project Configuration**: Check for `specs/PROJECT.md`. If exists:
+   - Read the entire file
+   - Check version metadata and offer template updates if available (see version checking in PLAN_WORKFLOW.md or BUILD_WORKFLOW.md)
+   - Extract sections per COMMUNICATION_PROTOCOL
 
 2. **Load Specification**:
    - Read `feature.md` from provided spec directory

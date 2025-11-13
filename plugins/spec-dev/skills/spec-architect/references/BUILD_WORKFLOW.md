@@ -14,8 +14,13 @@ Use this workflow to implement a feature from an existing, validated technical s
 
 Check if `specs/PROJECT.md` exists. If it does:
 1. Read the entire file
-2. Extract the "General Instructions" and "Architect Instructions" sections for your own use
-3. Keep the agent-specific sections ready to inject into briefings:
+2. Check the version metadata at the bottom:
+   - Extract `template_version` and compare with current PROJECT_TEMPLATE.md version
+   - If PROJECT_TEMPLATE.md has a newer version, offer to show the user what's new:
+     "Your PROJECT.md was created from template version X.X.X, but version Y.Y.Y is now available. Would you like me to show you the changes so you can decide if you want to adopt any new features?"
+   - If user wants to see changes, read PROJECT_TEMPLATE.md and explain the differences
+3. Extract the "General Instructions" and "Architect Instructions" sections for your own use
+4. Keep the agent-specific sections ready to inject into briefings:
    - "Developer Agent Instructions" → inject into spec-developer briefings
    - "Reviewer Agent Instructions" → inject into code-reviewer briefings
    - "Tester Agent Instructions" → inject into spec-tester briefings

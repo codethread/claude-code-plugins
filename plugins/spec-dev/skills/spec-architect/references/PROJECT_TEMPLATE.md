@@ -39,3 +39,32 @@
 - Verify mobile responsive design on viewport widths: 320px, 768px, 1024px
 - Test error scenarios explicitly (network failures, invalid inputs, timeouts)
 - Check browser console for errors during testing
+
+---
+
+## Version Metadata
+
+**DO NOT EDIT THIS SECTION - It is used for template version tracking**
+
+- **template_version**: 1.0.0
+- **owner_version**: 1.0.0
+
+### Version Field Descriptions
+
+- **template_version**: The version of PROJECT_TEMPLATE.md that was used to generate this file. Updated only when you regenerate from a newer template or manually adopt changes from a newer template.
+- **owner_version**: Your customization version. Increment this when you make significant changes to your PROJECT.md (e.g., 1.0.0 → 1.1.0 for additions, 2.0.0 for major restructuring). This helps track your project's configuration evolution separately from template updates.
+
+### How Versioning Works
+
+When you create a new PROJECT.md from this template:
+1. Both `template_version` and `owner_version` start at the same value (the current template version)
+2. When you customize PROJECT.md for your project, increment `owner_version`
+3. When a new PROJECT_TEMPLATE.md is released, the architect can compare versions and offer to show you what's new
+4. You can then decide which new features to adopt and update `template_version` accordingly
+
+### Template Version History
+
+**1.0.0** (2025-01-13)
+- Initial versioned template
+- Sections: General Instructions, Architect Instructions, Developer Agent Instructions, Reviewer Agent Instructions, Tester Agent Instructions
+- Establishes version tracking system for template evolution
