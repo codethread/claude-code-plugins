@@ -1,7 +1,7 @@
 {
   "name": "claude-code-knowledge",
   "description": "Official Claude Code documentation access. Provides instant reference to hooks, MCP, skills, slash commands, settings, CLI, and all Claude Code features with automatic sync from docs.anthropic.com.",
-  "version": "2.4.0",
+  "version": "1.0.0",
   "author": {
     "name": "Community"
   },

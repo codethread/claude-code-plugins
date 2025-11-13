@@ -6,7 +6,7 @@ allowed-tools: Read, Grep, Glob, Bash, Bash(bun:*)
 
 # Claude Code Knowledge
 
-**Version: 2.1.0-explicit-autofetch** (Updated 2025-11-09)
+**Version: 1.0.0** (Updated 2025-11-13)
 
 Access to official Claude Code documentation, automatically synced from docs.anthropic.com.
 

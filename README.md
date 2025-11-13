@@ -61,6 +61,20 @@ Show me the plugin directory structure
 
 Claude will reference CLAUDE.md files for comprehensive architecture details.
 
+## Development
+
+### Repository maintenance
+
+Project-level slash commands for maintaining this repository:
+
+- `/release` - Prepare plugin releases with version bumps, changelog updates, and git tags
+  - Safety checks for accidental commits (`.env`, `node_modules`, hidden files)
+  - Detects and squashes WIP commits
+  - Processes plugins in parallel (version bump, SKILL.md updates, CHANGELOG.md)
+  - Creates single conventional commit: `type(plugin1,plugin2): description`
+  - Creates git tags: `<plugin-name>-v<version>`
+  - Does NOT push (review with `git show` first)
+
 ## Plugin Suggestions
 
 Plugins provide automatic suggestions via hooks using structured XML tags. All plugin suggestions follow the pattern `<plugin-PLUGINNAME-suggestion>`, allowing you to control Claude's attention to these recommendations in your project's `CLAUDE.md`.

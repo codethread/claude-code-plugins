@@ -8,6 +8,11 @@
             "type": "command",
             "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/stop-doc-check.ts",
             "timeout": 60
+          },
+          {
+            "type": "command",
+            "command": "bun run verify",
+            "timeout": 60
           }
         ]
       }
