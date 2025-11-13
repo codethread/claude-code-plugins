@@ -8,6 +8,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a local Claude Code plugin marketplace repository. It contains plugin definitions that extend Claude Code with custom commands, agents, and skills.
 
+### Developer commands
+
+This repo is primarily markdown files, but all scripts are written with `bun`
+
+```bash
+bun run typecheck # alias: tsc --noEmit
+bun run lint # alias: biome lint --fix --unsafe .
+```
+
 ## Plugin Architecture
 
 ### Marketplace Structure

@@ -5,9 +5,9 @@ A local plugin marketplace for Claude Code providing development workflows and d
 ## What
 
 Extends Claude Code with:
+
 - **Development Workflows**: spec-dev, mcp-builder, doc-writer, langs
 - **Claude Code Knowledge**: Documentation access and skill creation tools
-- **Document Processing**: PDF, Excel, PowerPoint, Word
 
 ## Why
 
@@ -16,7 +16,6 @@ Extends Claude Code with:
 - Write quality documentation (doc-writer)
 - Language-specific patterns (langs: React, TypeScript)
 - Official Claude Code docs at your fingertips (claude-code-knowledge)
-- Process documents programmatically (pdf, xlsx, pptx, docx)
 
 ## How
 
@@ -36,35 +35,9 @@ bun install
 /plugin install claude-code-knowledge@personal-configs-plugins
 /plugin install mcp-builder@personal-configs-plugins
 /plugin install langs@personal-configs-plugins
-
-# Document processing (optional)
-/plugin install pdf@personal-configs-plugins
-/plugin install xlsx@personal-configs-plugins
-/plugin install pptx@personal-configs-plugins
-/plugin install docx@personal-configs-plugins
 ```
 
 **Note:** The `bun install` command installs all dependencies needed by plugin scripts and hooks. You only need to run this once after adding the marketplace.
-
-### For Contributors
-
-If you're contributing to this marketplace, quality scripts are available:
-
-```bash
-cd ~/.claude/plugins/marketplaces/personal-configs-plugins
-
-# Check code quality (type checking + linting)
-bun run check
-
-# Run type checking only
-bun run typecheck
-
-# Check linting only
-bun run lint
-
-# Check formatting (dry-run, doesn't modify files)
-bun run format
-```
 
 ### Use
 
@@ -79,6 +52,7 @@ After installation, plugins provide slash commands, agents, and skills. See indi
 ### Ask Claude
 
 For detailed information, ask Claude:
+
 ```
 What can the spec-dev plugin do?
 How do I create a new plugin?
@@ -92,6 +66,7 @@ Claude will reference CLAUDE.md files for comprehensive architecture details.
 Plugins provide automatic suggestions via hooks using structured XML tags. All plugin suggestions follow the pattern `<plugin-PLUGINNAME-suggestion>`, allowing you to control Claude's attention to these recommendations in your project's `CLAUDE.md`.
 
 **Example 1: Emphasize all plugin suggestions**
+
 ```markdown
 # CLAUDE.md
 
@@ -100,6 +75,7 @@ context-specific recommendations from installed plugins.
 ```
 
 **Example 2: Emphasize specific plugins**
+
 ```markdown
 # CLAUDE.md
 
@@ -110,6 +86,7 @@ context-specific recommendations from installed plugins.
 ```
 
 **Example 3: Ignore specific suggestions**
+
 ```markdown
 # CLAUDE.md
 
@@ -122,7 +99,7 @@ The XML tag format ensures Claude treats these suggestions as structured prompts
 ## Attribution
 
 Several plugins sourced from [Anthropic's skills repository](https://github.com/anthropics/skills):
-- Document processing (pdf, xlsx, pptx, docx)
+
 - MCP builder guidance
 - Skill creation scripts
 
