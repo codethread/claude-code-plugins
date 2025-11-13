@@ -13,6 +13,7 @@ Validates and prepares plugin releases by checking for accidental commits, ensur
 - Last 5 commits: !`git log -5 --oneline`
 - Current changes: !`git status --short`
 - Changed files: !`git diff --name-only HEAD`
+- Plugin tags: !`git tag -l '*-v*' --format='%(refname:short) -> %(objectname:short) %(subject)' | sort`
 - additional guidance (optional): $ARGUMENTS
 
 ## Instructions
