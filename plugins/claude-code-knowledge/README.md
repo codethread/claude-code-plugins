@@ -5,7 +5,7 @@ Official Claude Code documentation access with skill creation tools.
 ## What
 
 **Skill**: `claude-code-knowledge` - 45+ documentation topics (hooks, MCP, skills, settings, CLI, plugins)
-**Auto-sync**: Documentation automatically updates when skill loads (transparent, lazy)
+**Auto-sync**: Documentation fetches on first skill load (transparent, lazy)
 **Hook**: Auto-suggests skill when you ask Claude Code questions
 **Scripts**: Skill creation helpers (init, validate, package)
 
@@ -25,9 +25,11 @@ Official Claude Code documentation access with skill creation tools.
 ```bash
 /plugin install claude-code-knowledge@codethread-plugins
 
-# Install dependencies (one-time)
-cd ~/.claude/plugins/claude-code-knowledge/hooks && bun install
-cd ~/.claude/plugins/claude-code-knowledge/skills/claude-code-knowledge/scripts && bun install
+# Install hook dependencies (required)
+cd ~/.claude/plugins/marketplaces/codethread-plugins/plugins/claude-code-knowledge/hooks && bun install
+
+# Install script dependencies (optional, for skill creation tools)
+cd ~/.claude/plugins/marketplaces/codethread-plugins/plugins/claude-code-knowledge/skills/claude-code-knowledge/scripts && bun install
 ```
 
 ### Use

@@ -226,9 +226,9 @@ UserPromptSubmit hook that proactively suggests the skill when Claude Code topic
 - Runs on `UserPromptSubmit` event before Claude processes prompts
 - Analyzes user prompts for Claude Code-related keywords
 - Detects Claude Code-related questions using pattern matching
-- **Only suggests once per session** using session cache tracking
-- Session cache stored at `~/.local/cache/codethread-plugins/claude-code-knowledge/<normalized-cwd>/<session-id>.json`
-- Injects contextual suggestion to load the skill via stdout
+- **Only suggests once per session** using shared session cache utility
+- Session cache: `~/.local/cache/codethread-plugins/claude-code-knowledge/<normalized-cwd>/<session-id>.json`
+- Injects "ESSENTIAL SKILL" directive that causes Claude to automatically load the skill
 - Improves accuracy by catching edge cases the model might miss
 
 **Detection patterns**:
@@ -326,8 +326,8 @@ The plugin uses four mechanisms working together:
 **UserPromptSubmit Hook Path** (Context Injection):
 1. User submits prompt with Claude Code keywords
 2. UserPromptSubmit hook (claude-code-prompt.ts) detects the question
-3. Hook injects contextual suggestion to load the skill
-4. Claude sees the suggestion and follows the model-invoked path above
+3. Hook injects "ESSENTIAL SKILL" directive (not just a suggestion)
+4. Claude automatically loads the skill and follows the model-invoked path above
 
 **skill-rules.json Path** (Pattern Matching):
 1. User prompt matches keywords or intentPatterns in skill-rules.json
@@ -477,6 +477,15 @@ All scripts have been migrated from Python and Bash to Bun TypeScript:
 
 ## Version History
 
+- **2.5.0** (2025-11-13): Fixed Hook Suggestion Directive & Refactored to Shared Utilities
+  - Changed UserPromptSubmit hook output from "RECOMMENDED SKILL" to "ESSENTIAL SKILL"
+  - Ensures Claude automatically loads the skill when Claude Code questions detected
+  - Refactored to use shared `utils/session-cache` utility for consistency
+  - Session cache now marketplace-scoped: `~/.local/cache/codethread-plugins/claude-code-knowledge/`
+  - Added package.json files for hooks and scripts directories
+  - Hook dependencies: fast-xml-parser, @anthropic-ai/claude-agent-sdk, @types/bun
+  - Script dependencies: @types/bun
+
 - **2.4.0** (2025-11-11): Parallel Documentation Fetching
   - Refactored hook to fetch all documentation pages in parallel
   - Added concurrency control (10 concurrent downloads)
@@ -490,7 +499,7 @@ All scripts have been migrated from Python and Bash to Bun TypeScript:
   - Hook now fetches directly from docs.anthropic.com (no external scripts)
   - Removed fetch_docs.ts and sync_docs.ts from scripts directory
   - Skill directory only contains browsing tools (list_topics.ts) and skill-creator helpers
-  - Hook dependencies moved to hooks/package.json (fast-xml-parser)
+  - Hook dependencies moved to hooks/package.json (initially just fast-xml-parser, later expanded)
   - Cleaner separation: hooks handle fetching, skill handles reading
 
 - **2.2.0** (2025-11-11): Transparent Auto-Sync with PreToolUse Hook

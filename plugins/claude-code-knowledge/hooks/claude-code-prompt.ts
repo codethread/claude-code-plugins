@@ -1,8 +1,7 @@
 #!/usr/bin/env bun
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { homedir } from 'node:os';
-import { join } from 'node:path';
+import { readFileSync } from 'node:fs';
 import type { SyncHookJSONOutput, UserPromptSubmitHookInput } from '@anthropic-ai/claude-agent-sdk';
+import { readSessionCache, writeSessionCache } from '../../../utils/session-cache';
 
 interface SessionCache {
 	knowledge_suggested: boolean;
@@ -81,26 +80,21 @@ async function main() {
 		// Generate context injection if match found
 		if (isMatch) {
 			// Check session cache - only suggest once per session
-			const normalizedCwd = data.cwd.replace(/^\//, '').replace(/\//g, '-');
-			const cacheDir = join(
-				homedir(),
-				'.local/cache/codethread-plugins/claude-code-knowledge',
-				normalizedCwd
+			const cache = readSessionCache<SessionCache>(
+				'claude-code-knowledge',
+				data.cwd,
+				data.session_id
 			);
-			const sessionFile = join(cacheDir, `${data.session_id}.json`);
 
 			// If already suggested this session, exit silently
-			if (existsSync(sessionFile)) {
-				const session: SessionCache = JSON.parse(readFileSync(sessionFile, 'utf-8'));
-				if (session.knowledge_suggested) {
-					process.exit(0);
-				}
+			if (cache?.knowledge_suggested) {
+				process.exit(0);
 			}
 
 			// Use JSON output method for explicit control
 			let context = '<plugin-claude-code-knowledge-suggestion>\n';
 			context += `Detected Claude Code question: ${matchReason}\n\n`;
-			context += 'RECOMMENDED SKILL:\n';
+			context += 'ESSENTIAL SKILL:\n';
 			context += '  → claude-code-knowledge:claude-code-knowledge\n';
 			context += '</plugin-claude-code-knowledge-suggestion>';
 
@@ -115,13 +109,11 @@ async function main() {
 			console.log(JSON.stringify(output));
 
 			// Mark as suggested in session cache
-			mkdirSync(cacheDir, { recursive: true });
-			const sessionCache: SessionCache = {
+			writeSessionCache<SessionCache>('claude-code-knowledge', data.cwd, data.session_id, {
 				knowledge_suggested: true,
 				first_triggered: new Date().toISOString(),
 				match_reason: matchReason,
-			};
-			writeFileSync(sessionFile, JSON.stringify(sessionCache, null, 2));
+			});
 		}
 
 		// Exit 0 = success, additionalContext is added to context
