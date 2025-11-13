@@ -15,9 +15,10 @@ This directory contains Claude Code hooks for the plugin marketplace project.
 Ensures all relevant documentation is updated before ending a Claude Code session. When you attempt to stop, the hook:
 
 1. Checks if it has already run this session (via `stop_hook_active` flag)
-2. If not run, identifies all modified files in the git working directory
-3. For each modified file, finds all `README.md` and `CLAUDE.md` files from that file's directory up to the project root
-4. Blocks the stop and presents a checklist of documentation to verify
+2. Checks if enough time has elapsed since last trigger (3-minute delay prevents excessive interruptions)
+3. If time elapsed, identifies all modified files in the git working directory
+4. For each modified file, finds all `README.md` and `CLAUDE.md` files from that file's directory up to the project root
+5. Blocks the stop and presents a checklist of documentation to verify
 
 #### How It Works
 
@@ -66,14 +67,14 @@ Action required:
 
 #### Behavior Details
 
-**Runs Once Per Session:**
-The hook only blocks the first time you attempt to stop. After Claude reviews the documentation, subsequent stop attempts proceed without blocking.
+**Time-Based Filtering:**
+The hook implements a 3-minute delay to prevent excessive interruptions while ensuring documentation is reviewed.
 
-**How "Once Per Session" Works:**
-- Creates a marker file: `.stop-hook-{session_id}.marker` in the transcript directory
-- File contains timestamp of when hook first ran
-- Subsequent stops in same session detect marker file and exit silently
-- Marker file is cleaned up when transcript is removed (typically after session ends)
+**How Time Filtering Works:**
+- Uses shared session cache utility from `utils/session-cache.ts` (see `utils/CLAUDE.md` for details)
+- Calls `shouldTriggerBasedOnTime()` to check if 3 minutes have elapsed
+- Calls `markTriggered()` to record timestamp and metadata after each trigger
+- Cache persists for the session but is scoped per working directory
 
 **Smart Detection:**
 - Only triggers if files are actually modified
@@ -149,10 +150,11 @@ The hook is registered in `hooks.json`:
 - Ensure Bun is installed and available in PATH
 - Check Claude Code recognizes the hook: hooks should be in project or plugin root
 
-**Hook fires every time:**
-- The `stop_hook_active` environment variable may not persist between hook calls
-- This is expected behavior - environment variables don't persist across hook invocations
-- Current implementation blocks once by design
+**Hook fires too frequently:**
+- Check the 3-minute delay is working by verifying session cache exists
+- Session cache location: `~/.local/cache/personal-configs-plugins/stop-doc-check/<normalized-cwd>/<session-id>.json`
+- Cache should contain `last_triggered` timestamp
+- If cache is missing or invalid, hook will trigger immediately
 
 **No documentation listed:**
 - Verify files are actually modified: `git status`

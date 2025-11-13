@@ -186,116 +186,116 @@ Note: This is a text placeholder. Actual assets can be any file type.
 `;
 
 function titleCaseSkillName(skillName: string): string {
-  return skillName
-    .split('-')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+	return skillName
+		.split('-')
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ');
 }
 
 async function initSkill(skillName: string, path: string): Promise<string | null> {
-  // Determine skill directory path
-  const skillDir = join(path, skillName);
+	// Determine skill directory path
+	const skillDir = join(path, skillName);
 
-  // Check if directory already exists
-  if (existsSync(skillDir)) {
-    console.log(`❌ Error: Skill directory already exists: ${skillDir}`);
-    return null;
-  }
+	// Check if directory already exists
+	if (existsSync(skillDir)) {
+		console.log(`❌ Error: Skill directory already exists: ${skillDir}`);
+		return null;
+	}
 
-  // Create skill directory
-  try {
-    await mkdir(skillDir, { recursive: true });
-    console.log(`✅ Created skill directory: ${skillDir}`);
-  } catch (e) {
-    console.log(`❌ Error creating directory: ${e}`);
-    return null;
-  }
+	// Create skill directory
+	try {
+		await mkdir(skillDir, { recursive: true });
+		console.log(`✅ Created skill directory: ${skillDir}`);
+	} catch (e) {
+		console.log(`❌ Error creating directory: ${e}`);
+		return null;
+	}
 
-  // Create SKILL.md from template
-  const skillTitle = titleCaseSkillName(skillName);
-  const skillContent = SKILL_TEMPLATE(skillName, skillTitle);
+	// Create SKILL.md from template
+	const skillTitle = titleCaseSkillName(skillName);
+	const skillContent = SKILL_TEMPLATE(skillName, skillTitle);
 
-  const skillMdPath = join(skillDir, 'SKILL.md');
-  try {
-    await writeFile(skillMdPath, skillContent);
-    console.log('✅ Created SKILL.md');
-  } catch (e) {
-    console.log(`❌ Error creating SKILL.md: ${e}`);
-    return null;
-  }
+	const skillMdPath = join(skillDir, 'SKILL.md');
+	try {
+		await writeFile(skillMdPath, skillContent);
+		console.log('✅ Created SKILL.md');
+	} catch (e) {
+		console.log(`❌ Error creating SKILL.md: ${e}`);
+		return null;
+	}
 
-  // Create resource directories with example files
-  try {
-    // Create scripts/ directory with example script
-    const scriptsDir = join(skillDir, 'scripts');
-    await mkdir(scriptsDir, { recursive: true });
+	// Create resource directories with example files
+	try {
+		// Create scripts/ directory with example script
+		const scriptsDir = join(skillDir, 'scripts');
+		await mkdir(scriptsDir, { recursive: true });
 
-    const exampleScript = join(scriptsDir, 'example.py');
-    await writeFile(exampleScript, EXAMPLE_SCRIPT(skillName));
-    await chmod(exampleScript, 0o755);
-    console.log('✅ Created scripts/example.py');
+		const exampleScript = join(scriptsDir, 'example.py');
+		await writeFile(exampleScript, EXAMPLE_SCRIPT(skillName));
+		await chmod(exampleScript, 0o755);
+		console.log('✅ Created scripts/example.py');
 
-    // Create references/ directory with example reference doc
-    const referencesDir = join(skillDir, 'references');
-    await mkdir(referencesDir, { recursive: true });
+		// Create references/ directory with example reference doc
+		const referencesDir = join(skillDir, 'references');
+		await mkdir(referencesDir, { recursive: true });
 
-    const exampleReference = join(referencesDir, 'api_reference.md');
-    await writeFile(exampleReference, EXAMPLE_REFERENCE(skillTitle));
-    console.log('✅ Created references/api_reference.md');
+		const exampleReference = join(referencesDir, 'api_reference.md');
+		await writeFile(exampleReference, EXAMPLE_REFERENCE(skillTitle));
+		console.log('✅ Created references/api_reference.md');
 
-    // Create assets/ directory with example asset placeholder
-    const assetsDir = join(skillDir, 'assets');
-    await mkdir(assetsDir, { recursive: true });
+		// Create assets/ directory with example asset placeholder
+		const assetsDir = join(skillDir, 'assets');
+		await mkdir(assetsDir, { recursive: true });
 
-    const exampleAsset = join(assetsDir, 'example_asset.txt');
-    await writeFile(exampleAsset, EXAMPLE_ASSET);
-    console.log('✅ Created assets/example_asset.txt');
-  } catch (e) {
-    console.log(`❌ Error creating resource directories: ${e}`);
-    return null;
-  }
+		const exampleAsset = join(assetsDir, 'example_asset.txt');
+		await writeFile(exampleAsset, EXAMPLE_ASSET);
+		console.log('✅ Created assets/example_asset.txt');
+	} catch (e) {
+		console.log(`❌ Error creating resource directories: ${e}`);
+		return null;
+	}
 
-  // Print next steps
-  console.log(`\n✅ Skill '${skillName}' initialized successfully at ${skillDir}`);
-  console.log('\nNext steps:');
-  console.log('1. Edit SKILL.md to complete the TODO items and update the description');
-  console.log('2. Customize or delete the example files in scripts/, references/, and assets/');
-  console.log('3. Run the validator when ready to check the skill structure');
+	// Print next steps
+	console.log(`\n✅ Skill '${skillName}' initialized successfully at ${skillDir}`);
+	console.log('\nNext steps:');
+	console.log('1. Edit SKILL.md to complete the TODO items and update the description');
+	console.log('2. Customize or delete the example files in scripts/, references/, and assets/');
+	console.log('3. Run the validator when ready to check the skill structure');
 
-  return skillDir;
+	return skillDir;
 }
 
 async function main() {
-  const args = process.argv.slice(2);
+	const args = process.argv.slice(2);
 
-  if (args.length < 3 || args[1] !== '--path') {
-    console.log('Usage: init_skill.ts <skill-name> --path <path>');
-    console.log('\nSkill name requirements:');
-    console.log("  - Hyphen-case identifier (e.g., 'data-analyzer')");
-    console.log('  - Lowercase letters, digits, and hyphens only');
-    console.log('  - Max 40 characters');
-    console.log('  - Must match directory name exactly');
-    console.log('\nExamples:');
-    console.log('  init_skill.ts my-new-skill --path skills/public');
-    console.log('  init_skill.ts my-api-helper --path skills/private');
-    console.log('  init_skill.ts custom-skill --path /custom/location');
-    process.exit(1);
-  }
+	if (args.length < 3 || args[1] !== '--path') {
+		console.log('Usage: init_skill.ts <skill-name> --path <path>');
+		console.log('\nSkill name requirements:');
+		console.log("  - Hyphen-case identifier (e.g., 'data-analyzer')");
+		console.log('  - Lowercase letters, digits, and hyphens only');
+		console.log('  - Max 40 characters');
+		console.log('  - Must match directory name exactly');
+		console.log('\nExamples:');
+		console.log('  init_skill.ts my-new-skill --path skills/public');
+		console.log('  init_skill.ts my-api-helper --path skills/private');
+		console.log('  init_skill.ts custom-skill --path /custom/location');
+		process.exit(1);
+	}
 
-  const skillName = args[0];
-  const path = args[2];
+	const skillName = args[0];
+	const path = args[2];
 
-  console.log(`🚀 Initializing skill: ${skillName}`);
-  console.log(`   Location: ${path}`);
-  console.log();
+	console.log(`🚀 Initializing skill: ${skillName}`);
+	console.log(`   Location: ${path}`);
+	console.log();
 
-  const result = await initSkill(skillName, path);
+	const result = await initSkill(skillName, path);
 
-  if (result) {
-    process.exit(0);
-  } else {
-    process.exit(1);
-  }
+	if (result) {
+		process.exit(0);
+	} else {
+		process.exit(1);
+	}
 }
 
 main();

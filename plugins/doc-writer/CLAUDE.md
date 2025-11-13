@@ -43,12 +43,15 @@ plugins/doc-writer/
 **Hook behavior:**
 - Runs on `PostToolUse` event after Write, Edit, or MultiEdit tools execute
 - Detects `.md` file modifications (case-insensitive)
-- **Only suggests once per session** using session cache tracking
-- Session cache stored at `~/.local/cache/personal-configs-plugins/doc-writer/<normalized-cwd>/<session-id>.json`
+- **Only suggests once per session** using shared session cache utility (see `utils/CLAUDE.md`)
 - Provides contextual suggestions to Claude via `hookSpecificOutput.additionalContext`
 - Suggests `doc-writer:writing-documentation` skill for writing
 - Suggests `doc-writer:docs-reviewer` agent for review
 - Non-intrusive - Claude receives context but doesn't announce it unless relevant or asked
+
+**Implementation details:**
+- Uses `readSessionCache()` and `writeSessionCache()` from `utils/session-cache.ts`
+- Cache contains: `doc_writer_suggested`, `first_triggered`, `triggered_by` fields
 
 **Testing the hook:**
 

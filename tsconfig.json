@@ -24,6 +24,6 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["plugins/**/*.ts", ".claude/hooks/**/*.ts"],
+  "include": ["plugins/**/*.ts", ".claude/hooks/**/*.ts", "utils/**/*.ts"],
   "exclude": ["node_modules"]
 }

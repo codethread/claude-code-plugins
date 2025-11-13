@@ -3,8 +3,11 @@
 /**
  * Stop Hook: Documentation Check
  *
- * Blocks the stop event once per session to ensure all relevant documentation
+ * Blocks the stop event to ensure all relevant documentation
  * has been updated for any modified files.
+ *
+ * Time-based filtering: Only triggers once every 3 minutes per session
+ * to avoid excessive interruptions while still ensuring docs are updated.
  *
  * For each changed file, traverses from the file's directory up to the project
  * root, identifying all README.md and CLAUDE.md files that may need updating.
@@ -17,6 +20,13 @@ import type {
 import { execSync } from "child_process";
 import { existsSync } from "fs";
 import { dirname, join, relative } from "path";
+import {
+	shouldTriggerBasedOnTime,
+	markTriggered,
+} from "../../utils/session-cache";
+
+const PLUGIN_NAME = "stop-doc-check";
+const DELAY_MINUTES = 3;
 
 // Read input from stdin
 const input = await Bun.stdin.text();
@@ -25,6 +35,11 @@ const hookInput: StopHookInput = JSON.parse(input);
 // If hook already ran this session (continuing after previous block), allow stop
 if (hookInput.stop_hook_active) {
   process.exit(0);
+}
+
+// Check if enough time has elapsed since last trigger
+if (!shouldTriggerBasedOnTime(PLUGIN_NAME, hookInput.cwd, hookInput.session_id, DELAY_MINUTES)) {
+  process.exit(0); // Not enough time elapsed, allow stop
 }
 
 // Get modified files from git
@@ -115,6 +130,12 @@ const output: SyncHookJSONOutput = {
 	decision: "block",
 	reason: additionalContext.trim(),
 };
+
+// Mark this trigger with timestamp and metadata
+markTriggered(PLUGIN_NAME, hookInput.cwd, hookInput.session_id, {
+	modified_files_count: modifiedFiles.length,
+	doc_files_count: docFilesToCheck.size,
+});
 
 console.log(JSON.stringify(output, null, 2));
 process.exit(0);

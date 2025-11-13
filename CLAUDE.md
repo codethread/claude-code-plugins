@@ -23,9 +23,18 @@ bun run lint # alias: biome lint --fix --unsafe .
 
 - `.claude-plugin/marketplace.json` - Marketplace catalog that registers all available plugins
 - `plugins/` - Directory containing individual plugin implementations
+- `utils/` - Shared utilities for plugin and hook development (see `utils/CLAUDE.md`)
 - Each plugin has:
   - `README.md` (user guide - VERY brief, "What", "Why", "How")
   - `CLAUDE.md` (maintainer guide - comprehensive, **KEEP UPDATED WITH EACH CHANGE**)
+
+### Shared Utilities
+
+**IMPORTANT**: Before building new functionality, check `utils/` for existing utilities to avoid duplication.
+
+See `utils/CLAUDE.md` for detailed documentation of available utilities including:
+- Session cache management (time-based filtering, session state tracking)
+- Future shared utilities as they're added
 
 ## Creating New Plugins
 

@@ -4,85 +4,85 @@ import { basename, dirname, join } from 'node:path';
 import type { PostToolUseHookInput, SyncHookJSONOutput } from '@anthropic-ai/claude-agent-sdk';
 
 async function main() {
-  try {
-    // Read input from stdin
-    const input = readFileSync(0, 'utf-8');
-    const data: PostToolUseHookInput = JSON.parse(input);
+	try {
+		// Read input from stdin
+		const input = readFileSync(0, 'utf-8');
+		const data: PostToolUseHookInput = JSON.parse(input);
 
-    // Check if the tool was Read
-    if (data.tool_name !== 'Read') {
-      process.exit(0);
-    }
+		// Check if the tool was Read
+		if (data.tool_name !== 'Read') {
+			process.exit(0);
+		}
 
-    // Get the file path from tool input
-    const toolInput = data.tool_input as Record<string, unknown>;
-    const filePath = toolInput.file_path as string;
-    if (!filePath) {
-      process.exit(0);
-    }
+		// Get the file path from tool input
+		const toolInput = data.tool_input as Record<string, unknown>;
+		const filePath = toolInput.file_path as string;
+		if (!filePath) {
+			process.exit(0);
+		}
 
-    // Check if it's a TypeScript file (but not already a test file)
-    const isTypeScriptFile =
-      (filePath.endsWith('.ts') || filePath.endsWith('.tsx')) &&
-      !filePath.endsWith('.test.ts') &&
-      !filePath.endsWith('.test.tsx') &&
-      !filePath.endsWith('.spec.ts') &&
-      !filePath.endsWith('.spec.tsx');
+		// Check if it's a TypeScript file (but not already a test file)
+		const isTypeScriptFile =
+			(filePath.endsWith('.ts') || filePath.endsWith('.tsx')) &&
+			!filePath.endsWith('.test.ts') &&
+			!filePath.endsWith('.test.tsx') &&
+			!filePath.endsWith('.spec.ts') &&
+			!filePath.endsWith('.spec.tsx');
 
-    if (!isTypeScriptFile) {
-      process.exit(0);
-    }
+		if (!isTypeScriptFile) {
+			process.exit(0);
+		}
 
-    // Look for corresponding test files
-    const dir = dirname(filePath);
-    const file = basename(filePath);
-    const nameWithoutExt = file.replace(/\.tsx?$/, '');
+		// Look for corresponding test files
+		const dir = dirname(filePath);
+		const file = basename(filePath);
+		const nameWithoutExt = file.replace(/\.tsx?$/, '');
 
-    const testPatterns = [
-      `${nameWithoutExt}.test.ts`,
-      `${nameWithoutExt}.test.tsx`,
-      `${nameWithoutExt}.spec.ts`,
-      `${nameWithoutExt}.spec.tsx`,
-    ];
+		const testPatterns = [
+			`${nameWithoutExt}.test.ts`,
+			`${nameWithoutExt}.test.tsx`,
+			`${nameWithoutExt}.spec.ts`,
+			`${nameWithoutExt}.spec.tsx`,
+		];
 
-    const foundTestFiles: string[] = [];
-    for (const pattern of testPatterns) {
-      const testPath = join(dir, pattern);
-      if (existsSync(testPath)) {
-        foundTestFiles.push(testPath);
-      }
-    }
+		const foundTestFiles: string[] = [];
+		for (const pattern of testPatterns) {
+			const testPath = join(dir, pattern);
+			if (existsSync(testPath)) {
+				foundTestFiles.push(testPath);
+			}
+		}
 
-    // If test files were found, suggest them
-    if (foundTestFiles.length > 0) {
-      let context = '<plugin-langs-suggestion>\n';
-      context += `Source file: ${filePath}\n\n`;
-      context += 'Related test file(s):\n';
-      for (const testFile of foundTestFiles) {
-        context += `  → ${testFile}\n`;
-      }
-      context += '</plugin-langs-suggestion>';
+		// If test files were found, suggest them
+		if (foundTestFiles.length > 0) {
+			let context = '<plugin-langs-suggestion>\n';
+			context += `Source file: ${filePath}\n\n`;
+			context += 'Related test file(s):\n';
+			for (const testFile of foundTestFiles) {
+				context += `  → ${testFile}\n`;
+			}
+			context += '</plugin-langs-suggestion>';
 
-      // Return JSON with hookSpecificOutput for PostToolUse
-      const output: SyncHookJSONOutput = {
-        hookSpecificOutput: {
-          hookEventName: 'PostToolUse',
-          additionalContext: context,
-        },
-      };
+			// Return JSON with hookSpecificOutput for PostToolUse
+			const output: SyncHookJSONOutput = {
+				hookSpecificOutput: {
+					hookEventName: 'PostToolUse',
+					additionalContext: context,
+				},
+			};
 
-      console.log(JSON.stringify(output));
-    }
+			console.log(JSON.stringify(output));
+		}
 
-    // Exit 0 = success
-    process.exit(0);
-  } catch (err) {
-    console.error('Error in test-file-suggest hook:', err);
-    process.exit(1);
-  }
+		// Exit 0 = success
+		process.exit(0);
+	} catch (err) {
+		console.error('Error in test-file-suggest hook:', err);
+		process.exit(1);
+	}
 }
 
 main().catch((err) => {
-  console.error('Uncaught error:', err);
-  process.exit(1);
+	console.error('Uncaught error:', err);
+	process.exit(1);
 });
