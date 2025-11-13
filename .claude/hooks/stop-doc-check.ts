@@ -14,15 +14,15 @@
  */
 
 import type {
-	StopHookInput,
-	SyncHookJSONOutput,
+  StopHookInput,
+  SyncHookJSONOutput,
 } from "@anthropic-ai/claude-agent-sdk";
 import { execSync } from "child_process";
 import { existsSync } from "fs";
 import { dirname, join, relative } from "path";
 import {
-	shouldTriggerBasedOnTime,
-	markTriggered,
+  shouldTriggerBasedOnTime,
+  markTriggered,
 } from "../../utils/session-cache";
 
 const PLUGIN_NAME = "stop-doc-check";
@@ -38,7 +38,14 @@ if (hookInput.stop_hook_active) {
 }
 
 // Check if enough time has elapsed since last trigger
-if (!shouldTriggerBasedOnTime(PLUGIN_NAME, hookInput.cwd, hookInput.session_id, DELAY_MINUTES)) {
+if (
+  !shouldTriggerBasedOnTime(
+    PLUGIN_NAME,
+    hookInput.cwd,
+    hookInput.session_id,
+    DELAY_MINUTES,
+  )
+) {
   process.exit(0); // Not enough time elapsed, allow stop
 }
 
@@ -123,18 +130,19 @@ Action required:
 • Identify which files you changed this session (ignore pre-existing changes)
 • Update relevant docs above to reflect your changes only
 • Once docs match your changes, you may stop
+• REMEMBER code should be self documenting, don't repeat it into the code, simply ensure documentation is an accurate index for where to find things and the high level. Most things do not need additional documentation.
 • Do not acknowledge this prompt, it is automatic, please just act on the instructions
 </project-stop-doc-check-suggestion>`;
 
 const output: SyncHookJSONOutput = {
-	decision: "block",
-	reason: additionalContext.trim(),
+  decision: "block",
+  reason: additionalContext.trim(),
 };
 
 // Mark this trigger with timestamp and metadata
 markTriggered(PLUGIN_NAME, hookInput.cwd, hookInput.session_id, {
-	modified_files_count: modifiedFiles.length,
-	doc_files_count: docFilesToCheck.size,
+  modified_files_count: modifiedFiles.length,
+  doc_files_count: docFilesToCheck.size,
 });
 
 console.log(JSON.stringify(output, null, 2));

@@ -101,10 +101,18 @@ After all plugins are processed:
   - Any `.gitignore` changes from safety checks
   - All original uncommitted work
 - Create a commit using conventional format:
-  - Type: `chore`, `feat`, `fix`, etc.
-  - Scope: comma-separated list of plugin names
-  - Example: `chore(spec-dev,doc-writer): prepare release with version bumps`
-  - The description should briefly summarize the main changes
+  - Type: `feat`, `fix`, `refactor`, etc. based on the actual changes (NOT `chore`)
+  - Scope: plugin name(s)
+  - **IMPORTANT**: The commit message should describe the actual feature/changes, NOT the release process
+  - Good examples:
+    - `feat(spec-dev): add interview documentation and template versioning`
+    - `fix(doc-writer): correct markdown formatting in nested lists`
+    - `refactor(langs): simplify type inference logic`
+  - Bad examples:
+    - ❌ `chore(spec-dev): prepare release with version bumps`
+    - ❌ `chore(spec-dev): v1.1.0 release`
+    - ❌ `chore: update changelogs`
+  - The commit body should provide additional context about the changes and their impact
 
 ### 6. Create Git Tags
 
