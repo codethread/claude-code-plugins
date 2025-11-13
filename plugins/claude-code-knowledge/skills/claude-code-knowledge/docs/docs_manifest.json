@@ -15,8 +15,8 @@
     "setup.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/setup",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/setup.md",
-      "hash": "138f0e9644af27a7c995b60baa943e0dc0b022cf261f94fb72f62a78949001f0",
-      "last_updated": "2025-11-09T20:17:14.898Z"
+      "hash": "68551853fb299f0d8277a3f92a4ee30cefd6760c4c54e81e6cfc158971a10245",
+      "last_updated": "2025-11-13T07:23:20.251Z"
     },
     "cli-reference.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/cli-reference",
@@ -189,8 +189,8 @@
     "claude-code-on-the-web.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/claude-code-on-the-web",
       "original_md_url": "https://docs.claude.com/en/docs/claude-code/claude-code-on-the-web.md",
-      "hash": "8ec1a25cb251bb8114d4a4731ed446bd19b3bc6e23aead8621e0ff59ed9c1f17",
-      "last_updated": "2025-11-09T20:17:32.576Z"
+      "hash": "e9e191d03031ad481d30645bd1f86dd19ad59d9319be4e73cfd6106c88b96d95",
+      "last_updated": "2025-11-13T07:23:22.695Z"
     },
     "third-party-integrations.md": {
       "original_url": "https://docs.claude.com/en/docs/claude-code/third-party-integrations",
@@ -273,8 +273,8 @@
     }
   },
   "fetch_metadata": {
-    "last_fetch_completed": "2025-11-11T05:43:51.800Z",
-    "fetch_duration_seconds": 34.553,
+    "last_fetch_completed": "2025-11-13T07:23:23.439Z",
+    "fetch_duration_seconds": 7.318,
     "total_pages_discovered": 44,
     "pages_fetched_successfully": 45,
     "pages_failed": 0,
@@ -283,7 +283,7 @@
     "base_url": "https://docs.claude.com",
     "total_files": 45
   },
-  "last_updated": "2025-11-11T05:43:51.800Z",
+  "last_updated": "2025-11-13T07:23:23.440Z",
   "source": "https://docs.anthropic.com/en/docs/claude-code/",
   "skill": "claude-code-knowledge"
 }

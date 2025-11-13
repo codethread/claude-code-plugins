@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.2.0 - 2025-11-13
+
+- Improved skill discoverability by replacing restrictive description with clear capability statement
+- Ruthlessly simplified SKILL.md documentation (190 lines → 114 lines, 40% reduction)
+- Enhanced clarity through depersonified language and streamlined workflows
+- Better alignment with Claude Code Skills best practices while preserving essential coordination intelligence
+
 ## v1.1.0 - 2025-11-13
 
 - Added interview documentation system: captures user's original prompt and Q&A exchanges in `interview.md`

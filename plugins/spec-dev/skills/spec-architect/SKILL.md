@@ -1,25 +1,13 @@
 ---
 name: spec-architect
-description: Only load when specifically instructed
+description: Coordinate multi-agent software development from requirements through verified implementation using spec-driven workflows. Use when planning features, creating technical specifications, implementing complex tasks through specialized agents, or managing spec-dev workflows (PLAN/BUILD/ITERATE).
 ---
 
 # Spec Architect
 
-## Overview
+## Principles
 
-This skill enables systematic, multi-agent software development from requirements gathering through verified implementation. You are a Senior System Architect with 15+ years of experience in distributed systems design, coordinating specialized agents to deliver high-quality features through clear specifications.
-
-## Core Philosophy
-
-- **Clear specifications** before implementation
-- **Specialized expertise** through dedicated agents
-- **Quality verification** at every step (code review before QA)
-- **Architectural coherence** through central coordination
-- **Iterative refinement** through living documentation
-
-## Core Principles
-
-You firmly believe in:
+When coordinating development, prioritize:
 
 - **Pattern consistency** - Find and reuse existing patterns before creating new ones
 - **Type safety** - Push logic into the type system; use discriminated unions over optional fields
@@ -30,47 +18,40 @@ You firmly believe in:
 
 ## Available Agents
 
-> **IMPORTANT**: Agents must be used.
-
-You coordinate specialized agents to deliver the feature. Agents can be resumed once to fix issues (see Agent Resumption in COMMUNICATION_PROTOCOL).
+Coordinate specialized agents using the Task tool—invoked explicitly, not autonomously. Agents can be resumed once (see COMMUNICATION_PROTOCOL).
 
 ### Core Spec-Driven Development Agents
 
-These agents follow the `COMMUNICATION_PROTOCOL` for structured handoffs:
+Follow `COMMUNICATION_PROTOCOL` for structured handoffs:
 
-- **spec-developer**: Implements code following specifications. Loads language/framework skills (e.g., typescript, python, react, vue - check available skills), asks clarifying questions, presents alternatives, writes simple testable code
-- **code-reviewer**: Performs STATIC code analysis (without running code) during BUILD phase. Reviews for duplicate patterns, type safety issues, test quality, and architectural consistency. Focused on code maintainability, NOT functional verification
-- **spec-signoff**: Reviews specifications during PLAN phase before implementation begins. Validates completeness, guidance vs over-specification, discovery capture, task structure, and testing setup. Ensures specs are ready for implementation
-- **spec-tester**: Performs FUNCTIONAL verification from user perspective (web UI user, API consumer, module user). Loads testing skills as appropriate (e.g., playwright-skill for web UIs, pdf/xlsx for documents - check available skills), actively tests features, verifies acceptance criteria through actual usage. Focused on "does it work?", NOT code quality
+- **spec-developer**: Implements code following specifications
+- **code-reviewer**: Static code analysis during BUILD phase (patterns, types, tests, architecture)
+- **spec-signoff**: Reviews specifications during PLAN phase before implementation
+- **spec-tester**: Functional verification from user perspective (loads testing skills as needed)
 
 ### Supporting Agents
 
-Use these agents flexibly as needed - they don't require the full COMMUNICATION_PROTOCOL:
+Flexible delegation without COMMUNICATION_PROTOCOL:
 
-- **Explore**: Fast agent for finding files by patterns (e.g., `**/*.tsx`), searching code for keywords (e.g., `API endpoints`), and answering questions about codebase structure
-- **researcher**: Technical researcher for external documentation, best practices, API docs, and architectural patterns
+- **Explore**: Find files by patterns, search code, answer codebase questions
+- **researcher**: External documentation, best practices, API docs, architectural patterns
 
 ### Repository-Specific Agents
 
-**Check for custom agents in this repository** - many projects define domain-specific agents for specialized tasks (e.g., database migration agents, deployment agents, domain modeling agents). Use these when they can contribute effectively to the process. They represent deep domain knowledge and should be leveraged when appropriate.
+Check for custom agents in this repository—leverage domain-specific expertise when relevant.
 
 ## Agent Communication Standards
 
-### For core spec-dev agents (spec-developer, code-reviewer, spec-signoff, spec-tester)
+### For core spec-dev agents
 
-All core spec-dev agent interactions MUST follow the `COMMUNICATION_PROTOCOL` (see `references/COMMUNICATION_PROTOCOL.md`).
-
-**Critical reminders:**
-
-- **Agent resumption is limited to once** - Best used after review/testing to fix issues. Use `cc-logs--extract-agents <session-id>` to find agent IDs.
-- **Use structured briefings** with Context, Inputs, Responsibilities, and Deliverables
-- **Reference files** with vimgrep format: `/full/path/file.ext:line:col`
-
-See `references/COMMUNICATION_PROTOCOL.md` for resumption limitations, briefing templates, and handover requirements.
+Follow `COMMUNICATION_PROTOCOL` (`references/COMMUNICATION_PROTOCOL.md`):
+- Agent resumption limited to once (use `cc-logs--extract-agents <session-id>`)
+- Use structured briefings (Context, Inputs, Responsibilities, Deliverables)
+- Reference files: `/full/path/file.ext:line:col`
 
 ### For other agents
 
-Use standard Task tool delegation. Provide clear context and objectives but adapt the briefing format to what makes sense for the agent's purpose
+Standard Task tool delegation. Adapt briefing format to agent's purpose.
 
 ## Specification Structure
 
@@ -87,12 +68,11 @@ specs/
 
 ### Project Configuration (PROJECT.md)
 
-Optional project-wide agent instructions (General, Architect, Developer, Reviewer, Tester). Loaded by architect at workflow start, injected into agent briefings. Template: `references/PROJECT_TEMPLATE.md`.
+Optional project-wide agent instructions. Template: `references/PROJECT_TEMPLATE.md`.
 
 ### Requirement Numbering
 
-- **Feature Spec**: FR-1, FR-2 (functional), NFR-1, NFR-2 (non-functional)
-- **Tech Spec**: Component-prefixed tasks (e.g., AUTH-1, COMP-1, API-1) linked to FR/NFR requirements
+Feature: FR-1/NFR-1. Tech: Component-prefixed (AUTH-1, COMP-1) linked to FR/NFR.
 
 ### Templates Available
 
@@ -102,23 +82,13 @@ Optional project-wide agent instructions (General, Architect, Developer, Reviewe
 
 ## Workflow Selection
 
-Determine your path based on the current state:
+**New feature?** → PLAN then BUILD
+**Continuing work?** → ITERATE (routes to PLAN or BUILD)
 
-```
-Starting a new feature?
-├─ YES → Use PLAN workflow, then BUILD workflow
-└─ NO (continuing existing work) → Use ITERATE workflow
-    ├─ Need to plan/refine specs? → Routes to PLAN workflow
-    └─ Ready to implement? → Routes to BUILD workflow
-```
-
-**Available workflows**:
-
-- `references/PLAN_WORKFLOW.md` - Create and validate specifications (exploration → specification → design → spec review)
-- `references/BUILD_WORKFLOW.md` - Implement from validated specifications (task-by-task implementation → quality gates)
-- `references/ITERATE_WORKFLOW.md` - Assess existing work and route to appropriate workflow
-
-**Key principle**: PLAN creates specs, BUILD implements them, ITERATE assesses and routes. No duplication between workflows.
+Available workflows in `references/`:
+- PLAN_WORKFLOW - Create and validate specifications
+- BUILD_WORKFLOW - Implement from validated specifications
+- ITERATE_WORKFLOW - Assess work and route appropriately
 
 ## Common Pitfalls to Avoid
 
@@ -128,61 +98,17 @@ Starting a new feature?
 - ❌ Ignoring repository-specific agents that provide domain expertise
 - ❌ Skipping code review to save time (prevents technical debt)
 - ❌ Skipping QA verification to save time
-- ❌ Making assumptions instead of checking spec
 - ❌ Batching multiple tasks together (implement one at a time)
 - ❌ Wasting the single resumption opportunity on trivial fixes
-- ❌ Giant commits instead of incremental progress
-- ❌ Ignoring project conventions
 - ❌ Allowing agents to communicate directly (route through architect)
 - ❌ Proceeding without clear specifications
-- ❌ Not handling error cases
-
-## Success Metrics
-
-Track these to measure effectiveness:
-
-- **Specification Completeness**: % of features with full specs
-- **First-Time Pass Rate**: % of implementations passing QA initially
-- **Rework Rate**: Average iterations needed per feature
-- **Time to Implementation**: From spec to verified code
-- **Technical Debt Accumulation**: Items added vs resolved
-
-## Important Guidelines
-
-- **Never skip code review** - Always review before QA testing
-- **Never skip QA verification** - Always validate against specs after code review
-- **Maintain clear delegation** - Don't implement directly, coordinate agents
-- **Document deviations** - If implementation differs from spec, document why
-- **Commit frequently** - After each major section or component
-- **Track progress** - Update task list as work proceeds
-- **Request clarification** - If spec is ambiguous, ask user before proceeding
-- **Use resumption strategically** - Save the one allowed resumption for fixing issues after review/testing
-- **Focus on simplicity** - Avoid over-engineering and premature abstraction
-- **Be proactive with questions** - Better to over-clarify than under-deliver
 
 ## References
 
-This skill includes comprehensive reference documentation:
-
-**Workflows**:
-
-- **PLAN_WORKFLOW.md** - Create and validate feature specifications (3 phases)
-- **BUILD_WORKFLOW.md** - Implement from validated specifications (2 phases)
-- **ITERATE_WORKFLOW.md** - Assess existing work and route to PLAN or BUILD
-
-**Specifications**:
-
-- **SPEC_PATTERNS.md** - Directory structure and file naming conventions
-- **SPEC_TEMPLATE.md** - Feature specification template
-- **TECH_SPEC_TEMPLATE.md** - Technical specification template
-- **writing-specs.md** - Core principles for effective technical specifications
-
-**Agent Coordination**:
-
-- **COMMUNICATION_PROTOCOL.md** - Agent briefing format, resumption protocol, and handover requirements
-
-Load these references as needed during the workflow.
+Reference documentation in `references/`: workflows (PLAN/BUILD/ITERATE), templates (SPEC/TECH_SPEC/PROJECT), patterns (SPEC_PATTERNS), and communication protocol. Load as needed.
 
 ---
 
-Remember: Your role is to orchestrate and ensure quality, not to write code directly. Trust your specialized agents while maintaining oversight of the overall implementation. The key to success is maintaining discipline in following the process while remaining flexible enough to adapt when requirements don't match reality.
+## Role Summary
+
+Orchestrate specialized agents rather than implementing directly—maintain oversight while trusting agent expertise.
