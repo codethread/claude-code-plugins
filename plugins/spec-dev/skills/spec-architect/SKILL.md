@@ -44,7 +44,8 @@ Check for custom agents in this repository—leverage domain-specific expertise 
 
 ### For core spec-dev agents
 
-Follow `COMMUNICATION_PROTOCOL` (`references/COMMUNICATION_PROTOCOL.md`):
+Follow [`COMMUNICATION_PROTOCOL`](./references/COMMUNICATION_PROTOCOL.md):
+
 - Agent resumption limited to once (use `cc-logs--extract-agents <session-id>`)
 - Use structured briefings (Context, Inputs, Responsibilities, Deliverables)
 - Reference files: `/full/path/file.ext:line:col`
@@ -55,7 +56,7 @@ Standard Task tool delegation. Adapt briefing format to agent's purpose.
 
 ## Specification Structure
 
-All specifications follow the directory-based `SPEC_PATTERNS` (see `references/SPEC_PATTERNS.md`):
+All specifications follow the directory-based [`SPEC_PATTERNS`](./references/SPEC_PATTERNS.md):
 
 ```
 specs/
@@ -68,7 +69,7 @@ specs/
 
 ### Project Configuration (PROJECT.md)
 
-Optional project-wide agent instructions. Template: `references/PROJECT_TEMPLATE.md`.
+Optional project-wide agent instructions. Template: [`PROJECT_TEMPLATE.md`](./references/PROJECT_TEMPLATE.md).
 
 ### Requirement Numbering
 
@@ -76,19 +77,20 @@ Feature: FR-1/NFR-1. Tech: Component-prefixed (AUTH-1, COMP-1) linked to FR/NFR.
 
 ### Templates Available
 
-- `references/PROJECT_TEMPLATE.md` - Project configuration template (create at `specs/PROJECT.md`)
-- `references/SPEC_TEMPLATE.md` - Feature specification template
-- `references/TECH_SPEC_TEMPLATE.md` - Technical specification template
+- [`PROJECT_TEMPLATE.md`](./references/PROJECT_TEMPLATE.md) - Project configuration template (create at `specs/PROJECT.md`)
+- [`SPEC_TEMPLATE.md`](./references/SPEC_TEMPLATE.md) - Feature specification template
+- [`TECH_SPEC_TEMPLATE.md`](./references/TECH_SPEC_TEMPLATE.md) - Technical specification template
 
 ## Workflow Selection
 
 **New feature?** → PLAN then BUILD
 **Continuing work?** → ITERATE (routes to PLAN or BUILD)
 
-Available workflows in `references/`:
-- PLAN_WORKFLOW - Create and validate specifications
-- BUILD_WORKFLOW - Implement from validated specifications
-- ITERATE_WORKFLOW - Assess work and route appropriately
+Available workflows:
+
+- [`PLAN_WORKFLOW`](./references/PLAN_WORKFLOW.md) - Create and validate specifications
+- [`BUILD_WORKFLOW`](./references/BUILD_WORKFLOW.md) - Implement from validated specifications
+- [`ITERATE_WORKFLOW`](./references/ITERATE_WORKFLOW.md) - Assess work and route appropriately
 
 ## Common Pitfalls to Avoid
 
@@ -102,10 +104,6 @@ Available workflows in `references/`:
 - ❌ Wasting the single resumption opportunity on trivial fixes
 - ❌ Allowing agents to communicate directly (route through architect)
 - ❌ Proceeding without clear specifications
-
-## References
-
-Reference documentation in `references/`: workflows (PLAN/BUILD/ITERATE), templates (SPEC/TECH_SPEC/PROJECT), patterns (SPEC_PATTERNS), and communication protocol. Load as needed.
 
 ---
 
