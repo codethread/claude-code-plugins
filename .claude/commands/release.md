@@ -17,6 +17,8 @@ Validates and prepares plugin releases by checking for accidental commits, ensur
 
 ## Instructions
 
+First run `bun run verify` - DO NOT PROCEED if this fails and offer to fix the issues first
+
 ### 1. Safety Checks for Accidental Commits
 
 Check the git status and staged/committed files for:
