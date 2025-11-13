@@ -26,7 +26,7 @@ OPINIONATED coding patterns for React and TypeScript with automatic test file de
 ### Install
 
 ```bash
-/plugin install langs@personal-configs-plugins
+/plugin install langs@codethread-plugins
 ```
 
 ### Use

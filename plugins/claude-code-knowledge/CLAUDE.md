@@ -227,7 +227,7 @@ UserPromptSubmit hook that proactively suggests the skill when Claude Code topic
 - Analyzes user prompts for Claude Code-related keywords
 - Detects Claude Code-related questions using pattern matching
 - **Only suggests once per session** using session cache tracking
-- Session cache stored at `~/.local/cache/personal-configs-plugins/claude-code-knowledge/<normalized-cwd>/<session-id>.json`
+- Session cache stored at `~/.local/cache/codethread-plugins/claude-code-knowledge/<normalized-cwd>/<session-id>.json`
 - Injects contextual suggestion to load the skill via stdout
 - Improves accuracy by catching edge cases the model might miss
 

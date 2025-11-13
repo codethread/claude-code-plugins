@@ -49,7 +49,7 @@ plugins/spec-dev/
 - **PreCompact** (precompact-handler.sh): Increments compaction counter in session file
 - **SessionStart** (sessionstart-handler.sh): Auto-resumes spec-dev sessions by loading spec-architect skill with ITERATE workflow
 
-**Session files**: `~/.local/cache/personal-configs-plugins/spec-dev/<normalized-cwd>/<session-id>.json`
+**Session files**: `~/.local/cache/codethread-plugins/spec-dev/<normalized-cwd>/<session-id>.json`
 - Contains status, compaction count, cwd, timestamp
 - Created when spec-architect skill loads
 - Enables automatic workflow resumption
@@ -59,29 +59,29 @@ plugins/spec-dev/
 Find sessions:
 ```bash
 cwd=$(pwd | sed 's|^/||' | sed 's|/|-|g')
-ls -la ~/.local/cache/personal-configs-plugins/spec-dev/$cwd/
+ls -la ~/.local/cache/codethread-plugins/spec-dev/$cwd/
 ```
 
 View session file:
 ```bash
 session_id="your-session-id"
 cwd=$(pwd | sed 's|^/||' | sed 's|/|-|g')
-cat ~/.local/cache/personal-configs-plugins/spec-dev/$cwd/$session_id.json
+cat ~/.local/cache/codethread-plugins/spec-dev/$cwd/$session_id.json
 ```
 
 Test hooks:
 ```bash
 # PreToolUse
 echo '{"tool_name":"Skill","tool_input":{"skill":"spec-architect"},"session_id":"test-123","cwd":"'$(pwd)'"}' | \
-  ~/.claude/plugins/marketplaces/personal-configs-plugins/plugins/spec-dev/hooks/skill-pretooluse-handler.sh
+  ~/.claude/plugins/marketplaces/codethread-plugins/plugins/spec-dev/hooks/skill-pretooluse-handler.sh
 
 # PreCompact
 echo '{"session_id":"test-123","cwd":"'$(pwd)'"}' | \
-  ~/.claude/plugins/marketplaces/personal-configs-plugins/plugins/spec-dev/hooks/precompact-handler.sh
+  ~/.claude/plugins/marketplaces/codethread-plugins/plugins/spec-dev/hooks/precompact-handler.sh
 
 # SessionStart
 echo '{"session_id":"test-123","cwd":"'$(pwd)'","source":"startup"}' | \
-  ~/.claude/plugins/marketplaces/personal-configs-plugins/plugins/spec-dev/hooks/sessionstart-handler.sh
+  ~/.claude/plugins/marketplaces/codethread-plugins/plugins/spec-dev/hooks/sessionstart-handler.sh
 ```
 
 ## Key Design Decisions

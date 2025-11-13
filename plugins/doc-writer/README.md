@@ -22,7 +22,7 @@ Provides documentation expertise from React, Rust, Stripe, Twilio docs and autho
 ### Install
 
 ```bash
-/plugin install doc-writer@personal-configs-plugins
+/plugin install doc-writer@codethread-plugins
 ```
 
 ### Use

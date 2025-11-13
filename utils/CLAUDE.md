@@ -16,7 +16,7 @@ Provides consistent session cache management for marketplace plugins and hooks.
 - Consistent cache directory structure across all plugins
 
 **Cache Location:**
-`~/.local/cache/personal-configs-plugins/{plugin-name}/{normalized-cwd}/{session-id}.json`
+`~/.local/cache/codethread-plugins/{plugin-name}/{normalized-cwd}/{session-id}.json`
 
 **Key Functions:**
 

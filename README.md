@@ -26,15 +26,15 @@ Extends Claude Code with:
 /plugin marketplace add git@github.com:codethread/claude-code-plugins.git
 
 # Install dependencies (run once after adding marketplace)
-cd ~/.claude/plugins/marketplaces/personal-configs-plugins
+cd ~/.claude/plugins/marketplaces/codethread-plugins
 bun install
 
 # Install plugins
-/plugin install spec-dev@personal-configs-plugins
-/plugin install doc-writer@personal-configs-plugins
-/plugin install claude-code-knowledge@personal-configs-plugins
-/plugin install mcp-builder@personal-configs-plugins
-/plugin install langs@personal-configs-plugins
+/plugin install spec-dev@codethread-plugins
+/plugin install doc-writer@codethread-plugins
+/plugin install claude-code-knowledge@codethread-plugins
+/plugin install mcp-builder@codethread-plugins
+/plugin install langs@codethread-plugins
 ```
 
 **Note:** The `bun install` command installs all dependencies needed by plugin scripts and hooks. You only need to run this once after adding the marketplace.

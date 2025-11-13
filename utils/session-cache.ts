@@ -8,11 +8,12 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
+import marketplace from '../.claude-plugin/marketplace.json';
 
 /**
  * Base cache directory for all marketplace plugins
  */
-const CACHE_BASE = join(homedir(), '.local/cache/personal-configs-plugins');
+const CACHE_BASE = join(homedir(), '.local/cache', marketplace.name);
 
 /**
  * Normalize a directory path for use in cache filenames

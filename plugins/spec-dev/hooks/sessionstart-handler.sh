@@ -15,7 +15,7 @@ source=$(echo "$input" | jq -r '.source')
 normalized_cwd=$(echo "$cwd" | sed 's|^/||' | sed 's|/|-|g')
 
 # Locate session file
-cache_dir="$HOME/.local/cache/personal-configs-plugins/spec-dev/$normalized_cwd"
+cache_dir="$HOME/.local/cache/codethread-plugins/spec-dev/$normalized_cwd"
 session_file="$cache_dir/$session_id.json"
 
 # Check if session file exists

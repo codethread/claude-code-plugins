@@ -19,7 +19,7 @@ Multi-agent workflow that creates specifications, validates them, implements tas
 ### Install
 
 ```bash
-/plugin install spec-dev@personal-configs-plugins
+/plugin install spec-dev@codethread-plugins
 ```
 
 ### Use

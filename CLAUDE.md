@@ -102,7 +102,7 @@ Brief overview of the command.
 
 ## Context
 
-- injected context: !`bash ~/.claude/plugins/marketplaces/personal-configs-plugins/plugins/<plugin>/scripts/<script>.sh arg`
+- injected context: !`bash ~/.claude/plugins/marketplaces/codethread-plugins/plugins/<plugin>/scripts/<script>.sh arg`
 
 ## Arguments
 
@@ -123,7 +123,7 @@ Brief overview of the command.
 - **Don't repeat syntax**: Only define the arguments once in the Arguments section
 - **Plugin script paths**: When executing bash scripts from plugin directories, use the full marketplace path:
   - Pattern: `~/.claude/plugins/marketplaces/<marketplace-name>/plugins/<plugin-name>/scripts/<script.sh>`
-  - Example: `~/.claude/plugins/marketplaces/personal-configs-plugins/plugins/spec-dev/scripts/get-next-spec-id.sh`
+  - Example: `~/.claude/plugins/marketplaces/codethread-plugins/plugins/spec-dev/scripts/get-next-spec-id.sh`
 
 ## Plugin Documentation Standards
 
@@ -160,7 +160,7 @@ Brief description.
 
 ### Install
 
-/plugin install name@personal-configs-plugins
+/plugin install name@codethread-plugins
 
 ### Use
 

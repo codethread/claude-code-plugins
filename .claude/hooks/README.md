@@ -152,7 +152,7 @@ The hook is registered in `hooks.json`:
 
 **Hook fires too frequently:**
 - Check the 3-minute delay is working by verifying session cache exists
-- Session cache location: `~/.local/cache/personal-configs-plugins/stop-doc-check/<normalized-cwd>/<session-id>.json`
+- Session cache location: `~/.local/cache/codethread-plugins/stop-doc-check/<normalized-cwd>/<session-id>.json`
 - Cache should contain `last_triggered` timestamp
 - If cache is missing or invalid, hook will trigger immediately
 

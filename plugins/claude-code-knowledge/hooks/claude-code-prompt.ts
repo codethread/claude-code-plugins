@@ -84,7 +84,7 @@ async function main() {
 			const normalizedCwd = data.cwd.replace(/^\//, '').replace(/\//g, '-');
 			const cacheDir = join(
 				homedir(),
-				'.local/cache/personal-configs-plugins/claude-code-knowledge',
+				'.local/cache/codethread-plugins/claude-code-knowledge',
 				normalizedCwd
 			);
 			const sessionFile = join(cacheDir, `${data.session_id}.json`);

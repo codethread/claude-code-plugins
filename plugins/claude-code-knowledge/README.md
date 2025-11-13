@@ -23,7 +23,7 @@ Official Claude Code documentation access with skill creation tools.
 ### Install
 
 ```bash
-/plugin install claude-code-knowledge@personal-configs-plugins
+/plugin install claude-code-knowledge@codethread-plugins
 
 # Install dependencies (one-time)
 cd ~/.claude/plugins/claude-code-knowledge/hooks && bun install

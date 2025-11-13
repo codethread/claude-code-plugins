@@ -21,7 +21,7 @@ Build high-quality Model Context Protocol (MCP) servers for AI agents.
 ### Install
 
 ```bash
-/plugin install mcp-builder@personal-configs-plugins
+/plugin install mcp-builder@codethread-plugins
 ```
 
 ### Use
