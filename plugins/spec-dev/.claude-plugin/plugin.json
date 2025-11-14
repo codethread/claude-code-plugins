@@ -1,7 +1,7 @@
 {
   "name": "spec-dev",
   "description": "Multi-agent spec-driven development workflow with automatic session resumption. Use /build to create specifications and implement features, /iterate to continue work. Systematic requirements → specification → implementation → verification with hooks-based session tracking.",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "author": {
     "name": "codethread"
   },

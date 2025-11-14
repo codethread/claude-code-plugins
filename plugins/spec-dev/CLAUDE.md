@@ -23,7 +23,7 @@ plugins/spec-dev/
 │   ├── SKILL.md        # Routing and coordination
 │   └── references/     # PLAN_WORKFLOW, BUILD_WORKFLOW, ITERATE_WORKFLOW
 │                       # SPEC_TEMPLATE, TECH_SPEC_TEMPLATE, PROJECT_TEMPLATE
-│                       # SPEC_PATTERNS, COMMUNICATION_PROTOCOL, writing-specs
+│                       # COMMUNICATION_PROTOCOL, writing-specs
 └── scripts/            # get-next-spec-id.sh, get-latest-spec.sh
 ```
 

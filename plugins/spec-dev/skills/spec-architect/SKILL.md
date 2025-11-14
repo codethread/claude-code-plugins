@@ -22,7 +22,7 @@ Coordinate specialized agents using the Task tool—invoked explicitly, not auto
 
 ### Core Spec-Driven Development Agents
 
-Follow `COMMUNICATION_PROTOCOL` for structured handoffs:
+Follow [`COMMUNICATION_PROTOCOL`](./references/COMMUNICATION_PROTOCOL.md) for structured handoffs:
 
 - **spec-developer**: Implements code following specifications
 - **code-reviewer**: Static code analysis during BUILD phase (patterns, types, tests, architecture)
@@ -56,7 +56,7 @@ Standard Task tool delegation. Adapt briefing format to agent's purpose.
 
 ## Specification Structure
 
-All specifications follow the directory-based [`SPEC_PATTERNS`](./references/SPEC_PATTERNS.md):
+All specifications follow the directory-based pattern:
 
 ```
 specs/
@@ -67,6 +67,15 @@ specs/
     └── tech.md         # HOW to build it (implementation tasks like AUTH-1, COMP-1, etc.)
 ```
 
+## State Transfer Between Phases
+
+Each phase operates independently but follows these conventions:
+
+1. **Explicit Arguments**: Each command receives a spec directory path
+2. **Deterministic Structure**: All related files live in the same directory with standard names
+3. **Self-Contained Documents**: Each document contains all necessary context
+4. **Progressive Enhancement**: Each phase adds detail without modifying previous outputs
+
 ### Project Configuration (PROJECT.md)
 
 Optional project-wide agent instructions. Template: [`PROJECT_TEMPLATE.md`](./references/PROJECT_TEMPLATE.md).
@@ -76,6 +85,8 @@ Optional project-wide agent instructions. Template: [`PROJECT_TEMPLATE.md`](./re
 Feature: FR-1/NFR-1. Tech: Component-prefixed (AUTH-1, COMP-1) linked to FR/NFR.
 
 ### Templates Available
+
+The following **MUST** be read during the PLAN workflow
 
 - [`PROJECT_TEMPLATE.md`](./references/PROJECT_TEMPLATE.md) - Project configuration template (create at `specs/PROJECT.md`)
 - [`SPEC_TEMPLATE.md`](./references/SPEC_TEMPLATE.md) - Feature specification template

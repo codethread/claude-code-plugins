@@ -13,6 +13,7 @@ Resumable agents, clear boundaries, architect distributes PROJECT.md content.
 ### Resumption Limitations
 
 Agents can be resumed only one time after their initial execution. This means:
+
 - First execution: Agent does initial work
 - First resumption: Agent can fix issues or continue work
 - After that: Must spawn new agents for additional work
@@ -22,6 +23,7 @@ Agents can be resumed only one time after their initial execution. This means:
 Resume the developer agent after initial review/testing to fix issues. This is the most valuable use of the single resumption opportunity.
 
 Typical flow:
+
 1. Developer implements feature
 2. Reviewer/tester finds issues
 3. **Resume developer to fix** (using the one allowed resumption)
@@ -32,6 +34,7 @@ Typical flow:
 Use `cc-logs--extract-agents <session-id>` to get agent IDs from the current session when you need to resume.
 
 Example:
+
 ```bash
 # Get session ID (shown at session start)
 # "Initialized agent context session: 9e3db88b-75cb-416b-a0a7-73e4bd0e5a2b"
@@ -42,6 +45,7 @@ cc-logs--extract-agents 9e3db88b-75cb-416b-a0a7-73e4bd0e5a2b
 ```
 
 Resume using the Task tool:
+
 ```
 Task({
   resume: "<agent-id>",
@@ -68,60 +72,6 @@ When referencing ranges, use:
 /path/to/file.ext:startLine:startCol-endLine:endCol
 ```
 
-## Specification Structure Requirements
-
-### Feature Specification (SPEC)
-
-Feature specifications MUST use numbered sections for reference:
-
-```markdown
-## Functional Requirements
-
-### FR-1: User Authentication
-
-The system SHALL provide email-based authentication
-
-### FR-2: Session Management
-
-The system SHALL maintain user sessions for 24 hours
-
-## Non-Functional Requirements
-
-### NFR-1: Performance
-
-Authentication SHALL complete within 2 seconds
-
-### NFR-2: Security
-
-Passwords SHALL be hashed using bcrypt with minimum 10 rounds
-```
-
-### Technical Specification (TECH_SPEC)
-
-Technical specifications MUST contain implementation checklists that reference feature requirements:
-
-```markdown
-## Implementation Tasks
-
-### Component: Authentication Service
-
-Location: `src/services/auth.ts`
-
-- [ ] **AUTH-1**: Implement email validation (delivers FR-1)
-  - Validates email format per RFC 5322
-  - Returns error for invalid formats
-  - File: Create at `src/validators/email.ts`
-
-- [ ] **AUTH-2**: Implement password hashing (delivers NFR-2)
-  - Uses bcrypt library with 12 rounds
-  - Interfaces with: `src/lib/crypto.ts:15:1`
-
-- [ ] **AUTH-3**: Create login endpoint (delivers FR-1, NFR-1)
-  - POST /api/auth/login
-  - Response time < 2000ms
-  - Updates: `src/routes/auth.ts:28:1`
-```
-
 ## Project Configuration
 
 If `specs/PROJECT.md` exists, architect loads it once at workflow start and injects relevant sections into `Your_Responsibilities`:
@@ -140,7 +90,8 @@ When delegating to any agent, provide this structured context:
 
 ```yaml
 Context:
-  Phase: [specification|design|implementation|verification]
+  Workflow: [PLAN|BUILD|ITERATE]
+  Phase: [exploration|specification|technical-design|implementation|code-review|testing]
   Role: "You are working on [phase] of [feature]"
   Workflow_Position: "Previous phase: [x] | Your phase: [y] | Next phase: [z]"
 
@@ -153,16 +104,19 @@ Inputs:
     - /full/path/to/related.md
 
 Relevant_Skills: # Suggested skills for this work (load as needed)
-  - [skill-name]  # Language: typescript, python, go, ruby, etc.
-  - [skill-name]  # Framework: react, vue, django, rails, etc.
-  - [skill-name]  # Testing: playwright-skill, pdf, xlsx, etc.
+  - [skill-name] # Language: typescript, python, go, ruby, etc.
+  - [skill-name] # Framework: react, vue, django, rails, etc.
+  - [skill-name] # Testing: playwright-skill, pdf, xlsx, etc.
   # These are EXAMPLES - adapt to skills available in the current repository
   # Agents may load additional skills at their discretion beyond suggestions
 
 Your_Responsibilities:
   - [Specific task 1]
   - [Specific task 2]
-  - [Project-specific instructions from PROJECT.md if applicable - injected by architect]
+  - [
+      Project-specific instructions from PROJECT.md if applicable,
+      injected by architect,
+    ]
 
 NOT_Your_Responsibilities:
   - [Explicitly excluded task 1]
@@ -171,64 +125,72 @@ NOT_Your_Responsibilities:
 Deliverables:
   Format: [Description of expected output format]
   References: "Use pattern: file:line:col for all code references"
-  Checklist_Items: [List specific items to complete, e.g., "AUTH-1, AUTH-2, AUTH-3"]
+  Checklist_Items:
+    [List specific items to complete, e.g., "AUTH-1, AUTH-2, AUTH-3"]
 ```
 
 ## Handover Requirements
 
-### From Specification to Design
+### PLAN Workflow Outputs
 
-The specification phase MUST provide:
-
+**After Specification Creation (Phase 2)**:
 - Complete feature specification with numbered requirements (FR-X, NFR-X)
-- Technical notes if spike work was performed
+- `interview.md` capturing user's original request and Q&A
+- Technical notes (`notes.md`) if spike work was performed
 - Clear success criteria for each requirement
+- Testing setup instructions
 
-### From Design to Implementation
-
-The design phase MUST provide:
-
+**After Technical Design (Phase 3)**:
 - Technical specification with numbered tasks (e.g., AUTH-1, COMP-1, API-1)
 - Each task explicitly linked to feature requirements
-- File paths for all components to be created/modified
-- Interface definitions with exact file:line:col references
+- File paths for similar patterns and integration points (file:line:col references)
+- Guidance on approach (not detailed implementation)
+- Spec-signoff validation passed
 
-### From Implementation to Verification
+### BUILD Workflow Inputs and Outputs
 
-The implementation phase MUST provide:
+**Required Inputs**:
+- Validated `feature.md` with FR-X and NFR-X requirements
+- Validated `tech.md` with numbered implementation tasks
 
+**During Implementation (Phase 1)**:
 - Completed checklist items with file:line:col references to changes
 - List of any deviations from technical specification
 - Known limitations or incomplete items
 
-### Verification Reporting
+**Code Review Deliverables**:
+- Pattern consistency analysis (duplication check)
+- Type safety review (discriminated unions vs optional fields)
+- Test quality assessment
+- Architectural consistency validation
+- PASS/FAIL with specific file:line:col references for issues
 
-The verification phase MUST provide:
-
+**Testing Deliverables**:
 - Status for each numbered requirement (FR-X, NFR-X)
 - Status for each implementation task (e.g., AUTH-1, COMP-1, API-1)
 - Specific file:line:col references for any issues found
-- Clear PASS/FAIL status with evidence
+- Clear PASS/FAIL status with evidence from user perspective
 
 ## Example Agent Invocation
 
 ```markdown
 Context:
+Workflow: BUILD
 Phase: implementation
 Role: "You are implementing the authentication service for a user management feature"
-Workflow_Position: "Previous phase: technical design | Your phase: implementation | Next phase: QA verification"
+Workflow_Position: "Previous phase: technical-design | Your phase: implementation | Next phase: code-review"
 
 Inputs:
 Spec_Directory: specs/001-user-auth/
 Primary_Spec: specs/001-user-auth/feature.md
 Technical_Spec: specs/001-user-auth/tech.md
 Technical_Notes: specs/001-user-auth/notes.md
-Related_Docs:
-  - spec-templates/SPEC_PATTERNS.md
 
 Relevant_Skills:
-- typescript  # Example: Project uses TypeScript
-- react       # Example: Building React components
+
+- typescript # Example: Project uses TypeScript
+- react # Example: Building React components
+
 # Check available skills in repository and load as needed
 
 Your_Responsibilities:
