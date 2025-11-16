@@ -32,7 +32,7 @@ Documentation and dependencies:
 ### Key Components
 
 1. **SKILL.md** - Instructions for Claude on when and how to use the skill
-2. **reference.md** - Index of all available documentation
+2. **docs/docs_manifest.json** - Authoritative source tracking all documentation files with metadata
 3. **hooks/** - Hook subsystem for both auto-sync and proactive context injection
    - **hooks.json** - Hook registration (both PreToolUse and UserPromptSubmit)
    - **sync-docs-on-skill-load.ts** - PreToolUse hook that transparently syncs docs when skill loads
@@ -40,9 +40,10 @@ Documentation and dependencies:
    - **package.json** - Hook dependencies
 4. **skill-rules.json** - Pattern-based triggers for skill suggestion (keywords and regex)
 5. **scripts/** - Helper scripts for skill creation and browsing
-   - **list_topics.ts** - List available documentation topics (Bun TypeScript)
+   - **list_topics.ts** - Dynamically lists documentation topics from docs_manifest.json (Bun TypeScript)
    - **skill-creator/** - Helper scripts for creating and packaging skills (Bun TypeScript)
 6. **docs/** - Local cache of all documentation including skill-creation-guide.md
+   - **docs_manifest.json** - Authoritative source of truth (hashes, metadata, file list)
    - Documentation is fetched and managed by the PreToolUse hook
    - No manual maintenance scripts needed
 
@@ -105,10 +106,8 @@ claude-code-knowledge/
 │       │                       # - Instructions tell Claude how to use it
 │       │                       # - allowed-tools restricts what it can do
 │       │
-│       ├── reference.md        # Index of all documentation topics
-│       │
 │       ├── scripts/            # Helper scripts for browsing and skill creation
-│       │   ├── list_topics.ts  # List available topics (Bun TypeScript)
+│       │   ├── list_topics.ts  # Dynamic topic list from manifest (Bun TypeScript)
 │       │   ├── package.json    # Dependencies for scripts
 │       │   └── skill-creator/  # Skill creation helper scripts
 │       │       ├── init_skill.ts      # Initialize new skill structure (Bun TypeScript)
@@ -116,7 +115,7 @@ claude-code-knowledge/
 │       │       └── quick_validate.ts  # Validation without packaging (Bun TypeScript)
 │       │
 │       └── docs/               # Documentation cache
-│           ├── docs_manifest.json      # Metadata and hashes
+│           ├── docs_manifest.json      # ⭐ SOURCE OF TRUTH: Metadata, hashes, file list
 │           ├── skill-creation-guide.md # Comprehensive skill creation guide
 │           └── *.md                    # 45+ documentation files
 │
@@ -380,7 +379,7 @@ Documentation is automatically discovered from the sitemap! When new Claude Code
 1. **Nothing to do** - The hook automatically discovers new pages via sitemap
 2. **Fallback list**: If sitemap fails, update the fallback list in `hooks/sync-docs-on-skill-load.ts` (function `getFallbackPages()`)
 3. **Verify**: Load the skill to trigger sync, then run `bun scripts/list_topics.ts` to see new topics
-4. **Update reference.md**: If needed, regenerate the topic index (currently manual)
+4. **Manifest is authoritative**: `docs/docs_manifest.json` is updated automatically by the hook
 
 ### Updating Skill Creation Scripts
 
@@ -446,15 +445,15 @@ The `fetch_docs.py` script currently uses patterns for the old docs location. It
 Before considering the skill complete:
 
 - [ ] Documentation files exist (45 files)
-- [ ] Manifest is valid JSON
-- [ ] list_topics.ts works
-- [ ] sync_docs.ts works
+- [ ] Manifest is valid JSON (`docs/docs_manifest.json`)
+- [ ] list_topics.ts works (reads from manifest)
+- [ ] PreToolUse hook syncs docs on skill load
 - [ ] Claude can read individual docs
 - [ ] Claude can search across docs
-- [ ] Hook triggers on Claude Code questions (test via hook debugging)
+- [ ] UserPromptSubmit hook triggers on Claude Code questions (test via hook debugging)
 - [ ] Hook context appears in transcript correctly
 - [ ] skill-rules.json is valid JSON
-- [ ] Claude uses skill automatically for Claude Code questions (any of 3 paths)
+- [ ] Claude uses skill automatically for Claude Code questions (any of 4 paths: model-invoked, PreToolUse hook, UserPromptSubmit hook, skill-rules)
 - [ ] Skill provides accurate answers with citations
 - [ ] Hook dependencies installed: `cd hooks && bun install`
 - [ ] Script dependencies installed: `cd skills/claude-code-knowledge/scripts && bun install`
@@ -476,6 +475,15 @@ All scripts have been migrated from Python and Bash to Bun TypeScript:
 - **Compatibility**: All scripts maintain the same CLI interface and functionality
 
 ## Version History
+
+- **2.6.0** (2025-11-16): Eliminated Documentation Redundancy & Enhanced Dynamic Discovery
+  - Enhanced `list_topics.ts` to read from `docs_manifest.json` (authoritative source)
+  - Script now outputs markdown-formatted links and displays last sync timestamp
+  - Ruthlessly simplified SKILL.md from ~146 to ~52 lines (64% reduction)
+  - Removed static `reference.md` file completely (redundant with manifest)
+  - Updated CLAUDE.md to emphasize `docs_manifest.json` as source of truth
+  - Single source of truth: manifest tracks all files, hashes, URLs, timestamps
+  - Follows Claude Code best practices for minimal, focused skill documentation
 
 - **2.5.0** (2025-11-13): Fixed Hook Suggestion Directive & Refactored to Shared Utilities
   - Changed UserPromptSubmit hook output from "RECOMMENDED SKILL" to "ESSENTIAL SKILL"
