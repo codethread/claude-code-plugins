@@ -17,5 +17,10 @@
         ]
       }
     ]
+  },
+  "permissions": {
+    "allow": [],
+    "deny": [],
+    "ask": []
   }
 }

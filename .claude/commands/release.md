@@ -1,7 +1,7 @@
 ---
 description: Prepare plugins for release with version bumps, changelog updates, and safety checks
 argument-hint: [additional notes]
-allowed-tools: Bash(git:*)
+allowed-tools: Bash(git:*), Bash(bash:*)
 ---
 
 # Release
@@ -13,7 +13,7 @@ Validates and prepares plugin releases by checking for accidental commits, ensur
 - Last 5 commits: !`git log -5 --oneline`
 - Current changes: !`git status --short`
 - Changed files: !`git diff --name-only HEAD`
-- Plugin tags: !`git tag -l '*-v*' --format='%(refname:short) -> %(objectname:short) %(subject)' | sort`
+- Plugin tags: !`bash .claude/scripts/tags.sh`
 - additional guidance (optional): $ARGUMENTS
 
 ## Instructions
