@@ -1,14 +1,13 @@
 {
-  "name": "claude-code-knowledge-hooks",
+  "name": "claude-project-hooks",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "dependencies": {
-    "@claude-plugins/lib": "workspace:*",
-    "fast-xml-parser": "^4.3.2"
+    "@claude-plugins/lib": "workspace:*"
   },
   "devDependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.1.37",
-    "@types/bun": "latest"
+    "@types/bun": "^1.3.2"
   }
 }

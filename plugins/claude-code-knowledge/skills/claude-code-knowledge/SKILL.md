@@ -18,11 +18,29 @@ Documentation is located at [docs](docs)
 
 ## Workflow
 
-> User: "Help me create a claude hook that does ..."
+### For Skills Questions
 
-1. list files in `docs`
-2. read all relavent markdown files
-3. respond as appropriate, referencing speci specific files (e.g., "From docs/hooks.md...")
+> User: "How do I create a skill?"
+
+1. **Read [references/skills.md](references/skills.md) FIRST** - condensed key points
+2. If more details needed, read [docs/skills.md](docs/skills.md) for comprehensive information
+3. Respond with citations (e.g., "From references/skills.md...")
+
+### For Hooks Questions
+
+> User: "Help me create a hook that..."
+
+1. **Read [references/hooks.md](references/hooks.md) FIRST** - condensed key points
+2. If more details needed, read [docs/hooks.md](docs/hooks.md) and [docs/hooks-guide.md](docs/hooks-guide.md)
+3. Respond with citations (e.g., "From references/hooks.md...")
+
+### For Other Topics
+
+> User: "How do I configure MCP servers?"
+
+1. List files in `docs`
+2. Read relevant markdown files
+3. Respond with citations (e.g., "From docs/mcp.md...")
 
 ## Overlap
 

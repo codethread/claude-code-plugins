@@ -1,0 +1,9 @@
+{
+  "name": "@claude-plugins/spec-dev",
+  "version": "1.2.3",
+  "description": "Multi-agent spec-driven development workflow with automatic session resumption. Use /build to create specifications and implement features, /iterate to continue work.",
+  "private": true,
+  "type": "module",
+  "author": "codethread",
+  "license": "MIT"
+}

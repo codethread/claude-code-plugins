@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 import { readFileSync } from 'node:fs';
 import type { SyncHookJSONOutput, UserPromptSubmitHookInput } from '@anthropic-ai/claude-agent-sdk';
-import { readSessionCache, writeSessionCache } from '../../../utils/session-cache';
+import { readSessionCache, writeSessionCache } from '@claude-plugins/lib/session-cache';
 
 interface SessionCache {
 	knowledge_suggested: boolean;

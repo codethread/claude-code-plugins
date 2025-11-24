@@ -63,3 +63,7 @@ coverage/
 # Generated documentation
 plugins/claude-code-knowledge/skills/claude-code-knowledge/docs/*.md
 plugins/claude-code-knowledge/skills/claude-code-knowledge/docs/docs_manifest.json
+
+# TypeScript build output
+dist/
+*.tsbuildinfo

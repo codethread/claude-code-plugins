@@ -4,12 +4,17 @@
   "description": "A local plugin marketplace for Claude Code",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "lib",
+    "plugins/*",
+    ".claude/hooks"
+  ],
   "scripts": {
     "check": "biome check --fix --unsafe .",
     "lint": "biome lint --fix --unsafe .",
     "format": "biome format --fix .",
     "verify": "bun run lint && bun run typecheck",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --build"
   },
   "dependencies": {
     "fast-xml-parser": "^5.3.1"

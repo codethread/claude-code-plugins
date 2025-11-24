@@ -1,0 +1,17 @@
+{
+  "name": "@claude-plugins/langs",
+  "version": "1.0.0",
+  "description": "Language-specific coding skills including React, TypeScript, and more. Provides best practices, patterns, and expert guidance for writing clean, type-safe, and maintainable code.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.1.37",
+    "@types/bun": "^1.3.2",
+    "typescript": "^5.7.2"
+  },
+  "author": "codethread",
+  "license": "MIT"
+}

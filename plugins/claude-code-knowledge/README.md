@@ -26,10 +26,10 @@ Official Claude Code documentation access with skill creation tools.
 /plugin install claude-code-knowledge@codethread-plugins
 
 # Install hook dependencies (required)
-cd ~/.claude/plugins/marketplaces/codethread-plugins/plugins/claude-code-knowledge/hooks && bun install
+cd $CT_PLUGINS_DIR/claude-code-knowledge/hooks && bun install
 
 # Install script dependencies (optional, for skill creation tools)
-cd ~/.claude/plugins/marketplaces/codethread-plugins/plugins/claude-code-knowledge/skills/claude-code-knowledge/scripts && bun install
+cd $CT_PLUGINS_DIR/claude-code-knowledge/skills/claude-code-knowledge/scripts && bun install
 ```
 
 ### Use

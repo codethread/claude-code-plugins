@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 import type { PostToolUseHookInput, SyncHookJSONOutput } from '@anthropic-ai/claude-agent-sdk';
-import { readSessionCache, writeSessionCache } from '../../../utils/session-cache';
+import { readSessionCache, writeSessionCache } from '@claude-plugins/lib/session-cache';
 import { readFileSync } from 'node:fs';
 
 interface SessionCache {

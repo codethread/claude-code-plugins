@@ -71,7 +71,7 @@ Action required:
 The hook implements a 3-minute delay to prevent excessive interruptions while ensuring documentation is reviewed.
 
 **How Time Filtering Works:**
-- Uses shared session cache utility from `utils/session-cache.ts` (see `utils/CLAUDE.md` for details)
+- Uses shared session cache utility from `@claude-plugins/lib/session-cache` (see `lib/CLAUDE.md` for details)
 - Calls `shouldTriggerBasedOnTime()` to check if 3 minutes have elapsed
 - Calls `markTriggered()` to record timestamp and metadata after each trigger
 - Cache persists for the session but is scoped per working directory

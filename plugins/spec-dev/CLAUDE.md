@@ -79,15 +79,15 @@ Test hooks:
 ```bash
 # PreToolUse
 echo '{"tool_name":"Skill","tool_input":{"skill":"spec-architect"},"session_id":"test-123","cwd":"'$(pwd)'"}' | \
-  ~/.claude/plugins/marketplaces/codethread-plugins/plugins/spec-dev/hooks/skill-pretooluse-handler.sh
+  $CT_PLUGINS_DIR/spec-dev/hooks/skill-pretooluse-handler.sh
 
 # PreCompact
 echo '{"session_id":"test-123","cwd":"'$(pwd)'"}' | \
-  ~/.claude/plugins/marketplaces/codethread-plugins/plugins/spec-dev/hooks/precompact-handler.sh
+  $CT_PLUGINS_DIR/spec-dev/hooks/precompact-handler.sh
 
 # SessionStart
 echo '{"session_id":"test-123","cwd":"'$(pwd)'","source":"startup"}' | \
-  ~/.claude/plugins/marketplaces/codethread-plugins/plugins/spec-dev/hooks/sessionstart-handler.sh
+  $CT_PLUGINS_DIR/spec-dev/hooks/sessionstart-handler.sh
 ```
 
 ## PROJECT.md Versioning System

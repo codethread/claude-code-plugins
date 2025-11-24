@@ -1,0 +1,9 @@
+{
+  "name": "@claude-plugins/mcp-builder",
+  "version": "1.0.0",
+  "description": "Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools.",
+  "private": true,
+  "type": "module",
+  "author": "codethread",
+  "license": "MIT"
+}

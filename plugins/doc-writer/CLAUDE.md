@@ -50,7 +50,7 @@ plugins/doc-writer/
 - Non-intrusive - Claude receives context but doesn't announce it unless relevant or asked
 
 **Implementation details:**
-- Uses `readSessionCache()` and `writeSessionCache()` from `utils/session-cache.ts`
+- Uses `readSessionCache()` and `writeSessionCache()` from `@claude-plugins/lib/session-cache`
 - Cache contains: `doc_writer_suggested`, `first_triggered`, `triggered_by` fields
 
 **Testing the hook:**

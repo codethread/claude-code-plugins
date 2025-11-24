@@ -8,13 +8,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a local Claude Code plugin marketplace repository. It contains plugin definitions that extend Claude Code with custom commands, agents, and skills.
 
+### Workspace Structure
+
+This repo uses bun workspaces with each plugin having its own `package.json`:
+- Root workspace: `lib`, `plugins/*`, `.claude/hooks`
+- Plugin packages: `@claude-plugins/<plugin-name>`
+- Shared library: `@claude-plugins/lib`
+- Project hooks: `claude-project-hooks` (in `.claude/hooks`)
+- TypeScript project references for proper dependency tracking
+
+**TypeScript Configuration:**
+- `tsconfig.base.json` - Shared compiler options
+- Root `tsconfig.json` - Project references to all workspaces
+- Each workspace has its own `tsconfig.json` extending the base
+- `lib` emits declaration files for other workspaces to consume
+
 ### Developer commands
 
 This repo is primarily markdown files, but all scripts are written with `bun`
 
 ```bash
-bun run typecheck # alias: tsc --noEmit
-bun run lint # alias: biome lint --fix --unsafe .
+bun run typecheck # Uses: tsc --build (with project references)
+bun run lint # Uses: biome lint --fix --unsafe .
+bun run verify # Runs: lint && typecheck
 ```
 
 ## Plugin Architecture
@@ -23,16 +39,22 @@ bun run lint # alias: biome lint --fix --unsafe .
 
 - `.claude-plugin/marketplace.json` - Marketplace catalog that registers all available plugins
 - `plugins/` - Directory containing individual plugin implementations
-- `utils/` - Shared utilities for plugin and hook development (see `utils/CLAUDE.md`)
+- `lib/` - Shared library package for plugin and hook development (see `lib/CLAUDE.md`)
 - Each plugin has:
   - `README.md` (user guide - VERY brief, "What", "Why", "How")
   - `CLAUDE.md` (maintainer guide - comprehensive, **KEEP UPDATED WITH EACH CHANGE**)
 
-### Shared Utilities
+### Shared Library (@claude-plugins/lib)
 
-**IMPORTANT**: Before building new functionality, check `utils/` for existing utilities to avoid duplication.
+**IMPORTANT**: Before building new functionality, check `lib/` for existing utilities to avoid duplication.
 
-See `utils/CLAUDE.md` for detailed documentation of available utilities including:
+The `@claude-plugins/lib` package provides shared utilities that can be imported by plugins and hooks:
+
+```typescript
+import { readSessionCache, writeSessionCache } from '@claude-plugins/lib/session-cache';
+```
+
+See `lib/CLAUDE.md` for detailed documentation of available utilities including:
 - Session cache management (time-based filtering, session state tracking)
 - Future shared utilities as they're added
 
@@ -60,7 +82,52 @@ See `utils/CLAUDE.md` for detailed documentation of available utilities includin
    }
    ```
 
-3. **Register in marketplace** `.claude-plugin/marketplace.json`
+3. **Create plugin package.json** `plugins/my-plugin/package.json`
+
+   Required for workspace configuration. Include if plugin has TypeScript files:
+
+   ```json
+   {
+     "name": "@claude-plugins/my-plugin",
+     "version": "1.0.0",
+     "description": "Brief description",
+     "private": true,
+     "type": "module",
+     "scripts": {
+       "typecheck": "tsc --noEmit"
+     },
+     "devDependencies": {
+       "@anthropic-ai/claude-agent-sdk": "^0.1.37",
+       "@types/bun": "^1.3.2",
+       "typescript": "^5.7.2"
+     },
+     "author": "Your Name",
+     "license": "MIT"
+   }
+   ```
+
+   **Nested package.json files**: If your plugin has TypeScript hooks or scripts, create package.json in those directories (e.g., `hooks/package.json`) with minimal dependencies and add `@claude-plugins/lib` as a workspace dependency if using shared utilities.
+
+4. **Create TypeScript configuration** `plugins/my-plugin/tsconfig.json` (if plugin has TypeScript)
+
+   ```json
+   {
+     "extends": "../../tsconfig.base.json",
+     "compilerOptions": {
+       "composite": true,
+       "outDir": "dist"
+     },
+     "include": ["**/*.ts"],
+     "exclude": ["node_modules", "dist"],
+     "references": [
+       { "path": "../../lib" }
+     ]
+   }
+   ```
+
+   Then add the plugin to root `tsconfig.json` references array.
+
+5. **Register in marketplace** `.claude-plugin/marketplace.json`
 
    Marketplace catalog that tells Claude Code where to find plugins.
 
@@ -76,7 +143,7 @@ See `utils/CLAUDE.md` for detailed documentation of available utilities includin
    }
    ```
 
-4. **Add plugin components**
+6. **Add plugin components**
    - Add commands as `.md` files in `commands/`
    - Add agents as `.md` files in `agents/`
    - Add skills in `skills/<skill-name>/SKILL.md`
@@ -102,7 +169,7 @@ Brief overview of the command.
 
 ## Context
 
-- injected context: !`bash ~/.claude/plugins/marketplaces/codethread-plugins/plugins/<plugin>/scripts/<script>.sh arg`
+- injected context: !`bash $CT_PLUGINS_DIR/<plugin>/scripts/<script>.sh arg`
 
 ## Arguments
 
@@ -121,9 +188,10 @@ Brief overview of the command.
 - **Reference variables**: Use the named variables (e.g., `FEATURE_BRIEF`, `SPEC_DIR`) throughout the rest of the document
 - **Write as instructions**: The command is written from Claude's perspective, assuming arguments are already replaced
 - **Don't repeat syntax**: Only define the arguments once in the Arguments section
-- **Plugin script paths**: When executing bash scripts from plugin directories, use the full marketplace path:
-  - Pattern: `~/.claude/plugins/marketplaces/<marketplace-name>/plugins/<plugin-name>/scripts/<script.sh>`
-  - Example: `~/.claude/plugins/marketplaces/codethread-plugins/plugins/spec-dev/scripts/get-next-spec-id.sh`
+- **Plugin script paths**: When executing bash scripts from plugin directories, use the `CT_PLUGINS_DIR` environment variable:
+  - Pattern: `$CT_PLUGINS_DIR/<plugin-name>/scripts/<script>.sh`
+  - Example: `$CT_PLUGINS_DIR/spec-dev/scripts/get-next-spec-id.sh`
+  - Note: Users must set `CT_PLUGINS_DIR=~/.claude/plugins/marketplaces/codethread-plugins/plugins` (see README.md)
 
 ## Plugin Documentation Standards
 

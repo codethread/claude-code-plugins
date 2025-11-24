@@ -23,7 +23,7 @@ import { dirname, join, relative } from "path";
 import {
   shouldTriggerBasedOnTime,
   markTriggered,
-} from "../../utils/session-cache";
+} from "@claude-plugins/lib/session-cache";
 
 const PLUGIN_NAME = "stop-doc-check";
 const DELAY_MINUTES = 3;

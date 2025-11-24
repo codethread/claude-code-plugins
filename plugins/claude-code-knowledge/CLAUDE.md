@@ -114,6 +114,10 @@ claude-code-knowledge/
 │       │       ├── package_skill.ts   # Validate and package skills (Bun TypeScript)
 │       │       └── quick_validate.ts  # Validation without packaging (Bun TypeScript)
 │       │
+│       ├── references/         # Quick reference guides (read FIRST)
+│       │   ├── skills.md       # Skills quick reference
+│       │   └── hooks.md        # Hooks quick reference
+│       │
 │       └── docs/               # Documentation cache
 │           ├── docs_manifest.json      # ⭐ SOURCE OF TRUTH: Metadata, hashes, file list
 │           ├── skill-creation-guide.md # Comprehensive skill creation guide
@@ -151,6 +155,37 @@ The most critical file. Contains:
 - Best practices for prompting subagents effectively
 - Avoid unfamiliar role names and internal protocols
 - Keep instructions direct and self-contained
+
+### references/ - Quick Reference Guides
+
+**Purpose**: Condensed, essential information for Skills and Hooks topics.
+
+**Strategy**: Two-tier documentation approach:
+1. **references/*.md** - Read FIRST, contains condensed key points
+2. **docs/*.md** - Read for additional details when needed
+
+**Files**:
+- **references/skills.md** - Skills quick reference
+  - What are Skills, Skill types, SKILL.md structure
+  - Key fields, file organization, discovery
+  - Testing, debugging, best practices
+  - Common patterns and use cases
+- **references/hooks.md** - Hooks quick reference
+  - What are hooks, hook types, events
+  - Configuration structure, matchers
+  - Input/output formats, exit codes
+  - Event-specific control, common use cases
+  - Security best practices
+
+**When to use**:
+- User asks about Skills → Read `references/skills.md` FIRST
+- User asks about Hooks → Read `references/hooks.md` FIRST
+- Only read full docs (`docs/skills.md`, `docs/hooks.md`) for deeper details
+
+**Maintenance**:
+- Update when official docs change significantly
+- Keep concise - avoid duplication with full docs
+- Focus on most common use cases and patterns
 
 ### hooks/sync-docs-on-skill-load.ts
 
@@ -488,7 +523,7 @@ All scripts have been migrated from Python and Bash to Bun TypeScript:
 - **2.5.0** (2025-11-13): Fixed Hook Suggestion Directive & Refactored to Shared Utilities
   - Changed UserPromptSubmit hook output from "RECOMMENDED SKILL" to "ESSENTIAL SKILL"
   - Ensures Claude automatically loads the skill when Claude Code questions detected
-  - Refactored to use shared `utils/session-cache` utility for consistency
+  - Refactored to use shared `@claude-plugins/lib/session-cache` utility for consistency
   - Session cache now marketplace-scoped: `~/.local/cache/codethread-plugins/claude-code-knowledge/`
   - Added package.json files for hooks and scripts directories
   - Hook dependencies: fast-xml-parser, @anthropic-ai/claude-agent-sdk, @types/bun

@@ -19,6 +19,16 @@ Extends Claude Code with:
 
 ## How
 
+### Setup
+
+1. **Configure environment variable** (add to your shell profile: `~/.zshrc`, `~/.bashrc`, etc.):
+
+   ```bash
+   export CT_PLUGINS_DIR=~/.claude/plugins/marketplaces/codethread-plugins/plugins
+   ```
+
+   After adding, reload your shell: `source ~/.zshrc` (or restart your terminal)
+
 ### Install
 
 ```bash
