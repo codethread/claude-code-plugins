@@ -152,7 +152,7 @@ bun run build           # Quiet mode
 bun run build:verbose   # Shows progress
 ```
 
-### `hooks/hooks.json` (113 lines)
+### `hooks/hooks.json`
 
 **Hook registration configuration.**
 
@@ -168,6 +168,20 @@ Registers `${CLAUDE_PLUGIN_ROOT}/bin/session-logger` executable for 11 events:
 9. PreCompact
 10. Notification
 11. PermissionRequest
+
+**Structure:**
+```json
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+      }
+    ]
+  }
+}
+```
 
 **Hook execution model:**
 - Claude Code invokes executable with hook input JSON on stdin
@@ -263,18 +277,18 @@ If Claude Code adds new hook events:
      | NewHookInput;
    ```
 
-3. **Register in hooks.json**:
+3. **Register in hooks.json** (add to the `hooks` object):
    ```json
-   "NewHook": [
-     {
-       "hooks": [
+   {
+     "hooks": {
+       "NewHook": [
          {
            "type": "command",
            "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
          }
        ]
      }
-   ]
+   }
    ```
 
 4. **Rebuild executable:**
