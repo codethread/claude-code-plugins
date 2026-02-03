@@ -5,6 +5,7 @@
     { "path": "./plugins/claude-code-knowledge" },
     { "path": "./plugins/doc-writer" },
     { "path": "./plugins/langs" },
+    { "path": "./plugins/logger" },
     { "path": "./.claude/hooks" }
   ]
 }

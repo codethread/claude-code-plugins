@@ -29,6 +29,11 @@
       "name": "langs",
       "source": "./plugins/langs",
       "category": "development-tools"
+    },
+    {
+      "name": "logger",
+      "source": "./plugins/logger",
+      "category": "development-tools"
     }
   ]
 }

@@ -8,6 +8,7 @@ Extends Claude Code with:
 
 - **Development Workflows**: spec-dev, mcp-builder, doc-writer, langs
 - **Claude Code Knowledge**: Documentation access and skill creation tools
+- **Session Logging**: logger (captures session events to JSONL files)
 
 ## Why
 
@@ -45,6 +46,7 @@ bun install
 /plugin install claude-code-knowledge@codethread-plugins
 /plugin install mcp-builder@codethread-plugins
 /plugin install langs@codethread-plugins
+/plugin install logger@codethread-plugins  # Optional: session event logging
 ```
 
 **Note:** The `bun install` command installs all dependencies needed by plugin scripts and hooks. You only need to run this once after adding the marketplace.
@@ -58,6 +60,7 @@ After installation, plugins provide slash commands, agents, and skills. See indi
 - `plugins/claude-code-knowledge/README.md` - Claude Code docs and skill creation
 - `plugins/mcp-builder/README.md` - MCP server development
 - `plugins/langs/README.md` - Language-specific patterns
+- `plugins/logger/README.md` - Session event logging (background hooks)
 
 ### Ask Claude
 
