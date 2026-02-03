@@ -175,13 +175,19 @@ Registers `${CLAUDE_PLUGIN_ROOT}/bin/session-logger` executable for 11 events:
   "hooks": {
     "SessionStart": [
       {
-        "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+          }
+        ]
       }
     ]
   }
 }
 ```
+
+**Note:** The `hooks` array is nested inside a configuration object. The configuration object can optionally include a `matcher` field to filter which tools trigger the hook (e.g., `"matcher": "Write|Edit"`).
 
 **Hook execution model:**
 - Claude Code invokes executable with hook input JSON on stdin
@@ -283,8 +289,12 @@ If Claude Code adds new hook events:
      "hooks": {
        "NewHook": [
          {
-           "type": "command",
-           "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+           "hooks": [
+             {
+               "type": "command",
+               "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+             }
+           ]
          }
        ]
      }

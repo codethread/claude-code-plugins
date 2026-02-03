@@ -2,68 +2,112 @@
   "hooks": {
     "SessionStart": [
       {
-        "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+          }
+        ]
       }
     ],
     "SessionEnd": [
       {
-        "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+          }
+        ]
       }
     ],
     "PreToolUse": [
       {
-        "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+          }
+        ]
       }
     ],
     "PostToolUse": [
       {
-        "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+          }
+        ]
       }
     ],
     "PostToolUseFailure": [
       {
-        "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
       {
-        "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+          }
+        ]
       }
     ],
     "Stop": [
       {
-        "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+          }
+        ]
       }
     ],
     "SubagentStop": [
       {
-        "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+          }
+        ]
       }
     ],
     "PreCompact": [
       {
-        "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+          }
+        ]
       }
     ],
     "Notification": [
       {
-        "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+          }
+        ]
       }
     ],
     "PermissionRequest": [
       {
-        "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/session-logger"
+          }
+        ]
       }
     ]
   }

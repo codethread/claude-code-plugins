@@ -2,6 +2,13 @@
 
 All notable changes to the logger plugin will be documented in this file.
 
+## [1.0.2] - 2026-02-03
+
+### Fixed
+- Corrected hooks.json structure to use proper nested hooks arrays
+- Added support for optional matcher field in hook configurations
+- Updated CLAUDE.md with correct hook structure examples
+
 ## [1.0.1] - 2026-02-03
 
 ### Fixed
