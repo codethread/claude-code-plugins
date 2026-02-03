@@ -90,11 +90,23 @@ For better performance, spawn multiple Task agents (model: haiku) to process plu
   - Today's date (2025-11-13) as the heading
   - 2-4 concise bullet points describing key changes based on git diff and commit messages
 
-### 5. Commit All Changes
+### 5. Bump Marketplace Version
 
 After all plugins are processed:
 
+- Read `.claude-plugin/marketplace.json`
+- Locate the `metadata.version` field
+- Bump the minor version (e.g., `1.1.0` → `1.2.0`)
+- Update the marketplace.json file with the new version
+
+**Version Strategy:** The marketplace version receives a minor bump with every release, regardless of the individual plugin version changes.
+
+### 6. Commit All Changes
+
+After all plugins are processed and marketplace version is bumped:
+
 - Stage all modified/created files including:
+  - Updated `.claude-plugin/marketplace.json` (marketplace version)
   - Updated `plugin.json` files
   - Updated `SKILL.md` files
   - New/updated `CHANGELOG.md` files
@@ -114,7 +126,7 @@ After all plugins are processed:
     - ❌ `chore: update changelogs`
   - The commit body should provide additional context about the changes and their impact
 
-### 6. Create Git Tags
+### 7. Create Git Tags
 
 For each plugin that had its version bumped:
 
@@ -123,10 +135,11 @@ For each plugin that had its version bumped:
 - Use `git tag -a <tag-name> -m "Release <plugin-name> v<version>"`
 - Run `git tag -l` to confirm tags were created
 
-### 7. Summary
+### 8. Summary
 
 Display a summary showing:
 
+- Marketplace version (old → new)
 - Final commit message
 - List of tags created
 - Reminder that changes can be reviewed with `git show` and pushed with `git push && git push --tags`

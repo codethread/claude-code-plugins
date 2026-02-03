@@ -4,6 +4,10 @@
     "name": "PersonalConfigs",
     "email": "[email protected]"
   },
+  "metadata": {
+    "description": "codethreads various plugins",
+    "version": "1.1.0"
+  },
   "plugins": [
     {
       "name": "spec-dev",

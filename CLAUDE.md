@@ -139,6 +139,15 @@ See `lib/CLAUDE.md` for detailed documentation of available utilities including:
 
    ```json
    {
+     "name": "marketplace-name",
+     "owner": {
+       "name": "Owner Name",
+       "email": "[email protected]"
+     },
+     "metadata": {
+       "description": "Marketplace description",
+       "version": "1.0.0"
+     },
      "plugins": [
        {
          "name": "my-plugin",
@@ -148,6 +157,8 @@ See `lib/CLAUDE.md` for detailed documentation of available utilities including:
      ]
    }
    ```
+
+   The `metadata.version` field tracks the marketplace version, which receives a minor bump with every release (handled by `/release` command).
 
 6. **Add plugin components**
    - Add commands as `.md` files in `commands/`

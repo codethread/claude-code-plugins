@@ -84,6 +84,7 @@ Project-level slash commands for maintaining this repository:
   - Safety checks for accidental commits (`.env`, `node_modules`, hidden files)
   - Detects and squashes WIP commits
   - Processes plugins in parallel (version bump, SKILL.md updates, CHANGELOG.md)
+  - Bumps marketplace version (minor increment)
   - Creates single conventional commit: `type(plugin1,plugin2): description`
   - Creates git tags: `<plugin-name>-v<version>`
   - Does NOT push (review with `git show` first)
