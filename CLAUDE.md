@@ -28,9 +28,10 @@ This repo uses bun workspaces with each plugin having its own `package.json`:
 This repo is primarily markdown files, but all scripts are written with `bun`
 
 ```bash
+make # Runs: bun install && bun run build
+bun run verify # Runs: lint && typecheck
 bun run typecheck # Uses: tsc --build (with project references)
 bun run lint # Uses: biome lint --fix --unsafe .
-bun run verify # Runs: lint && typecheck
 ```
 
 ## Plugin Architecture
