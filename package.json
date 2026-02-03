@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "build": "bun --filter '*' build",
+    "postbuild": "bun scripts/clean-build-artifacts.ts",
     "check": "biome check --fix --unsafe .",
     "lint": "biome lint --fix --unsafe .",
     "format": "biome format --fix .",

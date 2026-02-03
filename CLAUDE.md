@@ -34,6 +34,11 @@ bun run typecheck # Uses: tsc --build (with project references)
 bun run lint # Uses: biome lint --fix --unsafe .
 ```
 
+**Build Process:**
+- `bun run build` compiles all workspace packages
+- `postbuild` automatically cleans bun build artifacts (`.*.bun-build` files) from all workspaces
+- Cleanup script: `scripts/clean-build-artifacts.ts` (uses concurrent operations)
+
 ## Plugin Architecture
 
 ### Marketplace Structure
