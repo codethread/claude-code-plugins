@@ -2,6 +2,13 @@
 
 All notable changes to the logger plugin will be documented in this file.
 
+## [1.0.3] - 2026-02-03
+
+### Fixed
+- Removed duplicate hooks field from plugin manifest to prevent registration errors
+- Documented hooks manifest best practices in CLAUDE.md
+- Added warning in root CLAUDE.md to prevent future duplicate hooks issues
+
 ## [1.0.2] - 2026-02-03
 
 ### Fixed

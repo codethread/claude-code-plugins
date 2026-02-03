@@ -88,6 +88,8 @@ See `lib/CLAUDE.md` for detailed documentation of available utilities including:
    }
    ```
 
+   **Important about hooks:** Do NOT add a `"hooks"` field that references `./hooks/hooks.json` or `hooks/hooks.json`. Claude Code automatically loads `hooks/hooks.json` from the standard location. The manifest's `hooks` field should only reference ADDITIONAL hook files beyond the standard location (e.g., `"hooks": "./hooks/custom-hooks.json"`). Referencing the standard location will cause a duplicate registration error.
+
 3. **Create plugin package.json** `plugins/my-plugin/package.json`
 
    Required for workspace configuration. Include if plugin has TypeScript files:

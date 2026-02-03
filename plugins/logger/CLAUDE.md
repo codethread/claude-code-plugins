@@ -189,6 +189,8 @@ Registers `${CLAUDE_PLUGIN_ROOT}/bin/session-logger` executable for 11 events:
 
 **Note:** The `hooks` array is nested inside a configuration object. The configuration object can optionally include a `matcher` field to filter which tools trigger the hook (e.g., `"matcher": "Write|Edit"`).
 
+**Important:** Claude Code automatically loads `hooks/hooks.json` from the plugin directory. Do NOT reference this file in the plugin manifest's `hooks` field, as that would create a duplicate registration error. The manifest's `hooks` field should only reference additional hook files beyond the standard `hooks/hooks.json` location.
+
 **Hook execution model:**
 - Claude Code invokes executable with hook input JSON on stdin
 - Executable writes log entry to JSONL file
@@ -653,6 +655,34 @@ ls -t .logs/cc-session-*.jsonl | tail -n +11 | xargs rm
 # Keep only last 7 days
 find .logs -name "cc-session-*.jsonl" -mtime +7 -delete
 ```
+
+### Duplicate Hooks Manifest
+
+**Problem:** Plugin manifest references `hooks/hooks.json`, causing duplicate hook registration
+
+**Error message:**
+```
+Duplicate hooks file detected: ./hooks/hooks.json resolves to already-loaded file
+```
+
+**Root cause:** Claude Code automatically loads `hooks/hooks.json` from the standard location. The manifest's `hooks` field should only reference ADDITIONAL hook files beyond this standard location.
+
+**Solution:** Remove the `"hooks"` field from `.claude-plugin/plugin.json` if only using `hooks/hooks.json`
+
+**Correct manifest** (no hooks field):
+```json
+{
+  "name": "logger",
+  "version": "1.0.2",
+  "description": "Logs all Claude Code session events to JSONL files",
+  "author": {
+    "name": "codethread"
+  },
+  "license": "MIT"
+}
+```
+
+**Only use `"hooks"` field when:** You have additional hook files beyond `hooks/hooks.json` (e.g., `"hooks": "./hooks/custom-hooks.json"`).
 
 ## Related Documentation
 

@@ -1,10 +1,9 @@
 {
   "name": "logger",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Logs all Claude Code session events to JSONL files",
   "author": {
     "name": "codethread"
   },
-  "license": "MIT",
-  "hooks": "./hooks/hooks.json"
+  "license": "MIT"
 }
