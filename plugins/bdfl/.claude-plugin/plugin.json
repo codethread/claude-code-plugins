@@ -1,0 +1,9 @@
+{
+  "name": "bdfl",
+  "description": "Opinionated project architecture bootstrapping and migration",
+  "version": "1.0.0",
+  "author": {
+    "name": "codethread"
+  },
+  "keywords": ["architecture", "scaffolding", "migration", "typescript", "effect"]
+}

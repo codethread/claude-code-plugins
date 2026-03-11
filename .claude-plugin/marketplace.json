@@ -38,6 +38,16 @@
       "name": "logger",
       "source": "./plugins/logger",
       "category": "development-tools"
+    },
+    {
+      "name": "workflow",
+      "source": "./plugins/workflow",
+      "category": "development-tools"
+    },
+    {
+      "name": "bdfl",
+      "source": "./plugins/bdfl",
+      "category": "development-workflow"
     }
   ]
 }
