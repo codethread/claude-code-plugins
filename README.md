@@ -6,7 +6,7 @@ A local plugin marketplace for Claude Code providing development workflows and d
 
 Extends Claude Code with:
 
-- **Development Workflows**: spec-dev, mcp-builder, doc-writer, langs, bdfl
+- **Development Workflows**: spec-dev, mcp-builder, doc-writer, langs, bdfl, karen
 - **Claude Code Knowledge**: Documentation access and skill creation tools
 - **Session Logging**: logger (captures session events to JSONL files)
 
@@ -48,6 +48,7 @@ make
 /plugin install langs@codethread-plugins
 /plugin install logger@codethread-plugins  # Optional: session event logging
 /plugin install bdfl@codethread-plugins    # Opinionated project bootstrapping/migration
+/plugin install karen@codethread-plugins   # Scope gatekeeper agent
 ```
 
 **Note:** The `make` command installs dependencies and builds all plugins. You only need to run this once after adding the marketplace.
@@ -63,6 +64,7 @@ After installation, plugins provide slash commands, agents, and skills. See indi
 - `plugins/langs/README.md` - Language-specific patterns
 - `plugins/logger/README.md` - Session event logging (background hooks)
 - `plugins/bdfl/README.md` - Opinionated project bootstrapping and migration
+- `plugins/karen/README.md` - Scope gatekeeper agent
 
 ### Ask Claude
 

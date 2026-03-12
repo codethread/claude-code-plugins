@@ -48,6 +48,11 @@
       "name": "bdfl",
       "source": "./plugins/bdfl",
       "category": "development-workflow"
+    },
+    {
+      "name": "karen",
+      "source": "./plugins/karen",
+      "category": "development-workflow"
     }
   ]
 }
