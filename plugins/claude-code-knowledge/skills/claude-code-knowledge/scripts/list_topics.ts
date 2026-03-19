@@ -48,7 +48,7 @@ try {
         .sort();
       lastSync = manifest.last_sync;
       useManifest = true;
-    } catch (e) {
+    } catch (_e) {
       console.error(
         "Warning: Could not read manifest, falling back to directory listing",
       );

@@ -23,16 +23,27 @@ This repo uses bun workspaces with each plugin having its own `package.json`:
 - Each workspace has its own `tsconfig.json` extending the base
 - `lib` emits declaration files for other workspaces to consume
 
+### NixOS Development
+
+A `flake.nix` provides a dev shell with `bun`, `biome`, and `typescript`. All project hooks in `.claude/settings.json` use `.claude/hooks/with-nix.sh` to automatically enter the nix shell when `flake.nix` is present.
+
 ### Developer commands
 
 This repo is primarily markdown files, but all scripts are written with `bun`
 
 ```bash
 make # Runs: bun install && bun run build
+claude --init # Runs Setup hooks (bun install + build), then starts interactive session
+claude --init-only # Runs Setup hooks then exits (for CI)
+claude --maintenance # Runs Setup hooks + verify (lint + typecheck)
 bun run verify # Runs: lint && typecheck
 bun run typecheck # Uses: tsc --build (with project references)
 bun run lint # Uses: biome lint --fix --unsafe .
 ```
+
+**Setup Hooks (in `.claude/settings.json`):**
+- `--init` / `--init-only`: Runs `bun install && bun run build` — installs deps and compiles all workspaces
+- `--maintenance`: Runs `bun install && bun run build && bun run verify` — full rebuild plus lint and typecheck
 
 **Build Process:**
 - `bun run build` compiles all workspace packages

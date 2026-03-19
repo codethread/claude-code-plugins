@@ -4,6 +4,19 @@ This directory contains Claude Code hooks for the plugin marketplace project.
 
 ## Available Hooks
 
+### Setup Hook: Init & Maintenance
+
+**Event:** `Setup`
+**Registered in:** `.claude/settings.json`
+
+#### Init (`claude --init` or `claude --init-only`)
+
+Runs `bun install && bun run build` to install all workspace dependencies and compile artifacts (e.g., logger binary). Use `--init` for interactive setup, `--init-only` for CI/automated environments.
+
+#### Maintenance (`claude --maintenance`)
+
+Runs `bun install && bun run build && bun run verify` — same as init plus linting and typechecking to catch issues during scheduled upkeep.
+
 ### Stop Hook: Documentation Check
 
 **File:** `stop-doc-check.ts`
@@ -183,6 +196,12 @@ The hook is registered in `hooks.json`:
 - Ensures all relevant documentation is checked
 - Captures both local (plugin-specific) and global (project-level) docs
 - Follows the principle that changes cascade up the hierarchy
+
+## Nix Wrapper
+
+**File:** `with-nix.sh`
+
+All hook commands in `.claude/settings.json` are routed through this wrapper. If `flake.nix` exists in `CLAUDE_PROJECT_DIR` and `nix` is available, it runs the command inside `nix develop`. Otherwise it passes through directly. This ensures hooks work on NixOS where `bun`/`biome`/`tsc` are only available in the nix dev shell.
 
 ## Hook Development
 

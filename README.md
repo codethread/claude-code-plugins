@@ -36,10 +36,6 @@ Extends Claude Code with:
 # Add marketplace
 /plugin marketplace add git@github.com:codethread/claude-code-plugins.git
 
-# Install and build (run once after adding marketplace)
-cd ~/.claude/plugins/marketplaces/codethread-plugins
-make
-
 # Install plugins
 /plugin install spec-dev@codethread-plugins
 /plugin install doc-writer@codethread-plugins
@@ -51,7 +47,7 @@ make
 /plugin install karen@codethread-plugins   # Scope gatekeeper agent
 ```
 
-**Note:** The `make` command installs dependencies and builds all plugins. You only need to run this once after adding the marketplace.
+Then run `claude --init` (or `claude --init-only`) in any project to install dependencies and build plugins. Each plugin's Setup hook handles its own initialization automatically.
 
 ### Use
 

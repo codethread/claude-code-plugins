@@ -516,7 +516,7 @@ async function fetchAndSavePage(
 				last_updated: lastUpdated,
 			},
 		};
-	} catch (e) {
+	} catch (_e) {
 		return { success: false, pagePath };
 	}
 }
@@ -554,7 +554,7 @@ async function fetchAndSaveChangelog(manifest: Manifest): Promise<FetchResult> {
 				source: 'claude-code-repository',
 			},
 		};
-	} catch (e) {
+	} catch (_e) {
 		return { success: false, pagePath: 'changelog' };
 	}
 }
