@@ -34,7 +34,7 @@ Documentation and dependencies:
 1. **SKILL.md** - Instructions for Claude on when and how to use the skill
 2. **docs/docs_manifest.json** - Authoritative source tracking all documentation files with metadata
 3. **hooks/** - Hook subsystem for both auto-sync and proactive context injection
-   - **hooks.json** - Hook registration (both PreToolUse and UserPromptSubmit)
+   - **hooks.json** - Hook registration (Setup, PreToolUse, UserPromptSubmit)
    - **sync-docs-on-skill-load.ts** - PreToolUse hook that transparently syncs docs when skill loads
    - **claude-code-prompt.ts** - UserPromptSubmit hook that detects Claude Code questions
    - **package.json** - Hook dependencies
@@ -91,7 +91,7 @@ claude-code-knowledge/
 │   └── plugin.json              # Plugin metadata for marketplace
 │
 ├── hooks/                       # Hook subsystem for auto-sync and context injection
-│   ├── hooks.json              # Hook registration (PreToolUse + UserPromptSubmit)
+│   ├── hooks.json              # Hook registration (Setup + PreToolUse + UserPromptSubmit)
 │   ├── sync-docs-on-skill-load.ts  # PreToolUse hook for transparent doc sync (Bun TypeScript)
 │   ├── claude-code-prompt.ts   # UserPromptSubmit hook (Bun TypeScript)
 │   ├── package.json            # Hook dependencies

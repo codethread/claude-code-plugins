@@ -18,12 +18,7 @@ Logs all Claude Code session events to structured JSONL files for analysis, debu
 /plugin install logger@codethread-plugins
 ```
 
-After installation, build the executable for your platform:
-
-```bash
-cd ~/.claude/plugins/marketplaces/codethread-plugins/plugins/logger
-bun run build
-```
+Then run `claude --init` (or `claude --init-only`) in any project to build the executable for your platform. This is handled automatically by the plugin's Setup hook.
 
 ### From Source
 

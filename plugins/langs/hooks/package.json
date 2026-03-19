@@ -1,0 +1,10 @@
+{
+  "name": "langs-hooks",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.1.37",
+    "@types/bun": "latest"
+  }
+}

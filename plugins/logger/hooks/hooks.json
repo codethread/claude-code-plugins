@@ -1,5 +1,17 @@
 {
   "hooks": {
+    "Setup": [
+      {
+        "matcher": "init",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PLUGIN_ROOT}\" && bun install && bun run build",
+            "timeout": 120
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "hooks": [

@@ -156,6 +156,8 @@ bun run build:verbose   # Shows progress
 
 **Hook registration configuration.**
 
+Registers a `Setup` hook (matcher: `init`) that runs `bun install && bun run build` to compile the binary when users run `claude --init`.
+
 Registers `${CLAUDE_PLUGIN_ROOT}/bin/session-logger` executable for 11 events:
 1. SessionStart
 2. SessionEnd

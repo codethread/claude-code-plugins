@@ -22,8 +22,8 @@ plugins/langs/
 ├── README.md                    # End-user documentation
 ├── CLAUDE.md                   # This file - maintainer documentation
 ├── hooks/                      # Auto-detection hooks
-│   ├── hooks.json             # Hook configuration
-│   ├── package.json           # Dependencies
+│   ├── hooks.json             # Hook configuration (Setup + PostToolUse)
+│   ├── package.json           # Dependencies (SDK types)
 │   └── test-file-suggest.ts   # PostToolUse hook
 └── skills/
     ├── lang-react/

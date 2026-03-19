@@ -21,7 +21,7 @@ plugins/doc-writer/
 ├── README.md                           # End-user documentation (what/why/how)
 ├── CLAUDE.md                          # This file - maintainer documentation (architecture, hook details)
 ├── hooks/                             # Auto-detection hooks
-│   ├── hooks.json                     # Hook configuration
+│   ├── hooks.json                     # Hook configuration (Setup + PostToolUse)
 │   ├── package.json                   # Hook dependencies
 │   └── doc-writer-suggest.ts          # PostToolUse hook for .md files
 ├── agents/
