@@ -1,7 +1,6 @@
 {
   "name": "doc-writer",
   "description": "Write clear, effective technical documentation following industry-proven patterns from exemplary projects (React, Rust, Stripe, Twilio) and authoritative style guides (Google, Diátaxis, Write the Docs, Microsoft). Use when creating or improving READMEs, API docs, tutorials, guides, or any technical documentation.",
-  "version": "1.0.0",
   "author": {
     "name": "codethread"
   },

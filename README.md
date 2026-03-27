@@ -6,16 +6,16 @@ A local plugin marketplace for Claude Code providing development workflows and d
 
 Extends Claude Code with:
 
-- **Development Workflows**: spec-dev, mcp-builder, doc-writer, langs, bdfl, karen
+- **Development Workflows**: langs, bdfl, karen, workflow
+- **Documentation**: doc-writer (technical writing best practices)
 - **Claude Code Knowledge**: Documentation access and skill creation tools
-- **Session Logging**: logger (captures session events to JSONL files)
 
 ## Why
 
-- Systematic development with specifications and reviews (spec-dev)
-- Build MCP servers with best practices (mcp-builder)
-- Write quality documentation (doc-writer)
 - Language-specific patterns (langs: React, TypeScript)
+- Write quality documentation (doc-writer)
+- Opinionated project bootstrapping and migration (bdfl)
+- Scope gatekeeper to prevent feature creep (karen)
 - Official Claude Code docs at your fingertips (claude-code-knowledge)
 
 ## How
@@ -37,14 +37,12 @@ Extends Claude Code with:
 /plugin marketplace add git@github.com:codethread/claude-code-plugins.git
 
 # Install plugins
-/plugin install spec-dev@codethread-plugins
-/plugin install doc-writer@codethread-plugins
 /plugin install claude-code-knowledge@codethread-plugins
-/plugin install mcp-builder@codethread-plugins
+/plugin install doc-writer@codethread-plugins
 /plugin install langs@codethread-plugins
-/plugin install logger@codethread-plugins  # Optional: session event logging
-/plugin install bdfl@codethread-plugins    # Opinionated project bootstrapping/migration
-/plugin install karen@codethread-plugins   # Scope gatekeeper agent
+/plugin install workflow@codethread-plugins
+/plugin install bdfl@codethread-plugins
+/plugin install karen@codethread-plugins
 ```
 
 Then run `claude --init` (or `claude --init-only`) in any project to install dependencies and build plugins. Each plugin's Setup hook handles its own initialization automatically.
@@ -53,12 +51,10 @@ Then run `claude --init` (or `claude --init-only`) in any project to install dep
 
 After installation, plugins provide slash commands, agents, and skills. See individual plugin READMEs for usage:
 
-- `plugins/spec-dev/README.md` - Spec-driven development workflows
-- `plugins/doc-writer/README.md` - Documentation writing guidance
 - `plugins/claude-code-knowledge/README.md` - Claude Code docs and skill creation
-- `plugins/mcp-builder/README.md` - MCP server development
+- `plugins/doc-writer/README.md` - Documentation writing guidance
 - `plugins/langs/README.md` - Language-specific patterns
-- `plugins/logger/README.md` - Session event logging (background hooks)
+- `plugins/workflow/README.md` - Development workflow
 - `plugins/bdfl/README.md` - Opinionated project bootstrapping and migration
 - `plugins/karen/README.md` - Scope gatekeeper agent
 
@@ -67,7 +63,7 @@ After installation, plugins provide slash commands, agents, and skills. See indi
 For detailed information, ask Claude:
 
 ```
-What can the spec-dev plugin do?
+What can the langs plugin do?
 How do I create a new plugin?
 Show me the plugin directory structure
 ```
@@ -83,8 +79,7 @@ Project-level slash commands for maintaining this repository:
 - `/release` - Prepare plugin releases with version bumps, changelog updates, and git tags
   - Safety checks for accidental commits (`.env`, `node_modules`, hidden files)
   - Detects and squashes WIP commits
-  - Processes plugins in parallel (version bump, SKILL.md updates, CHANGELOG.md)
-  - Bumps marketplace version (minor increment)
+  - Processes plugins in parallel (version bump in marketplace.json, CHANGELOG.md)
   - Creates single conventional commit: `type(plugin1,plugin2): description`
   - Creates git tags: `<plugin-name>-v<version>`
   - Does NOT push (review with `git show` first)
@@ -107,8 +102,6 @@ context-specific recommendations from installed plugins.
 ```markdown
 # CLAUDE.md
 
-- ALWAYS follow `<plugin-doc-writer-suggestion>` recommendations when
-  writing documentation
 - ALWAYS follow `<plugin-langs-suggestion>` when test files are detected
 - Consider `<plugin-claude-code-knowledge-suggestion>` for Claude Code questions
 ```
@@ -126,10 +119,7 @@ The XML tag format ensures Claude treats these suggestions as structured prompts
 
 ## Attribution
 
-Several plugins sourced from [Anthropic's skills repository](https://github.com/anthropics/skills):
-
-- MCP builder guidance
-- Skill creation scripts
+Skill creation scripts sourced from [Anthropic's skills repository](https://github.com/anthropics/skills).
 
 ## Reference
 

@@ -571,7 +571,7 @@ When making significant changes:
 
 - **Repository root CLAUDE.md:** Overall plugin architecture and standards
 - **skill-creator plugin:** For creating new skills (this plugin is an example)
-- **spec-dev plugin:** Related workflow for specification writing
+- **claude-code-knowledge plugin:** For Claude Code documentation and skill creation
 
 ## Questions and Support
 

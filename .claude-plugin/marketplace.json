@@ -5,52 +5,42 @@
     "email": "[email protected]"
   },
   "metadata": {
-    "description": "codethreads various plugins",
-    "version": "1.4.0"
+    "description": "codethreads various plugins"
   },
   "plugins": [
     {
-      "name": "spec-dev",
-      "source": "./plugins/spec-dev",
-      "category": "development-workflow"
-    },
-    {
-      "name": "mcp-builder",
-      "source": "./plugins/mcp-builder",
-      "category": "development-tools"
-    },
-    {
       "name": "doc-writer",
+      "version": "1.0.0",
       "source": "./plugins/doc-writer",
       "category": "development-tools"
     },
     {
       "name": "claude-code-knowledge",
+      "version": "1.1.0",
       "source": "./plugins/claude-code-knowledge",
       "category": "development-tools"
     },
     {
       "name": "langs",
+      "version": "1.0.0",
       "source": "./plugins/langs",
       "category": "development-tools"
     },
     {
-      "name": "logger",
-      "source": "./plugins/logger",
-      "category": "development-tools"
-    },
-    {
       "name": "workflow",
+      "version": "1.0.0",
       "source": "./plugins/workflow",
       "category": "development-tools"
     },
     {
       "name": "bdfl",
+      "version": "1.0.0",
       "source": "./plugins/bdfl",
       "category": "development-workflow"
     },
     {
       "name": "karen",
+      "version": "1.0.0",
       "source": "./plugins/karen",
       "category": "development-workflow"
     }

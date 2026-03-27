@@ -52,26 +52,20 @@ If WIP commits are found:
 
 From the changed files (including any newly squashed commits), determine which plugins under `plugins/` have been modified.
 
-### 4. Process Each Plugin (Parallelizable)
+### 4. Version Bump All Changed Plugins
+
+For each changed plugin, update its `version` field in `.claude-plugin/marketplace.json`:
+
+- Find the plugin's entry in the `plugins` array
+- Check the current `version` field
+- Determine appropriate bump (patch, minor, or major) based on changes
+- Update the version
+
+### 5. Process Each Plugin's CHANGELOG (Parallelizable)
 
 For better performance, spawn multiple Task agents (model: haiku) to process plugins in parallel. Each agent should handle one plugin and perform:
 
-#### a. Version Bump in plugin.json
-
-- Read the plugin's `.claude-plugin/plugin.json`
-- Check the current version
-- Verify if the version has been bumped appropriately for these changes
-- If not bumped, determine appropriate version (patch, minor, or major) based on changes
-- Update `plugin.json` with the new version
-
-#### b. Update SKILL.md Version References
-
-- Use Glob to find any `SKILL.md` files in the plugin: `plugins/<plugin>/skills/*/SKILL.md`
-- Read each `SKILL.md` file
-- Check if version numbers are mentioned (often in the description or header)
-- Update any version references to match the new `plugin.json` version
-
-#### c. Create or Update CHANGELOG.md
+#### Create or Update CHANGELOG.md
 
 - Check if `plugins/<plugin>/CHANGELOG.md` exists
 - If it doesn't exist, create it with this structure:
@@ -90,25 +84,12 @@ For better performance, spawn multiple Task agents (model: haiku) to process plu
   - Today's date (2025-11-13) as the heading
   - 2-4 concise bullet points describing key changes based on git diff and commit messages
 
-### 5. Bump Marketplace Version
+### 6. Commit All Changes
 
 After all plugins are processed:
 
-- Read `.claude-plugin/marketplace.json`
-- Locate the `metadata.version` field
-- Bump the minor version (e.g., `1.1.0` → `1.2.0`)
-- Update the marketplace.json file with the new version
-
-**Version Strategy:** The marketplace version receives a minor bump with every release, regardless of the individual plugin version changes.
-
-### 6. Commit All Changes
-
-After all plugins are processed and marketplace version is bumped:
-
 - Stage all modified/created files including:
-  - Updated `.claude-plugin/marketplace.json` (marketplace version)
-  - Updated `plugin.json` files
-  - Updated `SKILL.md` files
+  - Updated `.claude-plugin/marketplace.json` (plugin versions)
   - New/updated `CHANGELOG.md` files
   - Any `.gitignore` changes from safety checks
   - All original uncommitted work
@@ -117,12 +98,12 @@ After all plugins are processed and marketplace version is bumped:
   - Scope: plugin name(s)
   - **IMPORTANT**: The commit message should describe the actual feature/changes, NOT the release process
   - Good examples:
-    - `feat(spec-dev): add interview documentation and template versioning`
-    - `fix(doc-writer): correct markdown formatting in nested lists`
+    - `feat(langs): add Python skill with type hinting patterns`
+    - `fix(karen): correct verdict logic for edge cases`
     - `refactor(langs): simplify type inference logic`
   - Bad examples:
-    - ❌ `chore(spec-dev): prepare release with version bumps`
-    - ❌ `chore(spec-dev): v1.1.0 release`
+    - ❌ `chore(langs): prepare release with version bumps`
+    - ❌ `chore(langs): v1.1.0 release`
     - ❌ `chore: update changelogs`
   - The commit body should provide additional context about the changes and their impact
 
@@ -131,7 +112,7 @@ After all plugins are processed and marketplace version is bumped:
 For each plugin that had its version bumped:
 
 - Create an annotated git tag in the format: `<plugin-name>-v<version>`
-- Example: `spec-dev-v1.2.3`, `doc-writer-v2.0.0`
+- Example: `langs-v1.1.0`, `karen-v2.0.0`
 - Use `git tag -a <tag-name> -m "Release <plugin-name> v<version>"`
 - Run `git tag -l` to confirm tags were created
 
@@ -139,7 +120,6 @@ For each plugin that had its version bumped:
 
 Display a summary showing:
 
-- Marketplace version (old → new)
 - Final commit message
 - List of tags created
 - Reminder that changes can be reviewed with `git show` and pushed with `git push && git push --tags`

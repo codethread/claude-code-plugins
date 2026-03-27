@@ -1,9 +1,0 @@
-{
-  "name": "logger",
-  "version": "1.0.3",
-  "description": "Logs all Claude Code session events to JSONL files",
-  "author": {
-    "name": "codethread"
-  },
-  "license": "MIT"
-}

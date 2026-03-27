@@ -46,9 +46,7 @@ bun run lint # Uses: biome lint --fix --unsafe .
 - `--maintenance`: Runs `bun install && bun run build && bun run verify` — full rebuild plus lint and typecheck
 
 **Build Process:**
-- `bun run build` compiles all workspace packages
-- `postbuild` automatically cleans bun build artifacts (`.*.bun-build` files) from all workspaces
-- Cleanup script: `scripts/clean-build-artifacts.ts` (uses concurrent operations)
+- `bun run build` runs `tsc --build` (project references)
 
 ## Plugin Architecture
 
@@ -91,13 +89,14 @@ See `lib/CLAUDE.md` for detailed documentation of available utilities including:
    {
      "name": "my-plugin",
      "description": "Brief description of what this plugin does",
-     "version": "1.0.0",
      "author": {
        "name": "Your Name"
      },
      "keywords": ["tag1", "tag2", "tag3"]
    }
    ```
+
+   **Note:** Do not put `version` here — version is tracked in `marketplace.json` (see step 5).
 
    **Important about hooks:** Do NOT add a `"hooks"` field that references `./hooks/hooks.json` or `hooks/hooks.json`. Claude Code automatically loads `hooks/hooks.json` from the standard location. The manifest's `hooks` field should only reference ADDITIONAL hook files beyond the standard location (e.g., `"hooks": "./hooks/custom-hooks.json"`). Referencing the standard location will cause a duplicate registration error.
 
@@ -158,12 +157,12 @@ See `lib/CLAUDE.md` for detailed documentation of available utilities including:
        "email": "[email protected]"
      },
      "metadata": {
-       "description": "Marketplace description",
-       "version": "1.0.0"
+       "description": "Marketplace description"
      },
      "plugins": [
        {
          "name": "my-plugin",
+         "version": "1.0.0",
          "source": "./plugins/my-plugin",
          "category": "development-tools"
        }
@@ -171,7 +170,7 @@ See `lib/CLAUDE.md` for detailed documentation of available utilities including:
    }
    ```
 
-   The `metadata.version` field tracks the marketplace version, which receives a minor bump with every release (handled by `/release` command).
+   Each plugin entry has a `version` field — this is the single source of truth for plugin versions (not in `plugin.json`). For relative-path plugins, `plugin.json` version would silently override, so we keep it only here.
 
 6. **Add plugin components**
    - Add commands as `.md` files in `commands/`
@@ -220,7 +219,7 @@ Brief overview of the command.
 - **Don't repeat syntax**: Only define the arguments once in the Arguments section
 - **Plugin script paths**: When executing bash scripts from plugin directories, use the `CT_PLUGINS_DIR` environment variable:
   - Pattern: `$CT_PLUGINS_DIR/<plugin-name>/scripts/<script>.sh`
-  - Example: `$CT_PLUGINS_DIR/spec-dev/scripts/get-next-spec-id.sh`
+  - Example: `$CT_PLUGINS_DIR/langs/scripts/some-script.sh`
   - Note: Users must set `CT_PLUGINS_DIR=~/.claude/plugins/marketplaces/codethread-plugins/plugins` (see README.md)
 
 ## Plugin Documentation Standards
@@ -309,7 +308,7 @@ const output: SyncHookJSONOutput = {
 
 ### Naming Convention
 
-- **Plugin hooks**: `<plugin-PLUGINNAME-suggestion>` (e.g., `<plugin-doc-writer-suggestion>`)
+- **Plugin hooks**: `<plugin-PLUGINNAME-suggestion>` (e.g., `<plugin-langs-suggestion>`)
 - **Project hooks**: `<project-HOOKNAME-suggestion>` (e.g., `<project-stop-doc-check-suggestion>`)
 
 **Why XML tags?** Anthropic models treat XML as structural elements, users can control with wildcard rules (`<plugin-*-suggestion>`), and they're parseable for future tooling.
@@ -318,13 +317,11 @@ const output: SyncHookJSONOutput = {
 
 ```typescript
 const context =
-  "<plugin-doc-writer-suggestion>\n" +
-  "Detected markdown file modification: FILENAME\n\n" +
-  "ESSENTIAL SKILL:\n" +
-  "  → doc-writer:writing-documentation\n\n" +
-  "RECOMMENDED AGENT:\n" +
-  "  → doc-writer:docs-reviewer\n" +
-  "</plugin-doc-writer-suggestion>";
+  "<plugin-langs-suggestion>\n" +
+  "Detected TypeScript file: FILENAME\n\n" +
+  "RECOMMENDED SKILL:\n" +
+  "  → langs:lang-typescript\n" +
+  "</plugin-langs-suggestion>";
 
 const output = {
   hookSpecificOutput: {

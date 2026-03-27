@@ -345,14 +345,7 @@ Periodically test skills against real projects:
 
 Track significant changes:
 
-1. **Update version in plugin.json:**
-   ```json
-   {
-     "name": "langs",
-     "version": "1.1.0",
-     ...
-   }
-   ```
+1. **Update version in marketplace.json** (the single source of truth for plugin versions)
 
 2. **Document in git commit:**
    ```
@@ -366,8 +359,7 @@ Track significant changes:
 ## Related Documentation
 
 - **Repository root CLAUDE.md:** Overall plugin architecture
-- **doc-writer plugin:** For documenting these skills
-- **spec-dev plugin:** For implementing features using these skills
+- **claude-code-knowledge plugin:** For Claude Code documentation and skill creation
 
 ## Future Enhancement Ideas
 

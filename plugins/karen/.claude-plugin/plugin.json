@@ -1,7 +1,6 @@
 {
   "name": "karen",
   "description": "Scope gatekeeper agent that pushes back on unnecessary features and complexity. Delegate to Karen before implementing new features to challenge necessity, detect optimistic bias, and insist on the simplest solution.",
-  "version": "1.0.0",
   "author": {
     "name": "codethread"
   },
