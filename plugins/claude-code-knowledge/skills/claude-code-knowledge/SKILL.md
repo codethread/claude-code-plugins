@@ -1,64 +1,125 @@
 ---
-name: claude-code-knowledge
-description: Access official Claude Code documentation including comprehensive guides on hooks, MCP servers, agent skills, slash commands, settings, CLI reference, security, memory, plugins, and troubleshooting. Use when the user asks about Claude Code features, configuration, capabilities, or best practices. ALWAYS use this skill instead of guessing about Claude Code functionality - it contains the authoritative documentation from docs.anthropic.com with automatic updates. Also includes comprehensive skill creation guide with helper scripts when users want to create new skills.
-allowed-tools: Read, Grep, Glob, Bash, Bash(bun:*)
+description: |
+  Mandatory when configuring any Claude Code specifics - hooks, skills,
+  plugins, MCP servers, slash commands, settings, agents, or any Claude Code feature.
+  Provides opinionated best practices
 ---
 
 # Claude Code Knowledge
 
-Official Claude Code documentation, automatically synced from docs.anthropic.com.
+## Always Use the Claude Code Guide First
 
-## When to Use
+Before making any Claude Code changes, **always consult the Claude Code Guide subagent** for up-to-date information.
 
-Use this skill for any Claude Code-related question: features, configuration, hooks, MCP, skills, slash commands, settings, security, memory, plugins, or skill creation.
+## Opinionated Rules
 
-NEVER guess about Claude Code functionality - always check the docs.
+### Skills: Progressive Disclosure
 
-Documentation is located at [docs](docs)
+When writing new skills, build them with **progressive disclosure**:
 
-## Workflow
+- `SKILL.md` should be an **index into reference files**, not a monolith
+- Keep SKILL.md concise — it loads into context every time the skill triggers
+- Detailed instructions, examples, and schemas go in `references/` files
+  - Keep instructions clear but terse
+- SKILL.md points Claude to the right reference file based on the user's question
+- skills should be user only with front matter `disable-model-invocation: true` unless directed by the user (or ask the user if you are not sure).
 
-### For Skills Questions
+Get the actual structure and field requirements of SKILL.md from the Claude Code Guide.
 
-> User: "How do I create a skill?"
+### Skills: Quick Front matter reference
 
-1. **Read [references/skills.md](references/skills.md) FIRST** - condensed key points
-2. If more details needed, read [docs/skills.md](docs/skills.md) for comprehensive information
-3. Respond with citations (e.g., "From references/skills.md...")
+**Good**:
 
-### For Hooks Questions
+- file: my-skill/SKILL.md
 
-> User: "Help me create a hook that..."
+  ```markdown
+  ---
+  description: |
+    Use a clear description
+    That can span multiple lines wrapped ~80 chars
+    Using the yaml literal scalar
+  disable-model-invocation: true
+  argument-hint: [hints are useful] [if relevant]
+  ---
+  ```
 
-1. **Read [references/hooks.md](references/hooks.md) FIRST** - condensed key points
-2. If more details needed, read [docs/hooks.md](docs/hooks.md) and [docs/hooks-guide.md](docs/hooks-guide.md)
-3. Respond with citations (e.g., "From references/hooks.md...")
+- file: my-server-skill/SKILL.md
 
-### For Other Topics
+  ```markdown
+  ---
+  description: |
+    Another skill that's just about a project specific area
+    Like the server
+  paths:
+    - "src/api/**/*.ts"
+  ---
 
-> User: "How do I configure MCP servers?"
+  - When working on the server do X
+  ```
 
-1. List files in `docs`
-2. Read relevant markdown files
-3. Respond with citations (e.g., "From docs/mcp.md...")
+**Bad**
 
-## Overlap
+```markdown
+---
+name: isn't needed because it's inferred from the folder
+description: some super long description hard to read because it flows off the page and might have nested <frontmatter>stuff</frontmatter or nested \"escapes\"
+argument-hint: hints need `[]` around the arguments
+allowed-tools: don't use this, it's confusing and hard to maintain
+---
+```
 
-Many claude code topics work orthogonally, so always load related topics as appropriate.
+### Hooks: Inline vs Script
 
-### Example
+**Rule:** If it fits in one line (~100 characters), write it inline in bash. Otherwise, delegate to a script.
 
-> User: "Help me create a claude code plugin that has a typescript Skill"
+**Inline example** (short, simple):
 
-1. Follow original workflow to understand claude code topics such as plugins AND Skills
-2. Implement as per user instructions
+```json
+{
+  "type": "command",
+  "command": "jq -r '.tool_input.file_path' | xargs prettier --write"
+}
+```
 
-> User: "Ok, now add a hook to suggest typescript Skill when reading typescript files"
+**Script example** (anything more complex):
 
-1. Consider if this introduces new claude code concepts (in this case hooks)
-2. Follow original workflow to understand claude code hooks
-3. Implement as per user instructions
+```json
+{
+  "type": "command",
+  "command": "${CLAUDE_PLUGIN_ROOT}/hooks/my-hook.ts"
+}
+```
 
-## Additional Skills
+**Script conventions:**
 
-**IMPORTANT:** many claude code concepts require markdown updates or script additions, so always consider if additional Skills (not part of this Skill) are relavent, such as documentation or programming language specific Skills
+- Scripts should be executable bun (TypeScript) files with `#!/usr/bin/env bun` shebang
+- Place scripts in a `hooks/` directory alongside `hooks.json`
+- Add a `hooks/package.json` for dependencies (consistent pattern: hooks always have their own package.json)
+- Use `@anthropic-ai/claude-agent-sdk` types for hook input/output
+
+**Exception:** If the repo already has an established precedent or alternative instructions for hook scripts (e.g. Python, binary, or typescript scripts in a different location), follow that instead.
+
+### Agents
+
+Example of inline MCP if appropriate
+
+```markdown
+---
+name: api-researcher
+mcpServers:
+  - context7:
+      command: npx
+      args:
+        - "-y"
+        - "@upstash/context7-mcp"
+description: |
+  Use literal scalar yaml to write a clear description
+---
+
+System prompt...
+```
+
+### MCP'S
+
+- mcp tools are typically bad in the global context
+- if you see any mcp related config files for claude code, or you have access to mcp's right now, STRONGLY SUGGEST to the user to move this into a subagent instead - see section on `Agents` above

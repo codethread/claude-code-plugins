@@ -256,67 +256,6 @@ The Diátaxis framework covers four main types (tutorial, how-to, reference, exp
 ...
 ```
 
-### Maintaining Hooks
-
-The plugin includes a `PostToolUse` hook for auto-detection. To maintain or modify:
-
-**Testing the hook:**
-
-```bash
-cd plugins/doc-writer/hooks
-
-# Test with markdown file (should output hookSpecificOutput JSON)
-cat <<'EOF' | bun doc-writer-suggest.ts
-{
-  "session_id": "test",
-  "transcript_path": "/tmp/test",
-  "cwd": "/tmp",
-  "permission_mode": "auto",
-  "hook_event_name": "PostToolUse",
-  "tool_name": "Write",
-  "tool_input": {"file_path": "/tmp/test.md", "content": "# Test"},
-  "tool_response": {"filePath": "/tmp/test.md", "success": true}
-}
-EOF
-
-# Test with non-markdown file (should produce no output)
-cat <<'EOF' | bun doc-writer-suggest.ts
-{
-  "session_id": "test",
-  "transcript_path": "/tmp/test",
-  "cwd": "/tmp",
-  "permission_mode": "auto",
-  "hook_event_name": "PostToolUse",
-  "tool_name": "Write",
-  "tool_input": {"file_path": "/tmp/test.ts", "content": "const x = 1;"},
-  "tool_response": {"filePath": "/tmp/test.ts", "success": true}
-}
-EOF
-
-# Test in Claude Code (verify hook actually fires)
-claude --print --model haiku "Create /tmp/hook-test.md with '# Test'. After completing, tell me what PostToolUse hook context you received."
-```
-
-**Updating hook behavior:**
-
-1. Edit `hooks/doc-writer-suggest.ts`
-2. Modify detection logic or suggestion text
-3. Test with sample inputs
-4. Verify hook exits with code 0
-5. Update `hooks/README.md` if behavior changes
-
-**Common modifications:**
-- Add support for other file extensions (.mdx, .rst, .adoc)
-- Change suggestion text or formatting
-- Add more tool types (e.g., Delete for cleanup suggestions)
-- Filter by file path patterns (e.g., only trigger for docs/ directory)
-
-**Important notes:**
-- Hook provides context via `hookSpecificOutput.additionalContext`
-- Does not use `"decision": "block"` - suggestion is informational only
-- Claude receives the context but doesn't announce it unless relevant or asked
-- To test if working, explicitly ask Claude what context it received
-
 ### Improving Templates
 
 Templates in `SKILL.md` provide structure for different documentation types. To improve:
@@ -442,29 +381,7 @@ When making significant changes:
   Write a README for a library that validates emails
   ```
 
-- [ ] **Hook triggers on markdown files (manual script test):**
-  ```bash
-  # In hooks directory
-  cat <<'EOF' | bun doc-writer-suggest.ts
-  {"session_id":"test","transcript_path":"/tmp","cwd":"/tmp","permission_mode":"auto","hook_event_name":"PostToolUse","tool_name":"Write","tool_input":{"file_path":"/tmp/test.md","content":"# Test"},"tool_response":{"filePath":"/tmp/test.md","success":true}}
-  EOF
-  # Should output hookSpecificOutput JSON with additionalContext
-  ```
-
-- [ ] **Hook doesn't trigger on non-markdown files:**
-  ```bash
-  # In hooks directory
-  cat <<'EOF' | bun doc-writer-suggest.ts
-  {"session_id":"test","transcript_path":"/tmp","cwd":"/tmp","permission_mode":"auto","hook_event_name":"PostToolUse","tool_name":"Write","tool_input":{"file_path":"/tmp/test.ts","content":"const x = 1;"},"tool_response":{"filePath":"/tmp/test.ts","success":true}}
-  EOF
-  # Should produce no output (exits silently)
-  ```
-
-- [ ] **Hook works in Claude Code:**
-  ```bash
-  claude --print --model haiku "Create /tmp/test.md with '# Test'. After completing, tell me what PostToolUse hook context you received."
-  # Claude should report receiving doc-writer suggestion
-  ```
+- [ ] **Hook works** (see Component Responsibilities section for test commands)
 
 - [ ] **Style guidelines applied:**
   - Active voice used
@@ -489,120 +406,16 @@ Periodically validate skill output against exemplary projects:
    - Tone is appropriate
    - Navigation is clear
 
-### User Feedback Integration
-
-**When receiving feedback:**
-
-1. **Categorize the issue:**
-   - Missing pattern (add to skill)
-   - Incorrect pattern (fix in skill)
-   - Outdated research (update references)
-   - Documentation clarity (improve CLAUDE.md or README.md)
-
-2. **Trace to source:**
-   - Which section of SKILL.md is involved?
-   - Is research in references accurate?
-   - Is template structure the issue?
-
-3. **Make targeted fix:**
-   - Update specific section
-   - Test the change
-   - Document in git commit
-
 ## Common Pitfalls to Avoid
 
-### For Maintainers
-
-**Don't:**
-- ❌ Add content Claude already knows naturally
-- ❌ Use abstract warnings ("don't hallucinate") instead of actionable steps
-- ❌ Make SKILL.md too long (currently ~170 lines; avoid bloat)
-- ❌ Duplicate content between skill and references
-- ❌ Skip testing base knowledge before adding patterns
-
-**Do:**
-- ✅ Test with `claude --print --model haiku` before documenting (cost-effective)
-- ✅ Document only unique/opinionated patterns
-- ✅ Make verification actionable (researcher agent, Context7 MCP)
-- ✅ Apply docs-reviewer agent to all updates
-- ✅ Keep skill focused on behavior-changing patterns
-
-### For Skill Content
-
-**Don't:**
-- ❌ Prescribe overly rigid rules (context matters)
-- ❌ Include examples without context
-- ❌ Assume one-size-fits-all approaches
-- ❌ Neglect accessibility guidelines
-
-**Do:**
-- ✅ Provide decision frameworks (when to use X vs. Y)
-- ✅ Include anti-patterns (what to avoid)
-- ✅ Show progressive complexity
-- ✅ Offer templates that adapt to context
-
-## Version History and Changelog
-
-When making significant changes:
-
-1. **Update version in `marketplace.json`:**
-   ```json
-   {
-     "name": "doc-writer",
-     "version": "1.1.0",  // Increment appropriately
-     ...
-   }
-   ```
-
-2. **Document changes in git commit:**
-   ```
-   doc-writer: Add support for troubleshooting guides
-
-   - Added troubleshooting guide template to SKILL.md
-   - Updated decision guide to include troubleshooting
-   - Added examples from Vercel and Stripe docs
-   ```
-
-3. **Consider updating README.md:**
-   - If new features are user-facing
-   - Keep examples current
+- Don't add content Claude already knows naturally
+- Don't use abstract warnings ("don't hallucinate") — use actionable steps
+- Don't let SKILL.md grow beyond ~200 lines — use references for depth
+- Don't duplicate content between skill and references
+- Test with `claude --print --model haiku` before documenting (cost-effective)
+- Apply the docs-reviewer agent to all updates
 
 ## Related Documentation
 
 - **Repository root CLAUDE.md:** Overall plugin architecture and standards
-- **skill-creator plugin:** For creating new skills (this plugin is an example)
-- **claude-code-knowledge plugin:** For Claude Code documentation and skill creation
-
-## Questions and Support
-
-For questions about maintaining this plugin:
-1. Review this CLAUDE.md thoroughly
-2. Check the repository root CLAUDE.md for general plugin patterns
-3. Examine the skill-creator plugin for skill development guidance
-4. Review git history for context on past changes
-
-## Future Enhancement Ideas
-
-Potential improvements for future versions:
-
-1. **Interactive examples generator:**
-   - Command to generate CodeSandbox/StackBlitz links
-   - Automate "try it" sections
-
-2. **Documentation audit command:**
-   - Analyze existing docs against patterns
-   - Generate improvement suggestions
-
-3. **Template library expansion:**
-   - Additional templates for specific doc types
-   - Framework-specific templates (React, Vue, etc.)
-
-4. **Multi-language support:**
-   - Patterns for non-English documentation
-   - Localization best practices
-
-5. **Accessibility checker:**
-   - Validate alt text, contrast, heading hierarchy
-   - Automated accessibility scoring
-
-**Note:** Implement these only if user demand emerges and research supports their value.
+- **claude-code-knowledge plugin:** For Claude Code documentation

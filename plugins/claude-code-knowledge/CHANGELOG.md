@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.2.0 - 2026-03-27
+
+- Simplified to thin opinionated layer on top of built-in Claude Code Guide subagent
+- Removed hooks, scripts, references, skill-rules, and docs cache (all replaced by Guide subagent)
+- Added refactor-hooks companion skill
+- Updated plugin description and keywords to reflect new scope
+
 ## v1.1.0 - 2025-11-13
 
 - Fixed UserPromptSubmit hook to use "ESSENTIAL SKILL" directive for automatic skill loading

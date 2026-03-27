@@ -17,7 +17,6 @@ Session-scoped caching with time-based filtering for hooks.
 **Used By:**
 - `.claude/hooks/stop-doc-check.ts` - 3-minute delay between doc check prompts
 - `plugins/doc-writer/hooks/doc-writer-suggest.ts` - Once-per-session suggestion
-- `plugins/claude-code-knowledge/hooks/claude-code-prompt.ts` - Once-per-session skill suggestion
 
 **When to Use:**
 - Track state across hook invocations within a session

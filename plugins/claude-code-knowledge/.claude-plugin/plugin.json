@@ -1,18 +1,14 @@
 {
   "name": "claude-code-knowledge",
-  "description": "Official Claude Code documentation access. Provides instant reference to hooks, MCP, skills, slash commands, settings, CLI, and all Claude Code features with automatic sync from docs.anthropic.com.",
+  "description": "Opinionated Claude Code configuration guidance. Delegates to the built-in Claude Code Guide for official docs, adds project conventions on top.",
   "author": {
     "name": "Community"
   },
   "keywords": [
-    "documentation",
-    "reference",
     "claude-code",
-    "knowledge",
-    "docs",
+    "configuration",
     "hooks",
-    "mcp",
     "skills",
-    "settings"
+    "best-practices"
   ]
 }

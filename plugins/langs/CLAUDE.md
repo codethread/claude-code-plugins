@@ -111,15 +111,6 @@ EOF
 4. Reference files available but not automatically loaded
 5. Claude applies patterns when user writes/refactors code
 
-### Auto-Loading via CLAUDE.md
-
-The root `CLAUDE.md` instructs Claude to:
-- **ALWAYS** load `lang-*` skills when working in appropriate files
-- Load `lang-react` when writing/updating/reviewing React code
-- Load `lang-typescript` when writing TypeScript code
-
-This ensures skills are proactively loaded without user prompting.
-
 ### Hook-Based Test File Detection
 
 PostToolUse hook suggests test files when `.ts`/`.tsx` source files are read. Non-intrusive context injection.
@@ -359,16 +350,4 @@ Track significant changes:
 ## Related Documentation
 
 - **Repository root CLAUDE.md:** Overall plugin architecture
-- **claude-code-knowledge plugin:** For Claude Code documentation and skill creation
-
-## Future Enhancement Ideas
-
-Potential skills to add:
-
-1. **lang-python:** Python best practices with type hints, dataclasses, async patterns
-2. **lang-rust:** Rust ownership patterns, error handling, trait usage
-3. **lang-go:** Go idioms, error handling, concurrency patterns
-4. **lang-sql:** SQL query patterns, indexing, optimization
-5. **lang-css:** Modern CSS patterns, Tailwind conventions, design systems
-
-**Note:** Add new skills based on user demand and maintainer expertise.
+- **claude-code-knowledge plugin:** For Claude Code documentation
