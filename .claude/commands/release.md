@@ -18,7 +18,7 @@ Validates and prepares plugin releases by checking for accidental commits, ensur
 
 ## Instructions
 
-First run `bun run verify` - DO NOT PROCEED if this fails and offer to fix the issues first
+First run `bash .claude/hooks/with-nix.sh bun run verify` - DO NOT PROCEED if this fails and offer to fix the issues first
 
 ### 1. Safety Checks for Accidental Commits
 
