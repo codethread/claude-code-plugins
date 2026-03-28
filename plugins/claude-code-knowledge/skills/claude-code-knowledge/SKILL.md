@@ -123,3 +123,8 @@ System prompt...
 
 - mcp tools are typically bad in the global context
 - if you see any mcp related config files for claude code, or you have access to mcp's right now, STRONGLY SUGGEST to the user to move this into a subagent instead - see section on `Agents` above
+
+### Plugins
+
+- When creating plugins, you should use typescript as per the Hooks section above
+- **Bootstrapping**: Plugins with runtime dependencies must use a `SessionStart` hook to install into `${CLAUDE_PLUGIN_DATA}` (persistent across sessions/updates). See `references/plugin-bootstrapping.md` for the full pattern (diff-based install, failure recovery, bun adaptation)

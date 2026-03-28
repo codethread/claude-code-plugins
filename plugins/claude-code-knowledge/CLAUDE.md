@@ -30,7 +30,9 @@ claude-code-knowledge/
 │   └── plugin.json
 ├── skills/
 │   ├── claude-code-knowledge/
-│   │   └── SKILL.md            # Skill instructions (Guide + opinionated rules)
+│   │   ├── SKILL.md            # Skill instructions (Guide + opinionated rules)
+│   │   └── references/
+│   │       └── plugin-bootstrapping.md  # SessionStart hook pattern for dependency management
 │   └── refactor-hooks/
 │       └── SKILL.md            # Refactor existing hooks to match knowledge skill patterns
 ├── README.md
