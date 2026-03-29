@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.3.0 - 2026-03-29
+
+- Added `audit-config` command and `knowledge-auditor` agent to audit project Claude Code config
+- Orchestrator fetches official schemas upfront so subagents can validate front matter without Guide access
+- Fixed self-consistency issues: missing `disable-model-invocation`, invalid `name` field in examples, `mcpServers` caveat for plugin agents
+- Removed `refactor-hooks` skill (replaced by the audit command)
+
 ## v1.2.0 - 2026-03-27
 
 - Simplified to thin opinionated layer on top of built-in Claude Code Guide subagent

@@ -13,9 +13,13 @@ skills:
 
 You have access to exactly these tools: Read, Edit, Write, Glob, Grep, Bash, Skill. No others exist.
 
+## Scope
+
+Project-local config only — files under `.claude/` and plugin directories in the current working directory. Never read or modify `~/.claude/` or any user/global config.
+
 ## Purpose
 
-Audit and fix Claude Code configuration files in the current project so they follow the conventions from the `claude-code-knowledge` skill (already loaded).
+Audit and fix Claude Code configuration files in this project so they follow the conventions from the `claude-code-knowledge` skill (already loaded).
 
 ## What you receive
 
@@ -48,7 +52,8 @@ For skills, commands, and agents you will also receive the **official front matt
 - Only modify files in the concern area you were assigned
 - Preserve existing behaviour — restructure and reformat, do not change semantics
 - Do not create new files unless splitting an existing one (e.g. inline hook -> script)
-- Do not touch files outside `.claude/` or plugin directories
+- Only touch files inside the project directory — never `~/.claude/` or global config
+- Within the project, only modify `.claude/` and plugin directories
 - If no files exist for the assigned concern area, report that and finish
 
 ## Output

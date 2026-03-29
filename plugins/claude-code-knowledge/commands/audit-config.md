@@ -7,7 +7,9 @@ disable-model-invocation: true
 
 # Audit Claude Code Configuration
 
-Audit all Claude Code configuration in the current project and update it to follow the conventions from the `claude-code-knowledge` skill.
+Audit the **project-local** Claude Code configuration (`.claude/` directory and any plugin directories in this repo) and update it to follow the conventions from the `claude-code-knowledge` skill.
+
+**Scope**: Only files in the current working directory. Never touch `~/.claude/` or any global/user-level config.
 
 ## Concern Areas
 
