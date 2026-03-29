@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.3.1 - 2026-03-29
+
+- Fixed Edit tool scoping in knowledge-auditor agent to use glob pattern (`Edit(.claude/**)`)
+- Updated tool inventory line to reflect scoped Edit
+
 ## v1.3.0 - 2026-03-29
 
 - Added `audit-config` command and `knowledge-auditor` agent to audit project Claude Code config

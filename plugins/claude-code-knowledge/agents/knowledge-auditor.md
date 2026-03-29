@@ -5,13 +5,13 @@ description: |
   to match claude-code-knowledge conventions. Focuses on one concern area
   per invocation: hooks, skills, commands, agents, or settings.
   Spawned by the audit-config command — not typically called directly.
-tools: Read, Edit, Write, Glob, Grep, Bash, Skill
+tools: Read, Edit, Edit(.claude/**), Write, Glob, Grep, Bash, Skill
 model: sonnet
 skills:
   - claude-code-knowledge:claude-code-knowledge
 ---
 
-You have access to exactly these tools: Read, Edit, Write, Glob, Grep, Bash, Skill. No others exist.
+You have access to exactly these tools: Read, Edit (scoped to .claude/**), Write, Glob, Grep, Bash, Skill. No others exist.
 
 ## Scope
 
