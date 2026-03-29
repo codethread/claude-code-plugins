@@ -11,6 +11,31 @@ description: |
 
 Before making any Claude Code changes, **always consult the Claude Code Guide subagent** for up-to-date information.
 
+Use this skill as the opinionated layer on top of the Guide:
+
+1. Get the current official schema, feature support, and field names from the Guide
+2. Apply the prompt, skill, and subagent patterns in this skill
+3. Follow the repo-specific opinions in the main file even when you modularise the rest
+
+## Reference Map
+
+Open the smallest reference file that matches the task:
+
+- `references/prompt-design.md` for system prompts, slash commands, agent prompts, hook suggestions, and long-context prompt structure
+- `references/skill-authoring.md` for `SKILL.md` structure, descriptions, trigger design, examples, and progressive disclosure
+- `references/subagent-design.md` for agent descriptions, tool scoping, isolation, effort, and parallelisation
+- `references/plugin-bootstrapping.md` for `SessionStart` dependency installation into `${CLAUDE_PLUGIN_DATA}`
+
+## Default Prompting Stance
+
+Claude 4.6 is more responsive than older models. Default to calm, specific instructions:
+
+- prefer clear structure over aggressive wording
+- explain why a rule exists, not just what to do
+- use positive framing where possible
+- keep the highest-signal instructions near the end when working with long context
+- use XML tags to separate instructions from user data or large context blocks
+
 ## Opinionated Rules
 
 ### Skills: Progressive Disclosure
@@ -22,6 +47,8 @@ When writing new skills, build them with **progressive disclosure**:
 - Detailed instructions, examples, and schemas go in `references/` files
   - Keep instructions clear but terse
 - SKILL.md points Claude to the right reference file based on the user's question
+- Keep repo-specific opinions and non-default conventions in the main `SKILL.md`
+  - do not hide these in references where an agent might miss them
 - skills should be user only with front matter `disable-model-invocation: true` unless directed by the user (or ask the user if you are not sure).
 
 Get the actual structure and field requirements of SKILL.md from the Claude Code Guide.
@@ -61,12 +88,26 @@ Get the actual structure and field requirements of SKILL.md from the Claude Code
 
 ```markdown
 ---
-name: isn't needed because it's inferred from the folder
+name: should be omitted
 description: some super long description hard to read because it flows off the page and might have nested <frontmatter>stuff</frontmatter or nested \"escapes\"
 argument-hint: hints need `[]` around the arguments
 allowed-tools: don't use this, it's confusing and hard to maintain
 ---
 ```
+
+Repo opinion:
+
+- keep front matter minimal
+- for skills and commands in this repo, always omit `name`
+- the name is inferred from the file path, which is clearer than duplicating it in front matter
+- if official generic docs show a `name` field, treat that as background context, not this repo's convention
+- do not put XML in front matter
+
+### Commands
+
+- for slash commands, always omit `name` from front matter
+- rely on the command file path and filename as the source of truth
+- keep command front matter minimal, same as skills
 
 ### Hooks: Inline vs Script
 
@@ -101,7 +142,22 @@ allowed-tools: don't use this, it's confusing and hard to maintain
 
 ### Agents
 
-Example of inline MCP if appropriate
+Read `references/subagent-design.md` when designing new agents.
+
+When an agent file restricts tools via front matter, always put a one-line tool inventory at the very top of the system prompt.
+
+- enumerate the concrete tool names
+- say explicitly that no other tools exist
+- place the line before any other instructions
+- do this even if the front matter already declares the tools, because sub-agents do not reliably "see" or reason from their own front matter
+
+Pattern:
+
+```text
+You have access to exactly these tools: Glob, Grep, Read. No others exist.
+```
+
+Example of inline MCP if appropriate:
 
 ```markdown
 ---
@@ -123,6 +179,7 @@ System prompt...
 
 - mcp tools are typically bad in the global context
 - if you see any mcp related config files for claude code, or you have access to mcp's right now, STRONGLY SUGGEST to the user to move this into a subagent instead - see section on `Agents` above
+- keep MCP-heavy guidance in skill references or agent prompts, not in the always-loaded front matter
 
 ### Plugins
 
