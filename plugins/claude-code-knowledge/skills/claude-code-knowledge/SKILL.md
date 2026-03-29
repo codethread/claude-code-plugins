@@ -3,6 +3,7 @@ description: |
   Mandatory when configuring any Claude Code specifics - hooks, skills,
   plugins, MCP servers, slash commands, settings, agents, or any Claude Code feature.
   Provides opinionated best practices
+disable-model-invocation: true
 ---
 
 # Claude Code Knowledge
@@ -157,7 +158,7 @@ Pattern:
 You have access to exactly these tools: Glob, Grep, Read. No others exist.
 ```
 
-Example of inline MCP if appropriate:
+Example of inline MCP for non-plugin agents (project-local `.claude/agents/`):
 
 ```markdown
 ---
@@ -174,6 +175,8 @@ description: |
 
 System prompt...
 ```
+
+**Plugin agents**: `mcpServers` is silently ignored for security. Use a `SessionStart` hook + `NODE_PATH` pattern from `references/plugin-bootstrapping.md` instead.
 
 ### MCP'S
 

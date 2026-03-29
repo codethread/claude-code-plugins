@@ -43,7 +43,7 @@ claude-code-knowledge/
 
 ### `skills/claude-code-knowledge/SKILL.md`
 
-Contains two sections:
+Contains three sections:
 1. **Claude Code Guide directive** — always consult the subagent first
 2. **Reference map** — points Claude to the smallest supporting file for the task
 3. **Opinionated rules** — stays inline so it is always present in context

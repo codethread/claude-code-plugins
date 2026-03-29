@@ -42,8 +42,10 @@ Example:
 
 ```yaml
 ---
-name: hook-refactorer
-description: Refactors Claude Code hook configs and scripts into simpler, repo-approved patterns. Use when editing hooks.json, hook scripts, or Claude Code hook setup.
+description: |
+  Refactors Claude Code hook configs and scripts into simpler,
+  repo-approved patterns. Use when editing hooks.json, hook scripts,
+  or Claude Code hook setup.
 disable-model-invocation: true
 ---
 ```
