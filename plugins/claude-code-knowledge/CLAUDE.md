@@ -22,16 +22,18 @@ The plugin previously cached large amounts of documentation locally via hooks. T
 claude-code-knowledge/
 ├── .claude-plugin/
 │   └── plugin.json
+├── agents/
+│   └── knowledge-auditor.md    # Audits one concern area per invocation
+├── commands/
+│   └── audit-config.md         # Orchestrates sequential auditor runs
 ├── skills/
-│   ├── claude-code-knowledge/
-│   │   ├── SKILL.md            # Main index + inline repo opinions
-│   │   └── references/
-│   │       ├── plugin-bootstrapping.md  # SessionStart hook pattern for dependency management
-│   │       ├── prompt-design.md         # Current prompt-writing guidance for Claude Code surfaces
-│   │       ├── skill-authoring.md       # SKILL.md structure, triggering, and progressive disclosure
-│   │       └── subagent-design.md       # Agent descriptions, scope, tools, and parallelisation
-│   └── refactor-hooks/
-│       └── SKILL.md            # Refactor existing hooks to match knowledge skill patterns
+│   └── claude-code-knowledge/
+│       ├── SKILL.md            # Main index + inline repo opinions
+│       └── references/
+│           ├── plugin-bootstrapping.md  # SessionStart hook pattern for dependency management
+│           ├── prompt-design.md         # Current prompt-writing guidance for Claude Code surfaces
+│           ├── skill-authoring.md       # SKILL.md structure, triggering, and progressive disclosure
+│           └── subagent-design.md       # Agent descriptions, scope, tools, and parallelisation
 ├── README.md
 ├── CLAUDE.md                   # This file
 ├── CHANGELOG.md
@@ -57,9 +59,13 @@ Curated supporting references:
 - `subagent-design.md` — how to write focused subagents that delegate well
 - `plugin-bootstrapping.md` — runtime dependency bootstrapping pattern
 
-### `skills/refactor-hooks/SKILL.md`
+### `agents/knowledge-auditor.md`
 
-Companion skill that loads the `claude-code-knowledge` skill and applies its patterns to refactor existing `.claude/` hook files. Invoked as `/claude-code-knowledge:refactor-hooks`.
+Subagent that audits Claude Code config files for one concern area (hooks, skills, commands, agents, or settings). Preloads the `claude-code-knowledge` skill. Discovers files, compares against conventions, and fixes issues directly. Preserves existing behaviour — restructures and reformats only.
+
+### `commands/audit-config.md`
+
+Slash command (`/claude-code-knowledge:audit-config`) that orchestrates sequential auditor runs. Spawns `knowledge-auditor` once per concern area to avoid concurrent edits. Collects summaries at the end.
 
 ## Maintenance
 

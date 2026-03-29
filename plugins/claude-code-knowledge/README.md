@@ -4,8 +4,9 @@ Opinionated Claude Code configuration guidance.
 
 ## What
 
-**Skill**: `claude-code-knowledge` - Mandatory when configuring Claude Code specifics (hooks, skills, plugins, MCP, settings)
-**Approach**: Delegates to the built-in Claude Code Guide subagent for official docs, then applies repo opinions plus focused references for prompting, skills, and subagents
+- **Skill**: `claude-code-knowledge` — mandatory when configuring Claude Code specifics (hooks, skills, plugins, MCP, settings)
+- **Command**: `/claude-code-knowledge:audit-config` — audits and updates all Claude Code config in a project to match conventions
+- **Agent**: `knowledge-auditor` — used by the command; audits one concern area per invocation
 
 ## Why
 
@@ -23,8 +24,10 @@ Opinionated Claude Code configuration guidance.
 
 ### Use
 
-The skill loads automatically when configuring Claude Code features. It directs Claude to:
+The skill loads when configuring Claude Code features. To audit an existing project:
 
-1. Consult the Claude Code Guide subagent for official information
-2. Apply opinionated rules from the main skill
-3. Open the smallest supporting reference for prompt, skill, agent, or plugin work
+```
+/claude-code-knowledge:audit-config
+```
+
+This runs the `knowledge-auditor` agent sequentially across hooks, skills, commands, agents, and settings.
