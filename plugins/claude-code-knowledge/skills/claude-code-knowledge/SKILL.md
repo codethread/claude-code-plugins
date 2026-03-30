@@ -141,6 +141,12 @@ Repo opinion:
 
 **Exception:** If the repo already has an established precedent or alternative instructions for hook scripts (e.g. Python, binary, or typescript scripts in a different location), follow that instead.
 
+### Hooks: No Silent Failures
+
+**Rule:** Deterministic hooks (post-tool validators, stop hooks, linters, test runners) must never fail silently. If a required tool, binary, or configuration is missing, the hook must exit with a non-zero status and a clear error message — never swallow the error or silently skip the check.
+
+Hooks assume the repo is bootstrapped correctly. A missing dependency is a hard failure that the developer must fix, not something to work around at runtime. This applies to all hook types: inline commands, script-based hooks, and SessionStart bootstrapping checks.
+
 ### Agents
 
 Read `references/subagent-design.md` when designing new agents.
