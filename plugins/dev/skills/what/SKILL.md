@@ -14,6 +14,10 @@ Human-heavy, interactive phase. No implementation happens here — only understa
 
 **Hard gate**: nothing proceeds to `dev/how` until `prd.md` is saved and approved.
 
+### Context Isolation
+
+Each phase runs in a fresh context window with no conversation history from previous phases. The **only** handoff between What and How is `prd.md` plus any artifacts it references. If a discovery, decision, or constraint isn't captured in an artifact file, it doesn't exist for the next phase. Write every insight into a file — never rely on the conversation to carry knowledge forward.
+
 ## Conversation Flow
 
 ### 1. Create Worktree
@@ -107,7 +111,20 @@ All prototype code is throwaway. It exists to close understanding gaps, not to s
 
 ### 7. Refine (always runs)
 
-Take everything gathered — research, learning test results, prototype learnings, conversation — and distill into `prd.md`.
+Take everything gathered — research, learning test results, prototype learnings, conversation — and distill into artifacts. The PRD is the primary artifact; it may reference additional files for detail that would bloat the main document.
+
+**Remember: the next phase gets only these files, not this conversation.** Every decision, constraint, discovery, and verified behaviour must be written down. If you discussed something important with the user but didn't write it into an artifact, it's lost.
+
+#### Artifact structure
+
+- `prd.md` — always produced. The self-contained specification. References other artifacts where needed.
+- `research.md` — optional. Detailed research findings referenced from PRD's Research Summary.
+- Learning test files (`lt-*.ts`, `lt-*.sh`) — optional. Executable proof of verified behaviour, referenced from PRD.
+- Additional reference files — optional. Interface sketches, diagrams, prototype screenshots, API response samples. Anything the PRD cites that's better as a separate file.
+
+The PRD must be understandable on its own. Reference files provide depth, not missing context.
+
+#### Walkthrough
 
 Walk through the PRD section by section with the user:
 
@@ -129,5 +146,6 @@ See `references/prd-schema.md` for the output format.
 - Open questions must be resolved before saving — they don't carry forward
 - If research or prototyping reveals the feature is fundamentally different from what was imagined, restart the conversation rather than patching
 - Prototype code is always deleted before saving prd.md
-- Save artifacts to project root: `prd.md`, optionally `research.md`
+- Save all artifacts to project root: `prd.md`, optionally `research.md`, learning tests, and reference files
+- **Conversation is not an artifact** — if it was discussed but not written to a file, it doesn't survive to the next phase
 - **No unverified black-box claims in the PRD** — every behavioural claim about a binary, CLI, or closed API must be backed by a passing learning test. If you can't run it, you can't plan against it.
