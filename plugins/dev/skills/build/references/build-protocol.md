@@ -36,7 +36,7 @@ Append-only log. Two sections:
 
 ### Codebase Patterns (top of file, consolidated)
 
-General, reusable patterns discovered during build. Updated as new patterns emerge. These persist across tasks — every `/dev-build` invocation reads this section first.
+General, reusable patterns discovered during build. Updated as new patterns emerge. These persist across tasks — every `dev/build` invocation reads this section first.
 
 ```markdown
 ## Codebase Patterns
@@ -89,6 +89,6 @@ The plan is wrong:
 - Circular quality failures (3+ attempts, same root cause)
 - Task fundamentally can't be implemented as described
 
-**Action**: set task status to `fatal`, explain in notes why the plan is wrong and what needs to change. User goes back to `/dev-what` or `/dev-how`.
+**Action**: set task status to `fatal`, explain in notes why the plan is wrong and what needs to change. User goes back to `dev/what` or `dev/how`.
 
 **Never hack around a fatal** — the whole point of the phase system is that a bad plan gets fixed upstream, not patched downstream.

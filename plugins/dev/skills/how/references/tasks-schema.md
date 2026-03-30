@@ -83,4 +83,4 @@ qa:
 - `in_progress` — currently being worked on
 - `done` — completed and committed
 - `blocked` — environmental issue, user must fix (e.g. port in use, missing binary)
-- `fatal` — plan is wrong, go back to `/dev-what` or `/dev-how`
+- `fatal` — plan is wrong, go back to `dev/what` or `dev/how`

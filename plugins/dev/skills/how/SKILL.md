@@ -2,7 +2,7 @@
 description: |
   Decompose prd.md into an ordered task list (tasks.yml).
   Mechanical phase — human reviews but agent drives.
-  Triggers on: "dev how", "decompose", "break this down", "create tasks"
+  Triggers on: "dev/how", "decompose", "break this down", "create tasks"
 disable-model-invocation: true
 ---
 
@@ -14,7 +14,7 @@ Consumes `prd.md`, produces `tasks.yml`. Interactive — the human reviews and a
 
 ### 1. Read PRD
 
-Read `prd.md` from the project root. If it doesn't exist, tell the user to run `/dev-what` first.
+Read `prd.md` from the project root. If it doesn't exist, tell the user to run `dev/what` first.
 
 ### 2. Resolve Open Questions
 
@@ -25,7 +25,7 @@ The PRD's open questions section must be empty. If it's not, resolve them with t
 Break user stories into implementation tasks. Each task must be:
 
 - **Self-contained**: has everything needed to implement (description, files, criteria)
-- **One context window**: completable in a single `/dev-build` invocation
+- **One context window**: completable in a single `dev/build` invocation
 - **Verifiable**: acceptance criteria are specific and testable
 - **File-aware**: lists files that will be created or modified
 
@@ -92,4 +92,4 @@ Save to project root. See `references/tasks-schema.md` for the format.
 - Always include "Typecheck passes" in each task's criteria
 - Task order must respect dependencies — never reference files that don't exist yet
 - The `prd` field must point to the PRD file used
-- If decomposition reveals the PRD is incomplete or contradictory, go back to `/dev-what` rather than guessing
+- If decomposition reveals the PRD is incomplete or contradictory, go back to `dev/what` rather than guessing

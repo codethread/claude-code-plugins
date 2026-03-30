@@ -1,7 +1,7 @@
 ---
 description: Prepare plugins for release with version bumps, changelog updates, and safety checks
 argument-hint: [additional notes]
-allowed-tools: Bash(git:*), Bash(bash:*)
+allowed-tools: Bash(bash:*)
 ---
 
 # Release

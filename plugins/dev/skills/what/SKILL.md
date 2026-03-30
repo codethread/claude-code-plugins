@@ -3,7 +3,7 @@ description: |
   Define what to build through structured research and experimentation.
   Produces prd.md. Use at the start of any feature work.
   Triggers on: "what should we build", "let's plan", "new feature",
-  "I want to build", "dev what"
+  "I want to build", "dev/what"
 disable-model-invocation: true
 argument-hint: [feature idea]
 ---
@@ -12,7 +12,7 @@ argument-hint: [feature idea]
 
 Human-heavy, interactive phase. No implementation happens here — only understanding.
 
-**Hard gate**: nothing proceeds to `/dev-how` until `prd.md` is saved and approved.
+**Hard gate**: nothing proceeds to `dev/how` until `prd.md` is saved and approved.
 
 ## Conversation Flow
 

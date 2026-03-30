@@ -2,7 +2,7 @@
 description: |
   Implement the next pending task from tasks.yml.
   One task per invocation — user loops externally.
-  Triggers on: "dev build", "build next task", "implement next"
+  Triggers on: "dev/build", "build next task", "implement next"
 disable-model-invocation: true
 ---
 
@@ -16,7 +16,7 @@ Implements exactly ONE task per invocation. The user runs this in a loop externa
 
 Read `tasks.yml` and `progress.md` (if it exists) from the project root.
 
-If `tasks.yml` doesn't exist, stop and tell the user to run `/dev-how` first.
+If `tasks.yml` doesn't exist, stop and tell the user to run `dev/how` first.
 
 If `progress.md` exists, read the **Codebase Patterns** section at the top — these are consolidated learnings from previous iterations.
 
@@ -40,7 +40,7 @@ Implement the task according to its description, respecting:
 - Meet every acceptance criterion
 - Follow existing project conventions (read nearby code first)
 
-If you discover the task is impossible or the plan is wrong, do not hack around it. Set status to `fatal` in `tasks.yml`, explain why in the task's `notes`, and stop. The user must go back to `/dev-what` or `/dev-how` to fix the plan.
+If you discover the task is impossible or the plan is wrong, do not hack around it. Set status to `fatal` in `tasks.yml`, explain why in the task's `notes`, and stop. The user must go back to `dev/what` or `dev/how` to fix the plan.
 
 ### 5. Quality Checks
 
@@ -87,7 +87,7 @@ End your response with a clear signal:
 - **Task complete**: state which task was finished and what's next in the queue
 - **All tasks done**: all tasks have `status: done`
 - **Blocked**: environmental issue described, user must fix before re-running
-- **Fatal**: plan is wrong, must revisit `/dev-what` or `/dev-how`
+- **Fatal**: plan is wrong, must revisit `dev/what` or `dev/how`
 
 ## Rules
 
