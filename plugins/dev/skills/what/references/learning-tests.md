@@ -6,12 +6,23 @@ Small, executable assertions that verify your understanding of a black-box depen
 
 ## When to Write Them
 
-- CLI tools where flags may not work as documented
-- APIs with sparse documentation or surprising edge cases
+**Mandatory** (must write before proceeding to Refine):
+- Binary CLIs — you can't read their source, so you must run them
+- Closed-source APIs and SaaS endpoints
+- Any tool where the only documentation is external and may be stale
+
+**Strongly recommended** (write unless source inspection fully resolves the question):
 - Libraries where behaviour depends on combinations of options
+- APIs with sparse documentation or surprising edge cases
 - Any dependency where getting it wrong would invalidate your plan
 
+**Not needed** when you can read the actual source (in-repo code, `node_modules/`, cloned upstream) and the implementation unambiguously answers your question.
+
 **Concrete example**: testing Claude Code CLI flags. Many flags don't work, and others interact in unexpected ways. A plan that assumes `--flag-x` works will fail at build time. A learning test discovers this in minutes.
+
+### Autonomy
+
+Don't wait for the user to ask you to verify. The moment research surfaces a black-box dependency, transition directly to writing learning tests. This is the expected workflow — research tells you what to test, learning tests tell you what's actually true.
 
 ## How to Write Them
 

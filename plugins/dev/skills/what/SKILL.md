@@ -52,7 +52,19 @@ Before any planning, surface what you don't know:
 
 Be honest about uncertainty. Assume docs are wrong until proven otherwise.
 
-### 4. Research (optional)
+#### Classify Dependencies by Inspectability
+
+For every external dependency, determine how you can verify its behaviour:
+
+| Category | Example | Verification path |
+|---|---|---|
+| **In-repo code** | Project modules, workspace packages | Read the source directly — truth is in the code |
+| **Inspectable package** | npm module in `node_modules`, open-source library | Read exported types, source files, or vendored code. Can explore `node_modules/<pkg>/` or clone the upstream repo to read implementation |
+| **Black-box / binary** | CLI tools, closed-source APIs, SaaS endpoints | Cannot inspect — **must** verify through execution (learning tests) |
+
+This classification drives whether you research by reading (steps 4) or by running (step 5). For black-box dependencies, reading docs alone is never sufficient — you must execute against the real thing.
+
+### 4. Research (optional, but see note on inspectable deps)
 
 When external dependencies are involved, investigate before planning.
 
@@ -60,13 +72,25 @@ When external dependencies are involved, investigate before planning.
 - Use subagents for API research when appropriate
 - Document findings in `research.md`
 
+**For inspectable dependencies** — go beyond docs. These are your highest-confidence sources:
+
+- **npm packages**: read `node_modules/<pkg>/` — exported types, source, `README.md`. The actual type signatures are ground truth, not the website docs.
+- **Open-source tools**: if behaviour is unclear, clone or browse the upstream repo. Read the code that implements the feature you depend on.
+- **Vendoring**: for complex or critical dependencies, consider vendoring the source into a temp directory so you can search and cross-reference without network lookups.
+
+Research alone is sufficient **only** for inspectable dependencies where you can read the implementation. For black-box dependencies, research informs your learning tests but does not replace them.
+
 See `references/research.md` for the research protocol.
 
-### 5. Learning Tests (optional but strongly recommended)
+### 5. Learning Tests (mandatory for black-box deps, recommended otherwise)
 
 When unknowns involve black-box tools, CLIs, or APIs — write small executable tests that validate your assumptions before building against them.
 
 **This is the most important technique in this phase.** Plans built on untested assumptions fail at build time. Learning tests fail cheaply.
+
+**Hard rule**: if the dependency is a binary CLI, closed-source API, or anything you cannot read the source of, you **must** write learning tests before proceeding to Refine. Do not add claims about external tool behaviour to the PRD that haven't been verified by execution. Docs lie. Flags get removed. APIs drift. Run the tool and observe what actually happens.
+
+**Autonomy expectation**: don't wait for the user to suggest testing. As soon as research surfaces a dependency you can't inspect, immediately write and run learning tests. This is the agent's responsibility — be proactive, not passive. If you read docs that say a CLI flag exists, write a test that exercises it before recording it as a fact in the PRD.
 
 See `references/learning-tests.md` for the full pattern.
 
@@ -106,3 +130,4 @@ See `references/prd-schema.md` for the output format.
 - If research or prototyping reveals the feature is fundamentally different from what was imagined, restart the conversation rather than patching
 - Prototype code is always deleted before saving prd.md
 - Save artifacts to project root: `prd.md`, optionally `research.md`
+- **No unverified black-box claims in the PRD** — every behavioural claim about a binary, CLI, or closed API must be backed by a passing learning test. If you can't run it, you can't plan against it.
