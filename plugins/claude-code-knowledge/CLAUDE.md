@@ -27,13 +27,17 @@ claude-code-knowledge/
 ├── commands/
 │   └── audit-config.md         # Orchestrates sequential auditor runs
 ├── skills/
-│   └── claude-code-knowledge/
-│       ├── SKILL.md            # Main index + inline repo opinions
+│   ├── claude-code-knowledge/
+│   │   ├── SKILL.md            # Main index + inline repo opinions
+│   │   └── references/
+│   │       ├── plugin-bootstrapping.md  # SessionStart hook pattern for dependency management
+│   │       ├── prompt-design.md         # Current prompt-writing guidance for Claude Code surfaces
+│   │       ├── skill-authoring.md       # SKILL.md structure, triggering, and progressive disclosure
+│   │       └── subagent-design.md       # Agent descriptions, scope, tools, and parallelisation
+│   └── introspection/
+│       ├── SKILL.md            # Index for testing/verifying Claude Code behaviour
 │       └── references/
-│           ├── plugin-bootstrapping.md  # SessionStart hook pattern for dependency management
-│           ├── prompt-design.md         # Current prompt-writing guidance for Claude Code surfaces
-│           ├── skill-authoring.md       # SKILL.md structure, triggering, and progressive disclosure
-│           └── subagent-design.md       # Agent descriptions, scope, tools, and parallelisation
+│           └── headless-test-harness.md # Headless subprocess harness for integration testing
 ├── README.md
 ├── CLAUDE.md                   # This file
 ├── CHANGELOG.md
@@ -58,6 +62,10 @@ Curated supporting references:
 - `skill-authoring.md` — how to design concise, high-signal skills
 - `subagent-design.md` — how to write focused subagents that delegate well
 - `plugin-bootstrapping.md` — runtime dependency bootstrapping pattern
+
+### `skills/introspection/SKILL.md`
+
+Skill for testing and verifying Claude Code behaviour using a headless `claude -p` subprocess harness. Covers environment isolation, CLI flags, output parsing, and verification strategies for hooks, instructions, and tool patterns.
 
 ### `agents/knowledge-auditor.md`
 
