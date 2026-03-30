@@ -86,6 +86,14 @@ Get explicit approval before saving.
 
 Save to project root. See `references/tasks-schema.md` for the format.
 
+### 10. Commit Plan
+
+Stage and commit `tasks.yml` so the tree is clean for `dev/build`:
+
+```
+chore: dev/how — [short feature name]
+```
+
 ## Rules
 
 - Every task must have acceptance criteria — no exceptions
@@ -93,3 +101,4 @@ Save to project root. See `references/tasks-schema.md` for the format.
 - Task order must respect dependencies — never reference files that don't exist yet
 - The `prd` field must point to the PRD file used
 - If decomposition reveals the PRD is incomplete or contradictory, go back to `dev/what` rather than guessing
+- **Leave the git tree clean** — commit `tasks.yml` before finishing

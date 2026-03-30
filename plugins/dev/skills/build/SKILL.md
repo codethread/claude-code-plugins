@@ -66,19 +66,21 @@ If review returns actionable feedback, address it and re-run. Maximum 3 review c
 
 See `references/build-protocol.md` for the full code review integration.
 
-### 7. Commit
+### 7. Update State
 
-Stage and commit with format:
+1. Set task status to `done` in `tasks.yml`
+2. Populate the task's `notes` field with anything the next iteration should know
+3. Append to `progress.md` (see `references/build-protocol.md` for format)
+
+### 8. Commit
+
+Stage **all** changes — implementation files, `tasks.yml`, and `progress.md` — in a single commit:
 
 ```
 feat: [task-id] - [task title]
 ```
 
-### 8. Update State
-
-1. Set task status to `done` in `tasks.yml`
-2. Populate the task's `notes` field with anything the next iteration should know
-3. Append to `progress.md` (see `references/build-protocol.md` for format)
+The tree must be clean after this step.
 
 ### 9. Signal Result
 
@@ -97,3 +99,4 @@ End your response with a clear signal:
 - If a task's acceptance criteria conflict with reality, mark `fatal` — don't improvise
 - Always read progress.md's Codebase Patterns section before implementing
 - Always append learnings after completing a task
+- **Leave the git tree clean** — state files and implementation go in the same commit

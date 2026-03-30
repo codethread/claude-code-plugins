@@ -140,6 +140,16 @@ Walk through the PRD section by section with the user:
 
 See `references/prd-schema.md` for the output format.
 
+### 8. Commit Artifacts
+
+Stage and commit all artifacts produced during this phase so the worktree is clean for `dev/how`:
+
+```
+chore: dev/what — [short feature name]
+```
+
+Include `prd.md`, `research.md`, learning test files, and any other reference files. Prototype code must already be deleted (see Rules).
+
 ## Rules
 
 - Never skip Refine — even trivial features get a short PRD
@@ -149,3 +159,4 @@ See `references/prd-schema.md` for the output format.
 - Save all artifacts to project root: `prd.md`, optionally `research.md`, learning tests, and reference files
 - **Conversation is not an artifact** — if it was discussed but not written to a file, it doesn't survive to the next phase
 - **No unverified black-box claims in the PRD** — every behavioural claim about a binary, CLI, or closed API must be backed by a passing learning test. If you can't run it, you can't plan against it.
+- **Leave the git tree clean** — every phase must commit its artifacts before finishing

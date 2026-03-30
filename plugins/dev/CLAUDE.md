@@ -19,7 +19,7 @@ Skills-only plugin (wave 1) — no hooks, no orchestrator script. The user drive
 
 ## Artifacts
 
-All artifacts are transient (gitignored). Git commits are the permanent record.
+Artifacts are transient planning files committed to the feature branch. Git commits are the permanent record. **Every phase must leave the git tree clean** — artifacts are committed before the phase ends.
 
 | File | Phase | Purpose |
 |---|---|---|
