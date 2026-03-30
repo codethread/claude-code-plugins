@@ -1,0 +1,8 @@
+{
+  "name": "dev",
+  "description": "Phase-based development workflow: What, How, Build. Structured planning with research, learning tests, and prototyping before implementation.",
+  "author": {
+    "name": "codethread"
+  },
+  "keywords": ["workflow", "planning", "prd", "build-loop", "learning-tests"]
+}

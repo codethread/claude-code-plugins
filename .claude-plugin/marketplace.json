@@ -27,12 +27,6 @@
       "category": "development-tools"
     },
     {
-      "name": "workflow",
-      "version": "1.0.1",
-      "source": "./plugins/workflow",
-      "category": "development-tools"
-    },
-    {
       "name": "bdfl",
       "version": "1.0.0",
       "source": "./plugins/bdfl",
@@ -42,6 +36,12 @@
       "name": "karen",
       "version": "1.0.0",
       "source": "./plugins/karen",
+      "category": "development-workflow"
+    },
+    {
+      "name": "dev",
+      "version": "1.0.0",
+      "source": "./plugins/dev",
       "category": "development-workflow"
     }
   ]
