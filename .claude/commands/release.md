@@ -34,19 +34,9 @@ If any suspicious files are found:
 - If not intended, update `.gitignore` with appropriate patterns
 - Unstage the files with `git reset <file>`
 
-### 2. Check for WIP Commits to Squash
+### 2. Check for open work to commit
 
-Examine the last 5 commits for patterns indicating work-in-progress:
-
-- Commit messages like "wip", "WIP", "tmp", "temp", "fix", "update", or very short messages (< 15 chars)
-- Multiple small commits in sequence that appear to be part of the same feature
-- Commits that together form a logical release unit
-
-If WIP commits are found:
-
-- Use AskUserQuestion to confirm which commits should be squashed together
-- Use `git rebase -i HEAD~N` to interactively squash them into a single commit
-- Ensure the squashed commit follows conventional format: `type(scope): description`
+Commit it (use `ct/commit` skill if desired)
 
 ### 3. Identify Changed Plugins
 
@@ -81,7 +71,7 @@ For better performance, spawn multiple Task agents (model: haiku) to process plu
 
 - If it exists, add a new dated entry at the top (below the header)
 - Populate the entry with:
-  - Today's date (2025-11-13) as the heading
+  - Today's date as the heading
   - 2-4 concise bullet points describing key changes based on git diff and commit messages
 
 ### 6. Commit All Changes
@@ -102,9 +92,9 @@ After all plugins are processed:
     - `fix(karen): correct verdict logic for edge cases`
     - `refactor(langs): simplify type inference logic`
   - Bad examples:
-    - ❌ `chore(langs): prepare release with version bumps`
-    - ❌ `chore(langs): v1.1.0 release`
-    - ❌ `chore: update changelogs`
+    - BAD: `chore(langs): prepare release with version bumps`
+    - BAD: `chore(langs): v1.1.0 release`
+    - BAD: `chore: update changelogs`
   - The commit body should provide additional context about the changes and their impact
 
 ### 7. Create Git Tags
