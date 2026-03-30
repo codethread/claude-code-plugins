@@ -32,6 +32,9 @@ const DELAY_MINUTES = 3;
 const input = await Bun.stdin.text();
 const hookInput: StopHookInput = JSON.parse(input);
 
+// TEMP: adding this for now as the docs things is annoying
+process.exit(0);
+
 // If hook already ran this session (continuing after previous block), allow stop
 if (hookInput.stop_hook_active) {
   process.exit(0);
