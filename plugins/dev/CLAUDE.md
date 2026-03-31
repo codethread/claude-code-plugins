@@ -5,7 +5,7 @@
 Three skills implementing a phase-based development workflow. Each phase produces an artifact consumed by the next:
 
 ```
-dev/what  →  prd.md  →  dev/how  →  tasks.yml  →  dev/build  →  commits
+dev/what  →  .dev/prd.md  →  dev/how  →  .dev/tasks.yml  →  dev/build  →  commits
 ```
 
 Skills-only plugin (wave 1) — no hooks, no orchestrator script. The user drives phase transitions manually and loops `dev/build` themselves.
@@ -23,10 +23,12 @@ Artifacts are transient planning files committed to the feature branch. Git comm
 
 | File | Phase | Purpose |
 |---|---|---|
-| `prd.md` | What | Product requirements document |
-| `research.md` | What (optional) | Research findings |
-| `tasks.yml` | How | Task decomposition with status tracking |
-| `progress.md` | Build | Append-only learnings log |
+| `.dev/prd.md` | What | Product requirements document |
+| `.dev/research.md` | What (optional) | Research findings |
+| `.dev/tasks.yml` | How | Task decomposition with status tracking |
+| `.dev/progress.md` | Build | Append-only learnings log |
+
+The `.dev/` directory is not gitignored — it's committed to the feature branch. `dev/what` will refuse to start if `.dev/` is non-empty (user must clear it or finish the WIP first).
 
 ## Future Waves
 

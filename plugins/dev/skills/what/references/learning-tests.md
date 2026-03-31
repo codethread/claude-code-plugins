@@ -74,6 +74,6 @@ fi
 
 ## Output
 
-Commit learning test files alongside `research.md`. They serve as executable documentation of verified behaviour — future iterations can re-run them to detect regressions in dependencies.
+Save learning test files in `.dev/` alongside `research.md`. They serve as executable documentation of verified behaviour — future iterations can re-run them to detect regressions in dependencies.
 
-Name files with `lt-` prefix: `lt-claude-cli-flags.ts`, `lt-stripe-webhooks.sh`.
+Name files with `lt-` prefix: `.dev/lt-claude-cli-flags.ts`, `.dev/lt-stripe-webhooks.sh`.

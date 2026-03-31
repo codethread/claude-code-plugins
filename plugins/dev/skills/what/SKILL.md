@@ -1,7 +1,7 @@
 ---
 description: |
   Define what to build through structured research and experimentation.
-  Produces prd.md. Use at the start of any feature work.
+  Produces .dev/prd.md. Use at the start of any feature work.
   Triggers on: "what should we build", "let's plan", "new feature",
   "I want to build", "dev/what"
 disable-model-invocation: true
@@ -12,29 +12,40 @@ argument-hint: [feature idea]
 
 Human-heavy, interactive phase. No implementation happens here — only understanding.
 
-**Hard gate**: nothing proceeds to `dev/how` until `prd.md` is saved and approved.
+**Hard gate**: nothing proceeds to `dev/how` until `.dev/prd.md` is saved and approved.
 
 ### Context Isolation
 
-Each phase runs in a fresh context window with no conversation history from previous phases. The **only** handoff between What and How is `prd.md` plus any artifacts it references. If a discovery, decision, or constraint isn't captured in an artifact file, it doesn't exist for the next phase. Write every insight into a file — never rely on the conversation to carry knowledge forward.
+Each phase runs in a fresh context window with no conversation history from previous phases. The **only** handoff between What and How is `.dev/prd.md` plus any artifacts it references. If a discovery, decision, or constraint isn't captured in an artifact file, it doesn't exist for the next phase. Write every insight into a file — never rely on the conversation to carry knowledge forward.
 
 ## Conversation Flow
 
-### 1. Create Worktree
+### 1. Check for WIP
 
-Before anything else, set up an isolated workspace for this feature.
+Before anything else, check if `.dev/` exists and contains files. If it does, check `.dev/tasks.yml` for any task with `status: fatal` — that indicates a planned recovery back to this phase.
+
+- **Fatal task found**: this is an expected re-entry. Read the fatal task's `notes` to understand what went wrong, then proceed to step 3 (skip worktree creation — you're already in one). Use the existing `.dev/prd.md` as the starting point for revision.
+- **No fatal task**: **stop immediately** and tell the user:
+
+> `.dev/` is not empty — there's work-in-progress from a previous run. Either finish the existing feature (`dev/how` or `dev/build`) or clear it (`rm -rf .dev/`) before starting a new one.
+
+List the contents so the user can see what's there. Do not proceed until `.dev/` is empty or absent.
+
+### 2. Create Worktree
+
+Set up an isolated workspace for this feature.
 
 1. Derive a short, kebab-case branch name from the feature idea (e.g. `dev/priority-filter`)
 2. Check for uncommitted changes — if present, **warn the user** but don't block
 3. Create the worktree using nushell:
 
 ```bash
-nu -c 'use ct/git/worktree; wk add dev/<feature-name>'
+nu -c 'use ct/git/worktree *; wk add dev/<feature-name>'
 ```
 
 This creates a sibling worktree, fetches origin, and handles existing branches automatically. All subsequent work (research, learning tests, prototyping, prd.md) happens in this worktree.
 
-### 2. Understand the Feature
+### 3. Understand the Feature
 
 Ask the user what they want to build. Listen for:
 
@@ -45,7 +56,7 @@ Ask the user what they want to build. Listen for:
 
 Don't rush this. Ask clarifying questions. Challenge vague requirements.
 
-### 3. Identify Unknowns
+### 4. Identify Unknowns
 
 Before any planning, surface what you don't know:
 
@@ -66,15 +77,15 @@ For every external dependency, determine how you can verify its behaviour:
 | **Inspectable package** | npm module in `node_modules`, open-source library | Read exported types, source files, or vendored code. Can explore `node_modules/<pkg>/` or clone the upstream repo to read implementation |
 | **Black-box / binary** | CLI tools, closed-source APIs, SaaS endpoints | Cannot inspect — **must** verify through execution (learning tests) |
 
-This classification drives whether you research by reading (steps 4) or by running (step 5). For black-box dependencies, reading docs alone is never sufficient — you must execute against the real thing.
+This classification drives whether you research by reading (step 5) or by running (step 6). For black-box dependencies, reading docs alone is never sufficient — you must execute against the real thing.
 
-### 4. Research (optional, but see note on inspectable deps)
+### 5. Research (optional, but see note on inspectable deps)
 
 When external dependencies are involved, investigate before planning.
 
 - Read official docs, source code, changelogs
 - Use subagents for API research when appropriate
-- Document findings in `research.md`
+- Document findings in `.dev/research.md`
 
 **For inspectable dependencies** — go beyond docs. These are your highest-confidence sources:
 
@@ -86,7 +97,7 @@ Research alone is sufficient **only** for inspectable dependencies where you can
 
 See `references/research.md` for the research protocol.
 
-### 5. Learning Tests (mandatory for black-box deps, recommended otherwise)
+### 6. Learning Tests (mandatory for black-box deps, recommended otherwise)
 
 When unknowns involve black-box tools, CLIs, or APIs — write small executable tests that validate your assumptions before building against them.
 
@@ -98,7 +109,7 @@ When unknowns involve black-box tools, CLIs, or APIs — write small executable 
 
 See `references/learning-tests.md` for the full pattern.
 
-### 6. Prototype (optional)
+### 7. Prototype (optional)
 
 When the feature involves taste, UX, or architectural decisions that can't be resolved through conversation alone.
 
@@ -109,7 +120,7 @@ Two strategies:
 
 All prototype code is throwaway. It exists to close understanding gaps, not to ship.
 
-### 7. Refine (always runs)
+### 8. Refine (always runs)
 
 Take everything gathered — research, learning test results, prototype learnings, conversation — and distill into artifacts. The PRD is the primary artifact; it may reference additional files for detail that would bloat the main document.
 
@@ -117,10 +128,12 @@ Take everything gathered — research, learning test results, prototype learning
 
 #### Artifact structure
 
-- `prd.md` — always produced. The self-contained specification. References other artifacts where needed.
-- `research.md` — optional. Detailed research findings referenced from PRD's Research Summary.
-- Learning test files (`lt-*.ts`, `lt-*.sh`) — optional. Executable proof of verified behaviour, referenced from PRD.
-- Additional reference files — optional. Interface sketches, diagrams, prototype screenshots, API response samples. Anything the PRD cites that's better as a separate file.
+All artifacts are saved to the `.dev/` directory (create it if it doesn't exist):
+
+- `.dev/prd.md` — always produced. The self-contained specification. References other artifacts where needed.
+- `.dev/research.md` — optional. Detailed research findings referenced from PRD's Research Summary.
+- `.dev/lt-*.ts`, `.dev/lt-*.sh` — optional. Executable proof of verified behaviour, referenced from PRD.
+- Additional reference files in `.dev/` — optional. Interface sketches, diagrams, prototype screenshots, API response samples. Anything the PRD cites that's better as a separate file.
 
 The PRD must be understandable on its own. Reference files provide depth, not missing context.
 
@@ -140,15 +153,15 @@ Walk through the PRD section by section with the user:
 
 See `references/prd-schema.md` for the output format.
 
-### 8. Commit Artifacts
+### 9. Commit Artifacts
 
-Stage and commit all artifacts produced during this phase so the worktree is clean for `dev/how`:
+Stage and commit the `.dev/` directory so the worktree is clean for `dev/how`:
 
 ```
 chore: dev/what — [short feature name]
 ```
 
-Include `prd.md`, `research.md`, learning test files, and any other reference files. Prototype code must already be deleted (see Rules).
+Prototype code must already be deleted (see Rules).
 
 ## Rules
 
@@ -156,7 +169,7 @@ Include `prd.md`, `research.md`, learning test files, and any other reference fi
 - Open questions must be resolved before saving — they don't carry forward
 - If research or prototyping reveals the feature is fundamentally different from what was imagined, restart the conversation rather than patching
 - Prototype code is always deleted before saving prd.md
-- Save all artifacts to project root: `prd.md`, optionally `research.md`, learning tests, and reference files
+- Save all artifacts to `.dev/`: `prd.md`, optionally `research.md`, learning tests, and reference files
 - **Conversation is not an artifact** — if it was discussed but not written to a file, it doesn't survive to the next phase
 - **No unverified black-box claims in the PRD** — every behavioural claim about a binary, CLI, or closed API must be backed by a passing learning test. If you can't run it, you can't plan against it.
 - **Leave the git tree clean** — every phase must commit its artifacts before finishing

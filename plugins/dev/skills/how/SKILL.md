@@ -8,13 +8,13 @@ disable-model-invocation: true
 
 # How Are We Building It?
 
-Consumes `prd.md`, produces `tasks.yml`. Interactive — the human reviews and adjusts the plan before it's finalised.
+Consumes `.dev/prd.md`, produces `.dev/tasks.yml`. Interactive — the human reviews and adjusts the plan before it's finalised.
 
 ## Process
 
 ### 1. Read PRD
 
-Read `prd.md` from the project root. If it doesn't exist, tell the user to run `dev/what` first.
+Read `.dev/prd.md`. If it doesn't exist, tell the user to run `dev/what` first.
 
 ### 2. Resolve Open Questions
 
@@ -84,11 +84,11 @@ Get explicit approval before saving.
 
 ### 9. Save tasks.yml
 
-Save to project root. See `references/tasks-schema.md` for the format.
+Save to `.dev/tasks.yml`. See `references/tasks-schema.md` for the format.
 
 ### 10. Commit Plan
 
-Stage and commit `tasks.yml` so the tree is clean for `dev/build`:
+Stage and commit `.dev/tasks.yml` so the tree is clean for `dev/build`:
 
 ```
 chore: dev/how — [short feature name]
@@ -101,4 +101,4 @@ chore: dev/how — [short feature name]
 - Task order must respect dependencies — never reference files that don't exist yet
 - The `prd` field must point to the PRD file used
 - If decomposition reveals the PRD is incomplete or contradictory, go back to `dev/what` rather than guessing
-- **Leave the git tree clean** — commit `tasks.yml` before finishing
+- **Leave the git tree clean** — commit `.dev/tasks.yml` before finishing

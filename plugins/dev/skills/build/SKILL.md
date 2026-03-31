@@ -14,15 +14,15 @@ Implements exactly ONE task per invocation. The user runs this in a loop externa
 
 ### 1. Read State
 
-Read `tasks.yml` and `progress.md` (if it exists) from the project root.
+Read `.dev/tasks.yml` and `.dev/progress.md` (if it exists).
 
-If `tasks.yml` doesn't exist, stop and tell the user to run `dev/how` first.
+If `.dev/tasks.yml` doesn't exist, stop and tell the user to run `dev/how` first.
 
-If `progress.md` exists, read the **Codebase Patterns** section at the top — these are consolidated learnings from previous iterations.
+If `.dev/progress.md` exists, read the **Codebase Patterns** section at the top — these are consolidated learnings from previous iterations.
 
 ### 2. Check Requirements
 
-Run each requirement's `check` command from `tasks.yml`. If any fail, report the failures and stop — status: `blocked`.
+Run each requirement's `check` command from `.dev/tasks.yml`. If any fail, report the failures and stop — status: `blocked`.
 
 ### 3. Pick Task
 
@@ -30,7 +30,7 @@ First, check if any task has `status: blocked` or `status: fatal`. If so, **stop
 
 Then select the first task with `status: pending`. If no pending tasks remain, report completion and stop.
 
-Update the task's status to `in_progress` in `tasks.yml`.
+Update the task's status to `in_progress` in `.dev/tasks.yml`.
 
 ### 4. Implement
 
@@ -40,7 +40,7 @@ Implement the task according to its description, respecting:
 - Meet every acceptance criterion
 - Follow existing project conventions (read nearby code first)
 
-If you discover the task is impossible or the plan is wrong, do not hack around it. Set status to `fatal` in `tasks.yml`, explain why in the task's `notes`, and stop. The user must go back to `dev/what` or `dev/how` to fix the plan.
+If you discover the task is impossible or the plan is wrong, do not hack around it. Set status to `fatal` in `.dev/tasks.yml`, explain why in the task's `notes`, and stop. The user must go back to `dev/what` or `dev/how` to fix the plan.
 
 ### 5. Quality Checks
 
@@ -68,13 +68,13 @@ See `references/build-protocol.md` for the full code review integration.
 
 ### 7. Update State
 
-1. Set task status to `done` in `tasks.yml`
+1. Set task status to `done` in `.dev/tasks.yml`
 2. Populate the task's `notes` field with anything the next iteration should know
-3. Append to `progress.md` (see `references/build-protocol.md` for format)
+3. Append to `.dev/progress.md` (see `references/build-protocol.md` for format)
 
 ### 8. Commit
 
-Stage **all** changes — implementation files, `tasks.yml`, and `progress.md` — in a single commit:
+Stage **all** changes — implementation files, `.dev/tasks.yml`, and `.dev/progress.md` — in a single commit:
 
 ```
 feat: [task-id] - [task title]
@@ -94,9 +94,9 @@ End your response with a clear signal:
 ## Rules
 
 - Never implement more than one task per invocation
-- Never modify files outside the task's `files` list without updating `tasks.yml` first
+- Never modify files outside the task's `files` list without updating `.dev/tasks.yml` first
 - Never skip quality checks or code review
 - If a task's acceptance criteria conflict with reality, mark `fatal` — don't improvise
-- Always read progress.md's Codebase Patterns section before implementing
+- Always read `.dev/progress.md`'s Codebase Patterns section before implementing
 - Always append learnings after completing a task
 - **Leave the git tree clean** — state files and implementation go in the same commit
