@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.4.1 - 2026-03-31
+
+- Fixed `claude-code-knowledge` and `introspection` skills to enable model invocation by removing `disable-model-invocation` flag
+
 ## v1.4.0 - 2026-03-31
 
 - Added `introspection` skill with headless test harness for verifying Claude Code behaviour

@@ -3,7 +3,6 @@ description: |
   Mandatory when configuring any Claude Code specifics - hooks, skills,
   plugins, MCP servers, slash commands, settings, agents, or any Claude Code feature.
   Provides opinionated best practices
-disable-model-invocation: true
 ---
 
 # Claude Code Knowledge

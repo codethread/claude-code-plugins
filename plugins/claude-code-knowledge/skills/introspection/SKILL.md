@@ -4,7 +4,6 @@ description: |
   tool usage patterns — using a headless subprocess harness.
   Use when building integration tests, verifying hook execution,
   or validating Claude Code configuration end-to-end.
-disable-model-invocation: true
 ---
 
 # Introspection
