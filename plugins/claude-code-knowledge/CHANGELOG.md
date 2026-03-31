@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.4.0 - 2026-03-31
+
+- Added `introspection` skill with headless test harness for verifying Claude Code behaviour
+- Added `no-silent-failures` hook rule enforcing explicit error output
+- Expanded skill suite for testing and validating Claude Code integration patterns
+
 ## v1.3.1 - 2026-03-29
 
 - Fixed Edit tool scoping in knowledge-auditor agent to use glob pattern (`Edit(.claude/**)`)
