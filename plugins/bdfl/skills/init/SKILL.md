@@ -6,7 +6,7 @@ allowed-tools: Bash, Write, Edit, Read, Glob, Grep
 
 # BDFL Init
 
-Scaffold a new project from scratch using the BDFL architecture.
+Scaffold a new project from scratch that meets the full BDFL architecture from day one.
 
 ## Arguments
 
@@ -14,7 +14,7 @@ Scaffold a new project from scratch using the BDFL architecture.
 
 ## Architecture
 
-Load and follow the full architecture specification:
+Load and read the full architecture specification before proceeding:
 
 - [Architecture Reference](./references/architecture.md)
 
@@ -37,10 +37,12 @@ Load and follow the full architecture specification:
    - `@typescript/native-preview` for fast type-checking
    - ESLint with `typescript-eslint` (strict + recommended plugins for chosen components) and an `eslint-rules/` directory
    - `oxfmt` for formatting
-   - Add all scripts to `package.json` including the `verify` command
-9. Create the `Dockerfile` and `dev.sh` for Podman-based development
-10. Set up Claude Code hooks in `.claude/hooks/hooks.json`:
-    - Format on `Edit|Write`
-    - Verify on `Stop|SubagentStop`
-11. Run `pnpm install` and `pnpm verify` to confirm everything works
-12. Summarise what was created and any next steps
+   - Add all standard scripts to `package.json` including the `verify` command
+9. Set up the build tool (Vite) and test runner (Vitest, or jest-expo for Expo projects)
+10. Create the `Dockerfile` and `dev.sh` for Podman-based development
+11. Set up Claude Code hooks:
+    - PostToolUse on `Edit|Write`: format + lint the changed file
+    - Stop and SubagentStop: run `pnpm verify`
+    - Pre-commit git hook: run `pnpm verify`
+12. Run `pnpm install` and `pnpm verify` to confirm everything works
+13. Summarise what was created and any next steps

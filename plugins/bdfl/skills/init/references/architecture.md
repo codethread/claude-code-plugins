@@ -1,19 +1,16 @@
 # BDFL Architecture Reference
 
-The canonical technology choices and project structure for all projects managed under BDFL.
+The canonical specification for a BDFL-certified project. This document describes the **target state** — what a compliant project looks like when fully migrated.
 
 ## Runtime & Package Management
 
 - **Runtime**: Node.js (LTS)
 - **Package manager**: pnpm
 - **Version pinning**: Volta (pin node + pnpm versions in `package.json`)
-- **Build tool**: Vite
-- **Test runner**: Vitest
-  - **Exception**: Expo React Native projects use `jest` with `jest-expo`
 
 ## Language
 
-- **TypeScript** with extremely strict configuration:
+- **TypeScript** with the strictest configuration:
   - `strict: true`
   - `noUncheckedIndexedAccess: true`
   - `exactOptionalPropertyTypes: true`
@@ -25,46 +22,33 @@ The canonical technology choices and project structure for all projects managed 
 ## Core Library
 
 - **Effect.ts** and its ecosystem (`@effect/*`) as the primary library for:
-  - Error handling, concurrency, dependency injection, schema validation, HTTP, configuration, etc.
+  - Error handling, concurrency, dependency injection, schema validation, HTTP, configuration
 - Only reach for alternatives when Effect does not provide the capability
 
 ## Components (as needed)
 
-| Domain   | Technology                              |
-|----------|-----------------------------------------|
-| Web      | React                                   |
-| Mobile   | React Native via Expo                   |
-| Server   | `@effect/platform` built-in HTTP server |
+| Domain | Technology |
+|--------|-----------|
+| Web | React |
+| Mobile | React Native via Expo |
+| Server | `@effect/platform` built-in HTTP server |
 
-## Containerisation
+## Build & Test
 
-- Provide a `Dockerfile` with:
-  - Appropriate ingress (exposed ports)
-  - File sharing / volume mounts for source code
-  - Suitable for Claude Code to develop inside the container
-- Provide `./dev.sh` to invoke the container via **Podman**
+- **Build tool**: Vite
+- **Test runner**: Vitest
+  - **Exception**: Expo React Native projects use `jest` with `jest-expo`
 
 ## Project Tooling
 
-### TypeScript Go (fast type-checking)
+- **Type-checking**: `@typescript/native-preview` (`tsgo --noEmit`)
+- **Linting**: ESLint + typescript-eslint (flat config `eslint.config.ts`)
+  - Strict TypeScript settings and recommended rule presets
+  - Component-specific plugins (e.g. `eslint-plugin-react`, `eslint-plugin-react-hooks`)
+  - `eslint-rules/` directory at project root for bespoke custom rules
+- **Formatting**: oxfmt (no Prettier)
 
-- Install `@typescript/native-preview`
-- Add `typecheck` script in `package.json` running `tsgo --noEmit`
-
-### Linting: ESLint + typescript-eslint
-
-- Strict TypeScript settings and recommended rule presets
-- Include recommended plugins based on the project's components (e.g. `eslint-plugin-react`, `eslint-plugin-react-hooks` for web)
-- Create an `eslint-rules/` directory at the project root for bespoke custom rules
-- Flat config format (`eslint.config.ts`)
-
-### Formatting: oxfmt
-
-- Use `oxfmt` as the sole formatter (no Prettier)
-
-### package.json scripts
-
-All tooling must be runnable via `pnpm`:
+### Standard Scripts
 
 ```jsonc
 {
@@ -73,16 +57,42 @@ All tooling must be runnable via `pnpm`:
     "lint": "eslint --fix .",
     "format": "oxfmt --write .",
     "test": "vitest run",
+    "build": "vite build",
     "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm format"
   }
 }
 ```
 
-- `verify` runs all checks, with formatting **always last**
+`verify` runs all checks, with formatting **always last**.
 
-### Claude Code Hooks
+## Containerisation
 
-Add `.claude/hooks/hooks.json` with:
+- `Dockerfile` with appropriate ingress, volume mounts for source code, suitable for development inside the container
+- `./dev.sh` to invoke the container via **Podman**
 
-- **Format on file change**: `PostToolUse` hook matching `Edit|Write` that runs `oxfmt --write` on the changed file
-- **Verify on stop**: `Stop` and `SubagentStop` hooks that run `pnpm verify`
+## NixOS
+
+- `flake.nix` providing a dev shell with all required binaries
+- All scripts and hooks work inside the nix dev shell
+
+## Claude Code Hooks
+
+### Refined (per-file)
+
+- **PostToolUse** on `Edit|Write`: run `oxfmt --write` on the changed file
+- **PostToolUse** on `Edit|Write`: run `eslint --fix` on the changed file
+
+### Verification (per-stop)
+
+- **Stop** and **SubagentStop**: run `pnpm verify`
+
+### Git
+
+- **Pre-commit**: run `pnpm verify`
+
+## Monorepo (if applicable)
+
+- pnpm workspaces
+- Root `package.json` with workspace configuration
+- Shared `tsconfig.base.json` with project references
+- Root `verify` script that runs verification across all workspaces
