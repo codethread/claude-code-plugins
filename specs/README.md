@@ -4,6 +4,12 @@ Persistent domain specifications. Organized by system area, not feature chronolo
 
 **Rule:** specs describe intent, code describes reality. Always check the codebase before assuming a spec is fully implemented.
 
+## Infrastructure
+
+| Spec | Code | Purpose |
+|---|---|---|
+| [shared-lib.md](./shared-lib.md) | `lib/` | Session-scoped caching infrastructure for hooks across the plugin marketplace |
+
 ## Plugins
 
 | Spec | Code | Purpose |

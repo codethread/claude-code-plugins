@@ -10,7 +10,7 @@ systems:
       - "session-cache"
     target: "lib/"
     spec: "specs/shared-lib.md"
-    status: "pending"
+    status: "in_progress"
     action: "create"
     code:
       - "lib/"
