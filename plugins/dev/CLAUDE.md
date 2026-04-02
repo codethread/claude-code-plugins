@@ -2,13 +2,27 @@
 
 ## Architecture
 
-Three skills implementing a phase-based development workflow. Each phase produces an artifact consumed by the next:
+Three skills and one command implementing a phase-based development workflow:
 
 ```
-dev/what  →  .dev/prd.md  →  dev/how  →  .dev/tasks.yml  →  dev/build  →  commits
+dev/what  →  .dev/prd.md  →  dev/how  →  .dev/tasks.yml  →  dev/build  →  commits  →  /dev:done
 ```
 
 Skills-only plugin (wave 1) — no hooks, no orchestrator script. The user drives phase transitions manually and loops `dev/build` themselves.
+
+## Commands
+
+### `done` (`/dev:done <feature>`)
+
+Finishes a feature once all tasks are complete:
+
+1. Finds the worktree matching the given feature name (case-insensitive substring match against `dev/<feature>` paths from `git worktree list`)
+2. Verifies every task in `.dev/tasks.yml` has `status: done` — stops if any are incomplete
+3. Deletes `.dev/` and commits the removal in the worktree
+4. Squash merges the feature branch into trunk using the `project` field from `tasks.yml` as the commit message
+5. Removes the worktree and deletes the branch
+
+The squash merge keeps feature history contained within a single trunk commit named after the feature.
 
 ## Design Principles
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-03-31 (2)
+
+- Added `dev/done` command: verifies all tasks done, squash merges feature branch into trunk, cleans up worktree and branch
+
 ## 2026-03-31
 
 - Artifacts now stored in `.dev/` directory and committed to feature branch

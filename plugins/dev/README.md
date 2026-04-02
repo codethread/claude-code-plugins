@@ -10,6 +10,12 @@ Phase-based development workflow for Claude Code.
 | `dev/how` | Decompose PRD into ordered tasks | `prd.md` | `tasks.yml` |
 | `dev/build` | Implement one task (user loops externally) | `tasks.yml` | commits + updated `tasks.yml` |
 
+## Commands
+
+| Command | Purpose |
+|---|---|
+| `/dev:done <feature>` | Verify all tasks done, squash merge into trunk, remove worktree |
+
 ## Usage
 
 ```
@@ -21,6 +27,9 @@ dev/how
 
 # user runs build in a loop:
 while true; do claude --print "dev/build"; done
+
+/dev:done my-feature
+# verifies tasks, squash merges, cleans up
 ```
 
-Artifacts (`prd.md`, `tasks.yml`, `progress.md`) live in the project root and are transient — git history is the permanent record.
+Artifacts (`prd.md`, `tasks.yml`, `progress.md`) live in `.dev/` on the feature branch and are transient — git history is the permanent record.
