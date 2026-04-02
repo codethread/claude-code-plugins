@@ -10,11 +10,12 @@ systems:
       - "session-cache"
     target: "lib/"
     spec: "specs/shared-lib.md"
-    status: "in_progress"
+    status: "done"
     action: "create"
     code:
       - "lib/"
     rationale: "Session cache is foundational infra used by multiple hooks; deserves explicit API contract"
+    notes: "Spec created 2026-04-02. Single domain confirmed — no split needed."
 
   - id: "002"
     domain: "plugin-marketplace"
