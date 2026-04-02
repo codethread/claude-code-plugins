@@ -174,7 +174,6 @@ No automated test suite. The plugin is pure markdown with no runtime code. Verif
 
 **Knowledge Sources:**
 - `plugins/bdfl/README.md` — user quick start
-- `plugins/bdfl/CLAUDE.md` — maintainer guide (to be consolidated)
 - `plugins/bdfl/CHANGELOG.md` — release history
 - `plugins/bdfl/skills/init/SKILL.md` — init skill definition
 - `plugins/bdfl/skills/migrate/SKILL.md` — migrate skill definition
