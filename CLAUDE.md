@@ -72,9 +72,7 @@ The `@claude-plugins/lib` package provides shared utilities that can be imported
 import { readSessionCache, writeSessionCache } from '@claude-plugins/lib/session-cache';
 ```
 
-See `lib/CLAUDE.md` for detailed documentation of available utilities including:
-- Session cache management (time-based filtering, session state tracking)
-- Future shared utilities as they're added
+See `lib/CLAUDE.md` for usage conventions and [`specs/shared-lib.md`](./specs/shared-lib.md) for architecture and API details.
 
 ## Creating New Plugins
 
