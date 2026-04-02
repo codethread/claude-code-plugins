@@ -24,12 +24,13 @@ systems:
       - ".claude-plugin"
     target: "plugin marketplace"
     spec: "specs/plugin-marketplace.md"
-    status: "in_progress"
+    status: "done"
     action: "create"
     code:
       - ".claude-plugin/marketplace.json"
       - "plugins/*/.claude-plugin/plugin.json"
     rationale: "Registration, versioning, and discovery rules are implicit — need explicit spec"
+    notes: "Spec created 2026-04-02. Single domain confirmed — no split needed."
 
   - id: "003"
     domain: "project-hooks"
