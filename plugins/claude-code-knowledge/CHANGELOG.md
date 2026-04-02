@@ -4,6 +4,7 @@
 
 - Added `/claude-smoke` command: smoke tests hooks in the current project (discover, classify, generate, execute, report, cleanup)
 - Added `skills/introspection/references/smoke-examples.md`: template library for common hook patterns (formatter, linter-clean, linter-violation, type-checker-stop, pre-tool-blocker)
+- Documented subagent context isolation: subagents don't inherit CLAUDE.md, skills, or parent session state
 
 ## v1.4.1 - 2026-03-31
 

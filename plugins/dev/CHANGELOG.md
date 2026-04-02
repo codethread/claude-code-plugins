@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.4.1 - 2026-04-02
+
+- `dev:reverse`: simplified Wide Survey to a single Explore agent (Wave 1) rather than multiple parallel agents — cleaner orchestration, output drives Wave 2
+
 ## 2026-04-02 (2)
 
 - `dev:reverse`: parallel wide survey before deep dive — all docs/structure loaded concurrently upfront
