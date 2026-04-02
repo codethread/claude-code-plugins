@@ -32,28 +32,17 @@ Read `specs/README.md` if it exists. Determine:
 - No existing spec? → you are **creating**
 - No `specs/` directory at all? → you are **bootstrapping**
 
-### 3. Wide Survey (parallel)
+### 3. Wide Survey (Wave 1)
 
-Start broad before going deep. Launch parallel exploration agents to survey the full landscape of the target area simultaneously:
+Spawn a single Explore agent to map the landscape: file structure, documentation, entry points, and component boundaries across the codebase. The target may be a single directory or scattered across many — the agent should follow the code wherever it leads.
 
-- **File tree**: Glob the target directory for all files — build a mental map of the structure
-- **Documentation scan**: Read all `README.md`, `CLAUDE.md`, agent definitions, skill definitions, command definitions, and reference docs in the target area in parallel
-- **Entry points**: Identify public interfaces, exports, and main files
+**Wait for Wave 1 to return before proceeding.** Its output determines what to explore in depth.
 
-The goal is a complete birds-eye view before reading any implementation detail. Every doc and structural file should be loaded in this step.
+### 4. Deep Dives (Wave 2)
 
-### 4. Deep Dive (parallel per component)
+Based on what Wave 1 found, spawn **multiple parallel Explore agents** — one per distinct component or area identified. Each agent reads its area thoroughly: types, flows, integration boundaries, error handling, tests, system-level comments.
 
-With the landscape mapped, read the implementation in parallel per component/subsystem:
-
-- Data model / types / schemas
-- Key flows and state transitions
-- Integration boundaries (what talks to what)
-- Error handling patterns
-- Test coverage (what's tested tells you what matters)
-- Large inline comments that describe system-level design (not function-level jsdoc)
-
-Maximise use of parallel agent spawns — each independent subsystem or file cluster can be read concurrently.
+The number and scope of agents is determined by what Wave 1 discovered.
 
 ### 5. Invoke `dev/specs`
 
