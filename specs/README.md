@@ -9,3 +9,4 @@ Persistent domain specifications. Organized by system area, not feature chronolo
 | Spec | Code | Purpose |
 |---|---|---|
 | [dev-workflow.md](./dev-workflow.md) | `plugins/dev/` | Phase-based development workflow: What, How, Build, with persistent domain specs |
+| [dev-enhancements.md](./dev-enhancements.md) | `plugins/dev/` | Planned enhancements: quality gate hooks, stage enforcement, build loop runner |
