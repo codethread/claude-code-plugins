@@ -24,14 +24,25 @@ Each phase runs in a fresh context window with no conversation history from prev
 
 Before anything else, check if `.dev/` exists and contains files. If it does, check `.dev/tasks.yml` for any task with `status: fatal` — that indicates a planned recovery back to this phase.
 
-- **Fatal task found**: this is an expected re-entry. Read the fatal task's `notes` to understand what went wrong, then proceed to step 3 (skip worktree creation — you're already in one). Use the existing `.dev/prd.md` as the starting point for revision.
+- **Fatal task found**: this is an expected re-entry. Read the fatal task's `notes` to understand what went wrong, then proceed to step 4 (skip worktree creation — you're already in one). Use the existing `.dev/prd.md` as the starting point for revision.
 - **No fatal task**: **stop immediately** and tell the user:
 
 > `.dev/` is not empty — there's work-in-progress from a previous run. Either finish the existing feature (`dev/how` or `dev/build`) or clear it (`rm -rf .dev/`) before starting a new one.
 
 List the contents so the user can see what's there. Do not proceed until `.dev/` is empty or absent.
 
-### 2. Create Worktree
+### 2. Read Existing Specs
+
+Before planning anything, check if the project has persistent domain specs.
+
+1. If `specs/README.md` exists, read the index to understand what domains are already documented
+2. Identify which specs relate to the feature area — read those specs
+3. Note any goals, non-goals, invariants, or design decisions that constrain this feature
+4. Feed this context into the PRD — the feature should build on existing architectural knowledge, not contradict it
+
+If no `specs/` directory exists, skip this step. Specs will be created after the feature is built (via `dev/done`).
+
+### 3. Create Worktree
 
 Set up an isolated workspace for this feature.
 
@@ -45,7 +56,7 @@ nu -c 'use ct/git/worktree *; wk add dev/<feature-name>'
 
 This creates a sibling worktree, fetches origin, and handles existing branches automatically. All subsequent work (research, learning tests, prototyping, prd.md) happens in this worktree.
 
-### 3. Understand the Feature
+### 4. Understand the Feature
 
 Ask the user what they want to build. Listen for:
 
@@ -56,7 +67,7 @@ Ask the user what they want to build. Listen for:
 
 Don't rush this. Ask clarifying questions. Challenge vague requirements.
 
-### 4. Identify Unknowns
+### 5. Identify Unknowns
 
 Before any planning, surface what you don't know:
 
@@ -77,9 +88,9 @@ For every external dependency, determine how you can verify its behaviour:
 | **Inspectable package** | npm module in `node_modules`, open-source library | Read exported types, source files, or vendored code. Can explore `node_modules/<pkg>/` or clone the upstream repo to read implementation |
 | **Black-box / binary** | CLI tools, closed-source APIs, SaaS endpoints | Cannot inspect — **must** verify through execution (learning tests) |
 
-This classification drives whether you research by reading (step 5) or by running (step 6). For black-box dependencies, reading docs alone is never sufficient — you must execute against the real thing.
+This classification drives whether you research by reading (step 6) or by running (step 7). For black-box dependencies, reading docs alone is never sufficient — you must execute against the real thing.
 
-### 5. Research (optional, but see note on inspectable deps)
+### 6. Research (optional, but see note on inspectable deps)
 
 When external dependencies are involved, investigate before planning.
 
@@ -97,7 +108,7 @@ Research alone is sufficient **only** for inspectable dependencies where you can
 
 See `references/research.md` for the research protocol.
 
-### 6. Learning Tests (mandatory for black-box deps, recommended otherwise)
+### 7. Learning Tests (mandatory for black-box deps, recommended otherwise)
 
 When unknowns involve black-box tools, CLIs, or APIs — write small executable tests that validate your assumptions before building against them.
 
@@ -109,7 +120,7 @@ When unknowns involve black-box tools, CLIs, or APIs — write small executable 
 
 See `references/learning-tests.md` for the full pattern.
 
-### 7. Prototype (optional)
+### 8. Prototype (optional)
 
 When the feature involves taste, UX, or architectural decisions that can't be resolved through conversation alone.
 
@@ -120,7 +131,7 @@ Two strategies:
 
 All prototype code is throwaway. It exists to close understanding gaps, not to ship.
 
-### 8. Refine (always runs)
+### 9. Refine (always runs)
 
 Take everything gathered — research, learning test results, prototype learnings, conversation — and distill into artifacts. The PRD is the primary artifact; it may reference additional files for detail that would bloat the main document.
 
@@ -153,7 +164,7 @@ Walk through the PRD section by section with the user:
 
 See `references/prd-schema.md` for the output format.
 
-### 9. Commit Artifacts
+### 10. Commit Artifacts
 
 Stage and commit the `.dev/` directory so the worktree is clean for `dev/how`:
 

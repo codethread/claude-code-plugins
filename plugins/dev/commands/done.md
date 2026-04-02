@@ -1,12 +1,12 @@
 ---
-description: Verify all tasks complete, squash merge feature branch into trunk, and remove the worktree
+description: Verify all tasks complete, write specs, check alignment, squash merge feature branch into trunk, and remove the worktree
 argument-hint: <feature-name-or-path>
-allowed-tools: Bash(bash:*), Read, Glob
+allowed-tools: Bash(bash:*), Read, Glob, Agent, Skill
 ---
 
 # dev/done
 
-Finish a feature: verify tasks, squash merge into trunk, clean up.
+Coordinator that finishes a feature by orchestrating verification, spec writing, alignment review, and merge.
 
 ## Arguments
 
@@ -14,7 +14,7 @@ Finish a feature: verify tasks, squash merge into trunk, clean up.
 
 ## Instructions
 
-### 1. Find the worktree
+### 1. Resolve Worktree
 
 Run from the current repo root:
 
@@ -22,7 +22,7 @@ Run from the current repo root:
 git worktree list --porcelain
 ```
 
-Match `FEATURE` against the listed paths using case-insensitive substring matching (e.g. `ClaudeSmoke` should match `dev/claude-smoke`). If no match or multiple ambiguous matches, report the full list and stop.
+Match `FEATURE` against the listed paths using case-insensitive substring matching. If no match or multiple ambiguous matches, report the full list and stop.
 
 Extract:
 - `WORKTREE_PATH` — absolute path to the matched worktree
@@ -30,7 +30,15 @@ Extract:
 
 Do not match the main worktree (the one with no branch, or `(bare)`).
 
-### 2. Verify all tasks are done
+Determine trunk:
+
+```bash
+git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@'
+```
+
+If that returns nothing, check `git branch --list main master` and use whichever exists.
+
+### 2. Verify All Tasks Done
 
 Read `<WORKTREE_PATH>/.dev/tasks.yml`.
 
@@ -40,50 +48,56 @@ Check every entry in `tasks[].status`. If any task has a status other than `done
 > - 001 "Task title" (in_progress)
 > - 003 "Task title" (blocked)
 
-Do not proceed until all tasks are `done`.
+Extract the `project` field — this becomes the squash merge commit message.
 
-### 3. Get the feature name
+### 3. Write Specs
 
-Extract the `project` field from `tasks.yml`. This becomes the squash commit message.
+All steps in this phase run **inside the worktree** (`cd <WORKTREE_PATH>` before starting).
 
-### 4. Determine trunk
+Invoke the `dev/specs` skill to write or update persistent domain specs from what was built.
 
-```bash
-git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@'
-```
-
-If that returns nothing, check `git branch --list main master` and use whichever exists.
-
-### 5. Delete `.dev/` and commit in the worktree
-
-First, run `git status` in the worktree. If anything other than `.dev/` is modified or untracked, stop and report those files — the worktree must be clean before finishing.
-
-Then remove `.dev/` and commit only that deletion using `git add -u` (stages only tracked file removals, not untracked files):
+1. Review what changed on this branch:
 
 ```bash
-cd <WORKTREE_PATH> && rm -rf .dev && git add -u && git commit -m "chore: remove dev artifacts"
+cd <WORKTREE_PATH> && git diff --stat <TRUNK>...HEAD
 ```
 
-### 6. Squash merge into trunk
+The triple-dot (`...`) compares from the merge-base, so only branch-introduced changes are shown.
 
-Switch to trunk from the main worktree root, then squash merge:
+2. Use the changed files and implementation to identify which domain(s) were affected
+3. For each domain, invoke `dev/specs` — it reads the code in the worktree and writes `specs/<domain>.md`
+4. The PRD at `<WORKTREE_PATH>/.dev/prd.md` provides intent context — but specs are written from code reality
 
-```bash
-git checkout <TRUNK>
-git merge --squash <WORKTREE_BRANCH>
-git commit -m "<project field from tasks.yml>"
-```
+Commit spec changes in the worktree before proceeding.
 
-### 7. Remove the worktree and branch
+### 4. Alignment Check
 
-```bash
-git worktree remove <WORKTREE_PATH>
-git branch -D <WORKTREE_BRANCH>
-```
+Spawn the `spec-reviewer` agent in `post-build` mode. Pass it:
 
-### 8. Report
+- **Root path**: `<WORKTREE_PATH>`
+- **Domain specs**: list of specs created/updated in step 3
+
+The agent reads the PRD, specs, and code (following code locations from the specs), then reports either **ALIGNED** or **DIVERGED** with specific citations.
+
+If **aligned**, proceed to step 5.
+
+If **diverged**, report the divergences and **stop**. Do not merge. The user decides how to handle the divergence.
+
+### 5. Merge and Clean Up
+
+Spawn the `worktree-merger` agent. Pass it:
+
+- **WORKTREE_PATH**: `<WORKTREE_PATH>`
+- **WORKTREE_BRANCH**: `<WORKTREE_BRANCH>`
+- **TRUNK**: `<TRUNK>`
+- **COMMIT_MESSAGE**: the `project` field from tasks.yml
+
+The agent removes `.dev/`, squash merges into trunk, and cleans up the worktree and branch.
+
+### 6. Report
 
 Summarise:
 - Feature name (from `project` field)
+- Specs created/updated (list domain names)
 - Commit hash on trunk
 - Branch and worktree removed

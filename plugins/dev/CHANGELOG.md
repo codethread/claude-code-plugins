@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-04-02
+
+- Added `dev/specs` skill: writes persistent domain specs from code reality, decoupled from dev flow
+- Added `specs/` convention: domain-organized persistent knowledge (vs `.dev/` transient scratchpad)
+- Modified `dev/what`: reads existing `specs/` before planning to build on architectural knowledge
+- Refactored `dev/done` into a coordinator: delegates review to `spec-reviewer`, git operations to `worktree-merger`
+- Added `spec-reviewer` agent: compares specs vs code (+ PRD if present), supports post-build and reverse modes
+- Added `worktree-merger` agent: handles `.dev/` removal, squash merge, worktree + branch cleanup
+- Added `/dev:reverse` command: reverse-engineers domain specs from existing code
+- Added `references/spec-schema.md`: spec template and `specs/README.md` index format
+
 ## 2026-03-31 (2)
 
 - Added `dev/done` command: verifies all tasks done, squash merges feature branch into trunk, cleans up worktree and branch
