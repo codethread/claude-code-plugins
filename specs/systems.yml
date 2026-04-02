@@ -39,7 +39,7 @@ systems:
       - "hooks"
     target: ".claude/hooks"
     spec: "specs/project-hooks.md"
-    status: "pending"
+    status: "in_progress"
     action: "create"
     code:
       - ".claude/settings.json"
@@ -52,7 +52,7 @@ systems:
       - "documentation"
     target: "plugins/doc-writer/"
     spec: "specs/doc-writer.md"
-    status: "pending"
+    status: "in_progress"
     action: "create"
     code:
       - "plugins/doc-writer/"
