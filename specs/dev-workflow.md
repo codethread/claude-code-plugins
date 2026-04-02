@@ -147,7 +147,7 @@ All skills use `disable-model-invocation: true` — they are prompt-driven, not 
 ### User-Facing Commands
 
 - **`/dev:done <feature>`** — resolves worktree from feature name, verifies all tasks done, invokes `dev/specs`, spawns `spec-reviewer` (post-build mode), spawns `worktree-merger`.
-- **`/dev:reverse <target>`** — scopes target, reads code + scattered docs, invokes `dev/specs`, spawns `spec-reviewer` (reverse mode), fixes divergences until aligned.
+- **`/dev:reverse <target>`** — scopes target, wide parallel survey, deep parallel dives, invokes `dev/specs`, consolidates scattered docs into spec (deleting absorbed internal content), spawns `spec-reviewer` (reverse mode), fixes divergences until aligned.
 
 ### Agent Interfaces
 
@@ -182,11 +182,6 @@ All skills use `disable-model-invocation: true` — they are prompt-driven, not 
 No automated test suite. The plugin is pure markdown (skills, commands, agents, reference docs) with no TypeScript runtime code. Verification is behavioral — the workflow is tested by using it on real features. The `spec-reviewer` agent serves as a built-in verification mechanism that checks spec-to-code alignment.
 
 ## 7. Open Questions
-
-## Future Waves
-
-- **Wave 2**: Quality gate stop hook, `DEVFLOW_STAGE` env var, stage-aware write guard (PreToolUse hook)
-- **Wave 3**: `cc-devflow build` loop runner (replaces user's manual while loop), stats.json, structured logging
 
 ---
 

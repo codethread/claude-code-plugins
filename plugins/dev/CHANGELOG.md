@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-04-02 (2)
+
+- `dev:reverse`: parallel wide survey before deep dive — all docs/structure loaded concurrently upfront
+- `dev:reverse`: parallel deep dives per component/subsystem after survey
+- `dev:reverse`: new consolidation step — deletes internal docs absorbed into the spec (CLAUDE.md, arch sections of README)
+
 ## 2026-04-02
 
 - Added `dev/specs` skill: writes persistent domain specs from code reality, decoupled from dev flow

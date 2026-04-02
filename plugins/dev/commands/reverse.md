@@ -32,30 +32,28 @@ Read `specs/README.md` if it exists. Determine:
 - No existing spec? → you are **creating**
 - No `specs/` directory at all? → you are **bootstrapping**
 
-### 3. Read the Code
+### 3. Wide Survey (parallel)
 
-Read the implementation thoroughly:
+Start broad before going deep. Launch parallel exploration agents to survey the full landscape of the target area simultaneously:
 
-- Entry points and public interfaces
+- **File tree**: Glob the target directory for all files — build a mental map of the structure
+- **Documentation scan**: Read all `README.md`, `CLAUDE.md`, agent definitions, skill definitions, command definitions, and reference docs in the target area in parallel
+- **Entry points**: Identify public interfaces, exports, and main files
+
+The goal is a complete birds-eye view before reading any implementation detail. Every doc and structural file should be loaded in this step.
+
+### 4. Deep Dive (parallel per component)
+
+With the landscape mapped, read the implementation in parallel per component/subsystem:
+
 - Data model / types / schemas
 - Key flows and state transitions
 - Integration boundaries (what talks to what)
 - Error handling patterns
 - Test coverage (what's tested tells you what matters)
+- Large inline comments that describe system-level design (not function-level jsdoc)
 
-### 4. Harvest Documentation
-
-Scan for documentation scattered across the target area:
-
-- `README.md` files
-- `CLAUDE.md` files
-- Agent definitions (`.md` files in `agents/`)
-- Skill definitions (`SKILL.md` files)
-- Command definitions (`.md` files in `commands/`)
-- Large inline comments that describe system-level design (not just function-level jsdoc)
-- Reference documents (e.g. `references/*.md`)
-
-These are **inputs to the spec**, not replacements for it. The spec becomes the single source of truth — consolidating what is currently fragmented across multiple files and formats. Document in the spec where knowledge was sourced from so the original files can later be trimmed if desired.
+Maximise use of parallel agent spawns — each independent subsystem or file cluster can be read concurrently.
 
 ### 5. Invoke `dev/specs`
 
@@ -68,7 +66,20 @@ With the code and harvested documentation as context, write the spec following t
 
 If the target spans multiple domains, write one spec per domain. Ask the user before creating more than two specs in a single invocation.
 
-### 6. Alignment Check
+### 6. Consolidate Documentation
+
+The spec is now the single source of truth for this domain's internals. **Delete internal documentation that has been absorbed into the spec** from the target area:
+
+- **CLAUDE.md files**: Remove any notes about this domain's architecture, design decisions, or internal workings. Delete the entire file if nothing remains.
+- **README.md files**: Remove internal/architectural content that now lives in the spec. **Keep user-facing content** (What/Why/How, usage examples, setup instructions) — READMEs serve users, specs serve maintainers.
+- **Agent/skill/command definitions**: These are operational files — do not delete them. But remove any large architectural preambles or design rationale that duplicates what the spec now covers.
+
+**Scoping rules:**
+- Only delete content **about the domain being specced**. Notes about other domains or unrelated concerns stay untouched.
+- When in doubt, leave it. A missed deletion is harmless; a wrong deletion loses information.
+- Commit deletions separately: `docs: consolidate <domain> docs into spec`
+
+### 7. Alignment Check
 
 Spawn the `spec-reviewer` agent in `reverse` mode. Pass it:
 
@@ -80,11 +91,11 @@ The agent reads the specs and code, then reports **ALIGNED** or **DIVERGED**.
 
 If **diverged**, fix the spec based on the reviewer's citations and re-run the check. Repeat until aligned.
 
-### 7. Report
+### 8. Report
 
 Summarise:
 
 - Domain(s) specced
 - Specs created or updated (file paths)
-- Documentation sources harvested (list files that contributed knowledge)
+- Documentation consolidated (list files trimmed and what was removed)
 - Alignment verdict
