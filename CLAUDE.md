@@ -48,6 +48,10 @@ bun run lint # Uses: biome lint --fix --unsafe .
 **Build Process:**
 - `bun run build` runs `tsc --build` (project references)
 
+## Domain Knowledge
+
+Internal architecture, design decisions, and component details are documented as persistent domain specs in [`specs/README.md`](./specs/README.md). Read the relevant spec before working on a domain.
+
 ## Plugin Architecture
 
 ### Marketplace Structure
@@ -57,7 +61,7 @@ bun run lint # Uses: biome lint --fix --unsafe .
 - `lib/` - Shared library package for plugin and hook development (see `lib/CLAUDE.md`)
 - Each plugin has:
   - `README.md` (user guide - VERY brief, "What", "Why", "How")
-  - `CLAUDE.md` (maintainer guide - comprehensive, **KEEP UPDATED WITH EACH CHANGE**)
+  - `CLAUDE.md` (maintainer pointers - links to spec, plus notes not captured elsewhere)
 
 ### Shared Library (@claude-plugins/lib)
 
@@ -224,62 +228,29 @@ Brief overview of the command.
 
 ## Plugin Documentation Standards
 
-Two-layer documentation model for reduced maintenance:
+Three-layer documentation model:
 
 ### README.md (User Quick Start)
 
-**Audience**: Developers using the plugin
+**Audience**: Developers using the plugin. Usage, not internals.
 
-**Structure**: What / Why / How
+**Structure**: What / Why / How. ~30-50 lines.
 
-- **What**: Brief description of what the plugin provides (1-2 sentences)
-- **Why**: Key benefits (3-5 bullet points)
-- **How**: Installation and basic usage
+### CLAUDE.md (Maintainer Pointers)
 
-**Keep it minimal**: ~30-50 lines. Direct users to ask Claude for comprehensive information.
+**Audience**: Maintainers and Claude
 
-**Example**:
+Points to the domain spec in `specs/` for architecture and internals. Contains only:
+- Link to the relevant spec
+- Maintainer-specific notes not captured in the spec (e.g. future waves, gotchas)
 
-```markdown
-# Plugin Name
+**Key principle**: All Claude Code operational context lives in the plugin files (commands, agents, skills), NOT in README.md or CLAUDE.md. Internal architecture lives in `specs/`.
 
-Brief description.
+### specs/<domain>.md (Single Source of Truth)
 
-## What
+**Audience**: Maintainers, Claude, and other specs
 
-- Bullet list of what it provides
-
-## Why
-
-- Key benefits
-
-## How
-
-### Install
-
-/plugin install name@codethread-plugins
-
-### Use
-
-Basic usage example
-```
-
-### CLAUDE.md (Comprehensive Documentation)
-
-**Audience**: Maintainers AND Claude (when asked by users)
-
-**Should contain**:
-
-- Plugin architecture and design principles
-- Directory structure with detailed component descriptions
-- Component responsibilities (commands, skills, agents, scripts, hooks)
-- Hook implementation details and testing procedures
-- How to add/modify components
-- Common maintenance tasks
-- Architecture rationale
-- Common pitfalls to avoid
-
-**Key principle**: All Claude Code operational context lives in the plugin files such as commands, agents & skill, NOT in README.md or CLAUDE.md
+Architecture, design decisions, data model, interfaces, component details. See `specs/README.md` for the index.
 
 ## Writing Hook Suggestions
 
