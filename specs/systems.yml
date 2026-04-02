@@ -52,11 +52,12 @@ systems:
       - "documentation"
     target: "plugins/doc-writer/"
     spec: "specs/doc-writer.md"
-    status: "in_progress"
+    status: "done"
     action: "create"
     code:
       - "plugins/doc-writer/"
     rationale: "Skill + hook + agent + session-cache integration across multiple components"
+    notes: "Spec created 2026-04-03. Single domain confirmed — no split needed. CLAUDE.md consolidated into spec."
 
   - id: "005"
     domain: "claude-code-knowledge"
