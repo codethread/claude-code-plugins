@@ -148,6 +148,8 @@ Hooks assume the repo is bootstrapped correctly. A missing dependency is a hard 
 
 ### Agents
 
+**Subagents are context-isolated.** They do not load CLAUDE.md (project or user), do not inherit skills, and receive only their own system prompt plus basic env. This means they will not behave like the main agent — they lack project conventions, tool preferences, and any injected knowledge unless explicitly provided via `skills` frontmatter. Design subagents as focused, self-contained specialists; do not assume shared context with the parent session.
+
 Read `references/subagent-design.md` when designing new agents.
 
 When an agent file restricts tools via front matter, always put a one-line tool inventory at the very top of the system prompt.
