@@ -183,13 +183,15 @@ No automated test suite. The plugin is pure markdown (skills, commands, agents, 
 
 ## 7. Open Questions
 
-None — the system is well-understood. Future waves (quality gate hooks, stage env var, loop runner) are documented in CLAUDE.md but are planned extensions, not open design questions.
+## Future Waves
+
+- **Wave 2**: Quality gate stop hook, `DEVFLOW_STAGE` env var, stage-aware write guard (PreToolUse hook)
+- **Wave 3**: `cc-devflow build` loop runner (replaces user's manual while loop), stats.json, structured logging
 
 ---
 
 **Knowledge Sources:**
 - `plugins/dev/README.md` — high-level overview
-- `plugins/dev/CLAUDE.md` — architecture, design principles, future waves
 - `plugins/dev/CHANGELOG.md` — development history
 - `plugins/dev/commands/done.md` — done command spec
 - `plugins/dev/commands/reverse.md` — reverse command spec

@@ -61,7 +61,6 @@ Internal architecture, design decisions, and component details are documented as
 - `lib/` - Shared library package for plugin and hook development (see `lib/CLAUDE.md`)
 - Each plugin has:
   - `README.md` (user guide - VERY brief, "What", "Why", "How")
-  - `CLAUDE.md` (maintainer pointers - links to spec, plus notes not captured elsewhere)
 
 ### Shared Library (@claude-plugins/lib)
 
@@ -180,7 +179,8 @@ See `lib/CLAUDE.md` for detailed documentation of available utilities including:
    - Add commands as `.md` files in `commands/`
    - Add agents as `.md` files in `agents/`
    - Add skills in `skills/<skill-name>/SKILL.md`
-   - Create both `README.md` and `CLAUDE.md` in plugin directory
+   - Create `README.md` in plugin directory
+   - Create a domain spec in `specs/` for the plugin's internals
 
 ## Writing Slash Commands
 
@@ -228,7 +228,7 @@ Brief overview of the command.
 
 ## Plugin Documentation Standards
 
-Three-layer documentation model:
+Two-layer documentation model:
 
 ### README.md (User Quick Start)
 
@@ -236,21 +236,13 @@ Three-layer documentation model:
 
 **Structure**: What / Why / How. ~30-50 lines.
 
-### CLAUDE.md (Maintainer Pointers)
-
-**Audience**: Maintainers and Claude
-
-Points to the domain spec in `specs/` for architecture and internals. Contains only:
-- Link to the relevant spec
-- Maintainer-specific notes not captured in the spec (e.g. future waves, gotchas)
-
-**Key principle**: All Claude Code operational context lives in the plugin files (commands, agents, skills), NOT in README.md or CLAUDE.md. Internal architecture lives in `specs/`.
-
 ### specs/<domain>.md (Single Source of Truth)
 
 **Audience**: Maintainers, Claude, and other specs
 
-Architecture, design decisions, data model, interfaces, component details. See `specs/README.md` for the index.
+Architecture, design decisions, data model, interfaces, component details. See [`specs/README.md`](./specs/README.md) for the index.
+
+**Key principle**: Operational context lives in plugin files (commands, agents, skills). Internal architecture lives in `specs/`. No CLAUDE.md in plugin directories.
 
 ## Writing Hook Suggestions
 
