@@ -15,6 +15,7 @@ Phase-based development workflow for Claude Code.
 | Command | Purpose |
 |---|---|
 | `/dev:done <feature>` | Verify all tasks done, squash merge into trunk, remove worktree |
+| `/dev:reverse <target>` | Reverse-engineer persistent domain specs from existing code |
 
 ## Usage
 
