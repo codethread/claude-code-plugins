@@ -9,6 +9,7 @@ Persistent domain specifications. Organized by system area, not feature chronolo
 | Spec | Code | Purpose |
 |---|---|---|
 | [shared-lib.md](./shared-lib.md) | `lib/` | Session-scoped caching infrastructure for hooks across the plugin marketplace |
+| [plugin-marketplace.md](./plugin-marketplace.md) | `.claude-plugin/marketplace.json`, `plugins/*/.claude-plugin/plugin.json` | Plugin registration, versioning, and discovery via static JSON catalog |
 
 ## Plugins
 
