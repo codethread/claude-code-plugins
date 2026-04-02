@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.5.0 - 2026-04-02
+
+- Added `/claude-smoke` command: smoke tests hooks in the current project (discover, classify, generate, execute, report, cleanup)
+- Added `skills/introspection/references/smoke-examples.md`: template library for common hook patterns (formatter, linter-clean, linter-violation, type-checker-stop, pre-tool-blocker)
+
 ## v1.4.1 - 2026-03-31
 
 - Fixed `claude-code-knowledge` and `introspection` skills to enable model invocation by removing `disable-model-invocation` flag

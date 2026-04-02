@@ -25,7 +25,8 @@ claude-code-knowledge/
 ├── agents/
 │   └── knowledge-auditor.md    # Audits one concern area per invocation
 ├── commands/
-│   └── audit-config.md         # Orchestrates sequential auditor runs
+│   ├── audit-config.md         # Orchestrates sequential auditor runs
+│   └── claude-smoke.md         # Smoke tests hooks in the current project
 ├── skills/
 │   ├── claude-code-knowledge/
 │   │   ├── SKILL.md            # Main index + inline repo opinions
@@ -37,6 +38,7 @@ claude-code-knowledge/
 │   └── introspection/
 │       ├── SKILL.md            # Index for testing/verifying Claude Code behaviour
 │       └── references/
+│           ├── smoke-examples.md        # Test templates for common hook patterns
 │           └── headless-test-harness.md # Headless subprocess harness for integration testing
 ├── README.md
 ├── CLAUDE.md                   # This file
@@ -74,6 +76,10 @@ Subagent that audits Claude Code config files for one concern area (hooks, skill
 ### `commands/audit-config.md`
 
 Slash command (`/claude-code-knowledge:audit-config`) that orchestrates sequential auditor runs. Spawns `knowledge-auditor` once per concern area to avoid concurrent edits. Collects summaries at the end.
+
+### `commands/claude-smoke.md`
+
+Slash command (`/claude-code-knowledge:claude-smoke`) that smoke tests hooks in the current project. Discovers hooks from `.claude/settings.json`, `settings.local.json`, and agent frontmatter; classifies each as live-testable, headless-required, or manual; generates tests using templates from `skills/introspection/references/smoke-examples.md`; executes them; and reports results with a summary table. Agent-invocable (no `disable-model-invocation`).
 
 ## Maintenance
 
