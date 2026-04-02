@@ -44,10 +44,10 @@ Each plugin follows a predictable structure that Claude Code auto-discovers:
 plugins/<name>/
 ├── .claude-plugin/
 │   └── plugin.json          # Manifest (required)
-├── commands/                 # Slash commands (.md files)
-├── agents/                   # Agent definitions (.md files)
-├── skills/<skill>/SKILL.md   # Skill definitions
-├── hooks/
+├── commands/                 # Slash commands (.md files)          (optional)
+├── agents/                   # Agent definitions (.md files)       (optional)
+├── skills/<skill>/SKILL.md   # Skill definitions                   (optional)
+├── hooks/                    #                                      (optional)
 │   ├── hooks.json            # Hook config (auto-loaded by Claude Code)
 │   └── *.ts                  # Hook scripts
 ├── README.md                 # User guide (What/Why/How)
@@ -55,6 +55,8 @@ plugins/<name>/
 ├── package.json              # Workspace config (if TypeScript present)
 └── tsconfig.json             # TypeScript config (if TypeScript present)
 ```
+
+Only `.claude-plugin/plugin.json` and `README.md` are required. Plugins include whichever component directories they need.
 
 ### Build-Time Integration
 
@@ -140,12 +142,12 @@ interface PluginManifest {
 
 ### Release Command (`/release`)
 
-The `/release` slash command manages the version lifecycle:
+The `/release` project-level slash command (`.claude/commands/release.md`) manages the version lifecycle:
 
 1. Detects changed plugins from git diff
 2. Bumps `version` in `marketplace.json` (patch/minor/major)
 3. Creates/updates `plugins/<name>/CHANGELOG.md` with dated entries
-4. Commits with conventional format: `type(plugin1,plugin2): description`
+4. Commits with conventional format, e.g. `feat(langs): add Python skill with type hinting patterns`
 5. Creates annotated git tags: `<plugin-name>-v<version>`
 6. Does NOT push — user reviews with `git show` first
 
