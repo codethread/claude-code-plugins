@@ -31,6 +31,8 @@ Language-specific expertise plugin delivering opinionated coding patterns for Re
 ```
 plugins/langs/
 ├── .claude-plugin/plugin.json          # Plugin manifest (name, description, keywords)
+├── package.json                        # Workspace config (@claude-plugins/langs)
+├── tsconfig.json                       # TypeScript project references
 ├── hooks/
 │   ├── hooks.json                      # Hook registration (Setup + PostToolUse)
 │   ├── package.json                    # Hook dependencies (SDK types only)
