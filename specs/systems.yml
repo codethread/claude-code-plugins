@@ -79,11 +79,12 @@ systems:
       - "language-patterns"
     target: "plugins/langs/"
     spec: "specs/langs.md"
-    status: "pending"
+    status: "done"
     action: "create"
     code:
       - "plugins/langs/"
     rationale: "Hook-driven test-file suggestion + language skill integration"
+    notes: "Spec created 2026-04-03. Single domain confirmed — no split needed. CLAUDE.md consolidated into spec."
 
 covered:
   - domain: "dev-workflow"
