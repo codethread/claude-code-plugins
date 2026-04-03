@@ -66,7 +66,7 @@ systems:
       - "config-knowledge"
     target: "plugins/claude-code-knowledge/"
     spec: "specs/claude-code-knowledge.md"
-    status: "pending"
+    status: "in_progress"
     action: "create"
     code:
       - "plugins/claude-code-knowledge/"

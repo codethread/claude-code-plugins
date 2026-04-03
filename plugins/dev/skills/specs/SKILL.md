@@ -3,7 +3,6 @@ description: |
   Write or update persistent domain specs from existing code.
   Reads implementation, produces specs/<domain>.md and updates specs/README.md index.
   Triggers on: "dev/specs", "write spec", "update specs", "spec this"
-disable-model-invocation: true
 argument-hint: [domain or area to spec]
 ---
 
@@ -15,7 +14,7 @@ This skill is **general purpose** — it can be invoked standalone to spec any p
 
 ## Core Principle
 
-**Specs describe intent informed by reality.** Code is truth, but specs capture the *why* and *boundaries* that code alone cannot express. When writing a spec, read the code first, then articulate the design it embodies — plus goals, non-goals, and invariants that aren't visible in the implementation.
+**Specs describe intent informed by reality.** Code is truth, but specs capture the _why_ and _boundaries_ that code alone cannot express. When writing a spec, read the code first, then articulate the design it embodies — plus goals, non-goals, and invariants that aren't visible in the implementation.
 
 ## Process
 
@@ -24,11 +23,13 @@ This skill is **general purpose** — it can be invoked standalone to spec any p
 Determine what domain this spec covers. A domain is a **stable system boundary** — not a feature, not a task, not a ticket.
 
 Good domain names:
+
 - `auth-system` — enduring, covers auth as a concept
 - `task-engine` — a subsystem with stable interfaces
 - `data-pipeline` — an architectural seam
 
 Bad domain names:
+
 - `add-priority-filter` — that's a feature, not a domain
 - `spec-003` — chronological numbering fragments knowledge
 - `phase-2-redesign` — tied to a moment in time
@@ -54,17 +55,18 @@ This is the most important step. Read the actual implementation thoroughly:
 - Error handling patterns
 - Test coverage (what's tested tells you what matters)
 
-Do not write a spec from memory or from a PRD alone. The code is the source of truth for *what exists*. The spec adds *why it exists* and *what its boundaries are*.
+Do not write a spec from memory or from a PRD alone. The code is the source of truth for _what exists_. The spec adds _why it exists_ and _what its boundaries are_.
 
 ### 4. Write the Spec
 
-Use the template in `references/spec-schema.md`. Scale the spec to the domain:
+Use the spec-schema reference (loaded with this skill). Scale the spec to the domain:
 
 - **Lightweight** (small subsystem, <50 lines): overview, architecture sketch, interfaces, non-goals
 - **Medium** (moderate subsystem): full template, concrete types/schemas, design decisions
 - **Heavyweight** (large domain, security/data implications): full template plus security section, failure modes, rollout notes
 
 Every spec must have at minimum:
+
 - Overview with purpose statement
 - Goals and Non-Goals
 - Architecture section
@@ -78,7 +80,7 @@ Every spec must have at minimum:
 - Code location(s)
 - One-line purpose
 
-If `specs/README.md` doesn't exist, create it. See `references/spec-schema.md` for the index format.
+If `specs/README.md` doesn't exist, create it. See the spec-schema reference for the index format.
 
 ### 6. Commit
 

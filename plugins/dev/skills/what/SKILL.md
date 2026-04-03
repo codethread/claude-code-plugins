@@ -4,7 +4,6 @@ description: |
   Produces .dev/prd.md. Use at the start of any feature work.
   Triggers on: "what should we build", "let's plan", "new feature",
   "I want to build", "dev/what"
-disable-model-invocation: true
 argument-hint: [feature idea]
 ---
 
@@ -82,11 +81,11 @@ Be honest about uncertainty. Assume docs are wrong until proven otherwise.
 
 For every external dependency, determine how you can verify its behaviour:
 
-| Category | Example | Verification path |
-|---|---|---|
-| **In-repo code** | Project modules, workspace packages | Read the source directly — truth is in the code |
+| Category                | Example                                           | Verification path                                                                                                                        |
+| ----------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **In-repo code**        | Project modules, workspace packages               | Read the source directly — truth is in the code                                                                                          |
 | **Inspectable package** | npm module in `node_modules`, open-source library | Read exported types, source files, or vendored code. Can explore `node_modules/<pkg>/` or clone the upstream repo to read implementation |
-| **Black-box / binary** | CLI tools, closed-source APIs, SaaS endpoints | Cannot inspect — **must** verify through execution (learning tests) |
+| **Black-box / binary**  | CLI tools, closed-source APIs, SaaS endpoints     | Cannot inspect — **must** verify through execution (learning tests)                                                                      |
 
 This classification drives whether you research by reading (step 6) or by running (step 7). For black-box dependencies, reading docs alone is never sufficient — you must execute against the real thing.
 

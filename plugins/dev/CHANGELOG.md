@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.5.0 - 2026-04-02
+
+- Added `dev/systems` skill: surveys a repo or subtree and writes a reverse-spec backlog to `specs/systems.yml`
+- Added `references/systems-schema.md`: queue format for planned reverse-spec work
+- `dev:reverse` now supports dual-mode execution: queued backlog items from `specs/systems.yml` and existing freeform string/path targets
+- `dev:reverse` now updates backlog item status for queued reverse work (`in_progress`, `done`, `blocked`, `split`)
+
 ## v1.4.1 - 2026-04-02
 
 - `dev:reverse`: simplified Wide Survey to a single Explore agent (Wave 1) rather than multiple parallel agents — cleaner orchestration, output drives Wave 2

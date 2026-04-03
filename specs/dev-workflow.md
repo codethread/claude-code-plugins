@@ -7,15 +7,16 @@
 
 ### Purpose
 
-Phase-based development workflow plugin for Claude Code. Decomposes feature work into three sequential phases — What (research/planning), How (task decomposition), Build (implementation) — with persistent architectural knowledge captured as domain specs. The user drives phase transitions manually; each phase produces committed artifacts that serve as the sole handoff to the next phase.
+Phase-based development workflow plugin for Claude Code. Decomposes feature work into three sequential phases — What (research/planning), How (task decomposition), Build (implementation) — and mirrors that artifact-driven approach for reverse-spec work with Systems (reverse backlog planning) and Reverse (spec execution). The user drives phase transitions manually; each phase produces committed artifacts that serve as the sole handoff to the next phase.
 
 ### Goals
 
 - Eliminate mid-build course corrections by front-loading research and planning
 - Maintain fresh context per task via isolated `dev/build` invocations
 - Accumulate architectural knowledge in persistent domain specs that survive across features
+- Support queue-based reverse-spec work via `dev/systems` → `specs/systems.yml` → `/dev:reverse`
 - Automate feature completion (spec writing, alignment checking, squash merge) via `/dev:done`
-- Enable reverse-engineering specs from existing undocumented code via `/dev:reverse`
+- Preserve ad hoc reverse-engineering for one-off or narrow investigations via `/dev:reverse <loose target>`
 
 ### Non-Goals
 
@@ -26,21 +27,25 @@ Phase-based development workflow plugin for Claude Code. Decomposes feature work
 
 ## 2. Architecture
 
-Two-layer knowledge model with four skills, two commands, and two agents:
+Two-layer knowledge model with five skills, two commands, and two agents:
 
 ```
 specs/  ──read──→  dev/what  →  .dev/prd.md  →  dev/how  →  .dev/tasks.yml  →  dev/build  →  commits
-  ↑                                                                                              │
-  │                                                                                        /dev:done
-  │                                                                                              │
-  │                                                                                 dev/specs (write/update)
-  │                                                                                              │
-  │                                                                                 alignment check
-  │                                                                                 (PRD vs specs vs code)
-  │                                                                                              │
-  │                                                                                 squash merge + cleanup
+  ↑                  │                                                                              │
+  │                  │                                                                        /dev:done
+  │                  │                                                                              │
+  │                  │                                                                 dev/specs (write/update)
+  │                  │                                                                              │
+  │                  │                                                                 alignment check
+  │                  │                                                                 (PRD vs specs vs code)
+  │                  │                                                                              │
+  │                  │                                                                 squash merge + cleanup
+  │                  │
+  │                  └────→  dev/systems  →  specs/systems.yml  →  /dev:reverse  →  dev/specs  →  alignment check
+  │                                                          │
+  │                                                          └──── freeform `/dev:reverse <loose target>` remains valid
   │
-  └──── /dev:reverse ← existing code + scattered docs → dev/specs → alignment check (reverse)
+  └──── persistent specs + reverse backlog
 ```
 
 ### Component Relationships
@@ -52,6 +57,7 @@ specs/  ──read──→  dev/what  →  .dev/prd.md  →  dev/how  →  .dev
 | `dev/what` | Feature idea + existing `specs/` | `.dev/prd.md` (+ optional research, learning tests) | `plugins/dev/skills/what/SKILL.md` |
 | `dev/how` | `.dev/prd.md` | `.dev/tasks.yml` | `plugins/dev/skills/how/SKILL.md` |
 | `dev/build` | `.dev/tasks.yml` + `.dev/progress.md` | Commits + updated state files | `plugins/dev/skills/build/SKILL.md` |
+| `dev/systems` | Repo/subtree + existing `specs/` | `specs/systems.yml` | `plugins/dev/skills/systems/SKILL.md` |
 | `dev/specs` | Code + optional PRD context | `specs/<domain>.md` + `specs/README.md` | `plugins/dev/skills/specs/SKILL.md` |
 
 **Commands** (slash commands):
@@ -59,7 +65,7 @@ specs/  ──read──→  dev/what  →  .dev/prd.md  →  dev/how  →  .dev
 | Command | Purpose | Location |
 |---|---|---|
 | `/dev:done <feature>` | Orchestrate feature completion: verify tasks, write specs, check alignment, squash merge | `plugins/dev/commands/done.md` |
-| `/dev:reverse <target>` | Reverse-engineer domain specs from existing code | `plugins/dev/commands/reverse.md` |
+| `/dev:reverse <target>` | Reverse-engineer domain specs from existing code, from either a backlog item or a loose target | `plugins/dev/commands/reverse.md` |
 
 **Agents** (spawned by commands, not invoked directly):
 
@@ -70,7 +76,7 @@ specs/  ──read──→  dev/what  →  .dev/prd.md  →  dev/how  →  .dev
 
 ### Knowledge Layers
 
-- **`specs/`** (persistent) — domain specs on trunk, accumulate across features. Organized by stable system domain. Index at `specs/README.md`.
+- **`specs/`** (persistent) — domain specs on trunk, accumulate across features. Organized by stable system domain. Index at `specs/README.md`. Also contains `systems.yml`, the reverse-spec backlog when using `dev/systems`.
 - **`.dev/`** (transient) — feature scratchpad on feature branch. Contains `prd.md`, `tasks.yml`, `progress.md`, research, learning tests. Deleted during squash merge by `worktree-merger`.
 
 ### Reference Documents
@@ -84,6 +90,7 @@ Skills use progressive disclosure — SKILL.md files are concise, with detailed 
 | `skills/what/references/research.md` | `dev/what` | Research protocol and output format |
 | `skills/how/references/tasks-schema.md` | `dev/how` | `tasks.yml` YAML schema and field reference |
 | `skills/build/references/build-protocol.md` | `dev/build` | Code review integration and `progress.md` format |
+| `skills/systems/references/systems-schema.md` | `dev/systems` | `specs/systems.yml` backlog schema and status model |
 | `skills/specs/references/spec-schema.md` | `dev/specs` | Domain spec template and `specs/README.md` index format |
 
 ## 3. Data Model
@@ -129,6 +136,36 @@ Append-only log with two sections:
 - **Codebase Patterns** (top, consolidated) — reusable patterns read by every `dev/build` invocation
 - **Task Entries** (appended per task) — what was done, learnings, files changed
 
+### systems.yml
+
+```yaml
+version: 1
+generated: "2026-04-02"
+scope: "."
+
+systems:
+  - id: "001"
+    domain: "project-hooks"
+    aliases: [".claude/hooks", "hooks"]
+    target: ".claude/hooks"
+    spec: "specs/project-hooks.md"
+    status: "pending"            # pending | in_progress | done | blocked | split | skipped
+    action: "create"             # create | update
+    code:
+      - ".claude/settings.json"
+      - ".claude/hooks/"
+    rationale: "Project hook runtime and stop-doc-check flow"
+    notes: ""
+
+covered:
+  - domain: "dev-workflow"
+    spec: "specs/dev-workflow.md"
+    code: ["plugins/dev/"]
+    rationale: "Already documented"
+```
+
+`systems:` is the actionable reverse backlog. `covered:` is informational only and should not be looped over.
+
 ### specs/<domain>.md
 
 Sections: Overview (purpose, goals, non-goals), Architecture, Data Model, Interfaces, Design Decisions, Testing, Open Questions. Scaled by domain size (lightweight/medium/heavyweight). Full template at `skills/specs/references/spec-schema.md`.
@@ -142,12 +179,13 @@ All skills use `disable-model-invocation: true` — they are prompt-driven, not 
 - **`dev/what [idea]`** — starts research/planning phase. Checks for WIP in `.dev/`, reads existing `specs/`, creates worktree, drives interactive research/prototyping, produces `.dev/prd.md`.
 - **`dev/how`** — consumes `.dev/prd.md`, produces `.dev/tasks.yml` through interactive task decomposition.
 - **`dev/build`** — picks next pending task from `.dev/tasks.yml`, implements it, runs quality checks + code review, commits. One task per invocation.
+- **`dev/systems [scope]`** — surveys a repo or subtree, identifies durable domains worth reverse-speccing, and writes `specs/systems.yml`.
 - **`dev/specs [domain]`** — standalone spec writer. Reads code, writes `specs/<domain>.md`, updates index. Called by `done` and `reverse`, also usable independently.
 
 ### User-Facing Commands
 
 - **`/dev:done <feature>`** — resolves worktree from feature name, verifies all tasks done, invokes `dev/specs`, spawns `spec-reviewer` (post-build mode), spawns `worktree-merger`.
-- **`/dev:reverse <target>`** — scopes target, wide parallel survey, deep parallel dives, invokes `dev/specs`, consolidates scattered docs into spec (deleting absorbed internal content), spawns `spec-reviewer` (reverse mode), fixes divergences until aligned.
+- **`/dev:reverse <target>`** — resolves `target` as either a `systems.yml` item (`id`, `domain`, alias) or a loose freeform scope, then scopes target, runs survey/deep dives, invokes `dev/specs`, consolidates scattered docs into spec (deleting absorbed internal content), spawns `spec-reviewer` (reverse mode), fixes divergences until aligned, and updates backlog status if running from `systems.yml`.
 
 ### Agent Interfaces
 
@@ -162,6 +200,9 @@ All skills use `disable-model-invocation: true` — they are prompt-driven, not 
 - **Decision**: User drives phase transitions manually (wave 1).
   **Rationale**: Avoids complex orchestration before the core workflow is proven. The user's manual loop also provides natural checkpoints for course correction.
 
+- **Decision**: Reverse-spec work gets its own backlog artifact (`specs/systems.yml`) instead of overloading `specs/README.md`.
+  **Rationale**: `specs/README.md` is the index of completed persistent knowledge; a queue of possible future specs is a different concern and needs status tracking.
+
 - **Decision**: `fatal` status returns to What/How instead of hacking around plan issues.
   **Rationale**: The plan is the product. A bad plan patched downstream creates fragile features. Fixing upstream is cheaper than debugging downstream.
 
@@ -173,6 +214,9 @@ All skills use `disable-model-invocation: true` — they are prompt-driven, not 
 
 - **Decision**: `dev/specs` is a standalone skill decoupled from the dev flow.
   **Rationale**: Specs need to be writable outside the What/How/Build cycle — after refactors, for existing undocumented code, or for manual updates.
+
+- **Decision**: `/dev:reverse` supports both backlog-driven and freeform target modes.
+  **Rationale**: Some repos benefit from a full reverse backlog; others only need a one-off inspection of a narrow seam or vendored dependency.
 
 - **Decision**: Agents (`spec-reviewer`, `worktree-merger`) handle specialist concerns instead of inlining logic in commands.
   **Rationale**: Separation of concerns — commands coordinate, agents execute. Agents can use cheaper models (sonnet) for well-scoped tasks.
@@ -195,5 +239,6 @@ No automated test suite. The plugin is pure markdown (skills, commands, agents, 
 - `plugins/dev/skills/what/SKILL.md` — What phase skill
 - `plugins/dev/skills/how/SKILL.md` — How phase skill
 - `plugins/dev/skills/build/SKILL.md` — Build phase skill
+- `plugins/dev/skills/systems/SKILL.md` — Systems phase skill
 - `plugins/dev/skills/specs/SKILL.md` — Specs skill
 - `plugins/dev/skills/*/references/*.md` — all reference documents
