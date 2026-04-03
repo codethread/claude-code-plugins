@@ -17,6 +17,7 @@ Persistent domain specifications. Organized by system area, not feature chronolo
 | Spec | Code | Purpose |
 |---|---|---|
 | [doc-writer.md](./doc-writer.md) | `plugins/doc-writer/` | Documentation expertise: research-backed writing patterns, auto-detection hook, ruthless simplification agent |
+| [claude-code-knowledge.md](./claude-code-knowledge.md) | `plugins/claude-code-knowledge/` | Opinionated Claude Code config guidance, automated auditing, and hook smoke testing |
 | [dev-workflow.md](./dev-workflow.md) | `plugins/dev/` | Phase-based development workflow: What, How, Build, with persistent domain specs |
 | [dev-enhancements.md](./dev-enhancements.md) | `plugins/dev/` | Planned enhancements: quality gate hooks, stage enforcement, build loop runner |
 | [bdfl.md](./bdfl.md) | `plugins/bdfl/` | Opinionated project architecture bootstrapping and incremental migration |
