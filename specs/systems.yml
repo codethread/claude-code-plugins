@@ -66,11 +66,12 @@ systems:
       - "config-knowledge"
     target: "plugins/claude-code-knowledge/"
     spec: "specs/claude-code-knowledge.md"
-    status: "in_progress"
+    status: "done"
     action: "create"
     code:
       - "plugins/claude-code-knowledge/"
     rationale: "2 skills, 2 commands, 1 agent — complex plugin with audit and smoke-test workflows"
+    notes: "Spec created 2026-04-03. Single domain confirmed — no split needed. CLAUDE.md consolidated into spec."
 
   - id: "006"
     domain: "langs"
