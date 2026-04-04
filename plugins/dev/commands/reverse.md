@@ -16,7 +16,7 @@ Reverse-engineer persistent domain specs from existing code. Unlike `dev/done` (
 
 ### 1. Resolve the Target
 
-If `specs/systems.yml` exists, read it before interpreting `TARGET`.
+If `specs/systems.yml` exists, read it before interpreting `TARGET`. Treat it as the reverse backlog created by `dev/systems`.
 
 Resolution order:
 
@@ -113,6 +113,8 @@ If this run came from `specs/systems.yml`, update the matching item:
 - `split` if the domain had to be decomposed into narrower backlog items
 
 Update `notes` with short, durable context only if it will help the next reverse pass.
+
+If that file no longer has any actionable `systems[]` items after the update, delete `specs/systems.yml` as cleanup now that the backlog has been fully consumed.
 
 ### 10. Report
 

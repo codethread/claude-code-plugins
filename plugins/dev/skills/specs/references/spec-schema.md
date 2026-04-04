@@ -15,14 +15,14 @@ Persistent domain specifications. Organized by system area, not feature chronolo
 
 ## [Category Name]
 
-| Spec | Code | Purpose |
+| Spec | Purpose | Code |
 |---|---|---|
-| [domain.md](./domain.md) | `src/domain/` | One-line purpose |
-| [other.md](./other.md) | `src/other/`, `src/shared/other-utils.ts` | One-line purpose |
+| [domain.md](./domain.md) | One-line purpose | `src/domain/` |
+| [other.md](./other.md) | One-line purpose | `src/other/`, `src/shared/other-utils.ts` |
 
 ## [Another Category]
 
-| Spec | Code | Purpose |
+| Spec | Purpose | Code |
 |---|---|---|
 | ... | ... | ... |
 ```

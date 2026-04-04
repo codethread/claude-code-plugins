@@ -106,10 +106,10 @@ Marketplace entry (`.claude-plugin/marketplace.json`):
 
 ### Dependencies
 
-| Package | Location | Purpose |
+| Package | Purpose | Location |
 |---|---|---|
-| `@anthropic-ai/claude-agent-sdk` | `hooks/package.json` (dev) | `PostToolUseHookInput` and `SyncHookJSONOutput` types |
-| `@types/bun` | `hooks/package.json` (dev) | Bun runtime type definitions |
+| `@anthropic-ai/claude-agent-sdk` | `PostToolUseHookInput` and `SyncHookJSONOutput` types | `hooks/package.json` (dev) |
+| `@types/bun` | Bun runtime type definitions | `hooks/package.json` (dev) |
 
 No runtime dependencies. No shared library dependency (unlike doc-writer, this plugin does not use session cache).
 

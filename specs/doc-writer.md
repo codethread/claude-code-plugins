@@ -152,10 +152,10 @@ Marketplace entry in `.claude-plugin/marketplace.json`:
 
 ### Dependencies
 
-| Package | Location | Purpose |
+| Package | Purpose | Location |
 |---|---|---|
-| `@claude-plugins/lib` (workspace) | `hooks/package.json` | Session cache for once-per-session suggestion |
-| `@anthropic-ai/claude-agent-sdk` | `hooks/package.json` (dev) | Hook input/output type definitions |
+| `@claude-plugins/lib` (workspace) | Session cache for once-per-session suggestion | `hooks/package.json` |
+| `@anthropic-ai/claude-agent-sdk` | Hook input/output type definitions | `hooks/package.json` (dev) |
 
 ## 4. Design Decisions
 

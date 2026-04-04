@@ -76,7 +76,7 @@ specs/  ──read──→  dev/what  →  .dev/prd.md  →  dev/how  →  .dev
 
 ### Knowledge Layers
 
-- **`specs/`** (persistent) — domain specs on trunk, accumulate across features. Organized by stable system domain. Index at `specs/README.md`. Also contains `systems.yml`, the reverse-spec backlog when using `dev/systems`.
+- **`specs/`** (persistent) — domain specs on trunk, accumulate across features. Organized by stable system domain. Index at `specs/README.md`. Also contains `systems.yml`, the reverse-spec backlog when using `dev/systems`; once a `/dev:reverse` pass consumes the last actionable backlog item and the final spec(s) are aligned, delete `systems.yml` as cleanup.
 - **`.dev/`** (transient) — feature scratchpad on feature branch. Contains `prd.md`, `tasks.yml`, `progress.md`, research, learning tests. Deleted during squash merge by `worktree-merger`.
 
 ### Reference Documents
