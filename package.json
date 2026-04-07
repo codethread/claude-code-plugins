@@ -3,6 +3,21 @@
   "version": "1.0.0",
   "description": "A local plugin marketplace for Claude Code",
   "private": true,
+  "keywords": [
+    "pi-package"
+  ],
+  "pi": {
+    "skills": [
+      "./plugins/bdfl/skills",
+      "./plugins/dev/skills",
+      "./plugins/doc-writer/skills",
+      "./plugins/langs/skills"
+    ],
+    "prompts": [
+      "./plugins/dev/commands",
+      "./plugins/dev/agents"
+    ]
+  },
   "type": "module",
   "workspaces": [
     "lib",
