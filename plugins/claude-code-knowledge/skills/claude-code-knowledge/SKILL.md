@@ -7,9 +7,15 @@ description: |
 
 # Claude Code Knowledge
 
+## Variables
+
+### Agents
+
+- `CLAUDE_CODE_GUIDE_AGENT`: `claude-code-guide`
+
 ## Always Use the Claude Code Guide First
 
-Before making any Claude Code changes, **always consult the Claude Code Guide subagent** for up-to-date information.
+Before making any Claude Code changes, **always consult the $CLAUDE_CODE_GUIDE_AGENT subagent** for up-to-date information.
 
 Use this skill as the opinionated layer on top of the Guide:
 

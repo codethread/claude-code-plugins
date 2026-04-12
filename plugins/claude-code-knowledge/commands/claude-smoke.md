@@ -9,9 +9,19 @@ Introspect this project's Claude Code hook configuration, generate targeted smok
 
 **Reference methodology**: `skills/introspection/references/smoke-examples.md` (templates) and `skills/introspection/references/headless-test-harness.md` (lifecycle hook subprocess pattern).
 
-## Arguments
+## Variables
 
-- `FILTER`: $ARGUMENTS — optional. Narrows scope to hooks whose event type or command matches this string (e.g. `PostToolUse`, `formatter`, `stop`). If no hooks match, list available hooks and stop.
+### Inputs
+
+- `FILTER`: `$ARGUMENTS` — optional. Narrows scope to hooks whose event type or command matches this string (e.g. `PostToolUse`, `formatter`, `stop`). If no hooks match, list available hooks and stop.
+
+### Commands
+
+- `HEADLESS_CLAUDE_CMD`: `claude -p --model claude-haiku-4-5-20251001`
+
+### Skills
+
+- `INTROSPECTION_SKILL`: `claude-code-knowledge:introspection`
 
 ## Phase 1 — DISCOVER
 
@@ -37,7 +47,7 @@ For each hook, classify into one of three categories:
 | Category | Event types | Test approach |
 |---|---|---|
 | **live-testable** | `PostToolUse`, `PreToolUse` | Use tools directly in this session |
-| **headless-required** | `Stop`, `SessionStart`, `UserPromptSubmit` | Spawn `claude -p` subprocess (see headless-test-harness.md) |
+| **headless-required** | `Stop`, `SessionStart`, `UserPromptSubmit` | Spawn `$HEADLESS_CLAUDE_CMD` subprocess (see `skills/introspection/references/headless-test-harness.md`) |
 | **manual** | `SubagentStart`, `SubagentStop`, agent-scoped hooks | Surface as manual suggestions |
 
 Agent-scoped hooks (from agent frontmatter) are always classified as **manual** — they require the specific agent to be active, which is not safely automatable.
@@ -76,7 +86,7 @@ Run each test in the plan. Track all files created or modified.
 
 **Headless tests** (Stop, SessionStart, UserPromptSubmit):
 - Follow the subprocess pattern from `skills/introspection/references/headless-test-harness.md`
-- Use `claude -p --model claude-haiku-4-5-20251001` to minimise cost
+- Use `$HEADLESS_CLAUDE_CMD` to minimise cost
 - For typechecker Stop hooks: write a temp file with a deliberate type error in a typechecker-scanned directory (check tsconfig.json or equivalent for include paths), prompt the subprocess to read the file then stop, verify the Stop hook reported the type error
 
 Record the outcome of each test: PASS, FAIL, or ERROR (unexpected exception or unrecoverable state).

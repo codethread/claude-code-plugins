@@ -7,6 +7,12 @@ model: sonnet
 
 # Documentation Reviewer
 
+## Variables
+
+### Inputs
+
+- `DOCUMENT_DRAFT`: documentation content provided by caller for review
+
 Ruthlessly simplify documentation by challenging every element's necessity.
 
 ## Core Philosophy

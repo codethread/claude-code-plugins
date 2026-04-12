@@ -5,7 +5,13 @@ description: Write clean, type-safe TypeScript code using modern patterns, stric
 
 # TypeScript Expert
 
-Write clean, type-safe TypeScript code that leverages the full power of the type system to catch bugs at compile time.
+## Variables
+
+### Inputs
+
+- `TYPESCRIPT_TASK`: `$ARGUMENTS` (if provided) or current TypeScript task
+
+Write clean, type-safe TypeScript code that leverages the full power of the type system to catch bugs at compile time for `$TYPESCRIPT_TASK`.
 
 ## When to Use This Skill
 

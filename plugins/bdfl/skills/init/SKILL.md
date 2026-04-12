@@ -8,9 +8,11 @@ allowed-tools: Bash, Write, Edit, Read, Glob, Grep
 
 Scaffold a new project from scratch that meets the full BDFL architecture from day one.
 
-## Arguments
+## Variables
 
-- `PROJECT_OUTLINE`: $ARGUMENTS — a brief description of the project, its purpose, and which components are needed (web, mobile, server, or a combination)
+### Inputs
+
+- `PROJECT_OUTLINE`: `$ARGUMENTS` — brief description of project purpose and required components (web, mobile, server, or combination)
 
 ## Architecture
 
@@ -21,7 +23,7 @@ Load and read the full architecture specification before proceeding:
 ## Instructions
 
 1. Read the architecture reference above in full
-2. Parse `PROJECT_OUTLINE` to determine:
+2. Parse `$PROJECT_OUTLINE` to determine:
    - Project name
    - Which components are required (web, mobile, server)
    - Any additional context about the project's purpose

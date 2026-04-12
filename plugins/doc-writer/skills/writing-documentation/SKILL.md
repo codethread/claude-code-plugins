@@ -5,6 +5,17 @@ description: Write clear, effective technical documentation following industry-p
 
 # Writing Documentation Skill
 
+## Variables
+
+### Commands
+
+- `CLAUDE_PRINT_COMMAND`: `claude --print --model haiku`
+
+### Agents
+
+- `RESEARCHER_AGENT`: `researcher`
+- `DOCS_REVIEWER_AGENT`: `docs-reviewer`
+
 ## Documentation Types (Diátaxis Framework)
 
 - **Tutorial** - Learning-oriented, step-by-step
@@ -24,8 +35,8 @@ Verify what Claude already knows:
 
 ```bash
 # Use haiku for cost-effective testing (gives same quality answers as sonnet)
-claude --print --model haiku "Do NOT use any skills. How would you [perform task]?"
-claude --print --model haiku "Do NOT use any skills. When should you [make decision]?"
+$CLAUDE_PRINT_COMMAND "Do NOT use any skills. How would you [perform task]?"
+$CLAUDE_PRINT_COMMAND "Do NOT use any skills. When should you [make decision]?"
 ```
 
 ### 2. Document ONLY Unique Patterns
@@ -58,13 +69,13 @@ Result: 328→125 lines (-62%) by documenting only unique opinions.
 
 When documenting unfamiliar APIs or libraries:
 
-**1. Launch researcher agent:**
+**1. Launch `$RESEARCHER_AGENT`:**
 
 ```
-Use Task tool to launch researcher agent to verify [API/library] documentation
+Use Task tool to launch `$RESEARCHER_AGENT` agent to verify [API/library] documentation
 ```
 
-Researcher agent uses Context7 MCP to fetch official API docs and verify method signatures.
+`$RESEARCHER_AGENT` uses Context7 MCP to fetch official API docs and verify method signatures.
 
 **2. Read the codebase:**
 
@@ -91,7 +102,7 @@ Add link to authoritative source.
 4. **Input**: Always validate before processing
 5. **Errors**: Handle network/file operations
 
-Use researcher agent if uncertain about security best practices.
+Use `$RESEARCHER_AGENT` agent if uncertain about security best practices.
 
 ## Code Example Requirements
 
@@ -125,12 +136,12 @@ Include when relevant:
 
 See `references/best-practices.md` for complete production-ready examples.
 
-## Using docs-reviewer Agent
+## Using `$DOCS_REVIEWER_AGENT`
 
 After writing documentation:
 
 ```
-Use docs-reviewer agent to ruthlessly simplify
+Use `$DOCS_REVIEWER_AGENT` agent to ruthlessly simplify
 ```
 
 The agent challenges every element's necessity, asking "Would the documentation still be clear without this?"
@@ -150,7 +161,7 @@ Eliminates:
 Before publishing:
 
 **Verification:**
-- [ ] Verified APIs exist (researcher agent, codebase read, or official docs)
+- [ ] Verified APIs exist (`$RESEARCHER_AGENT`, codebase read, or official docs)
 - [ ] Code is complete and secure (all imports, parameterized queries, error handling)
 - [ ] Examples are production-ready (auth, logging, retries, timeouts)
 
@@ -161,9 +172,9 @@ Before publishing:
 - [ ] Appropriate hedging (direct for facts, hedge only when uncertain)
 
 **Claude Code Docs:**
-- [ ] Tested base knowledge with `claude --print`
+- [ ] Tested base knowledge with `$CLAUDE_PRINT_COMMAND`
 - [ ] Documented only unique patterns
-- [ ] Applied docs-reviewer agent for ruthless simplification
+- [ ] Applied `$DOCS_REVIEWER_AGENT` agent for ruthless simplification
 
 ## References
 

@@ -8,7 +8,13 @@ description: |
 
 # Introspection
 
-Test Claude Code behaviour by spawning headless `claude -p` subprocesses and inspecting the results.
+## Variables
+
+### Commands
+
+- `HEADLESS_CLAUDE_CMD`: `claude -p`
+
+Test Claude Code behaviour by spawning headless `$HEADLESS_CLAUDE_CMD` subprocesses and inspecting the results.
 
 ## When to Use
 

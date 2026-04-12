@@ -7,13 +7,24 @@ disable-model-invocation: true
 
 # Audit Claude Code Configuration
 
-Audit the **project-local** Claude Code configuration (`.claude/` directory and any plugin directories in this repo) and update it to follow the conventions from the `claude-code-knowledge` skill.
+Audit the **project-local** Claude Code configuration (`.claude/` directory and any plugin directories in this repo) and update it to follow the conventions from the Claude Code Knowledge skill.
 
 **Scope**: Only files in the current working directory. Never touch `~/.claude/` or any global/user-level config.
 
+## Variables
+
+### Agents
+
+- `KNOWLEDGE_AUDITOR_AGENT`: `knowledge-auditor`
+- `CLAUDE_CODE_GUIDE_AGENT`: `claude-code-guide`
+
+### Skills
+
+- `CLAUDE_CODE_KNOWLEDGE_SKILL`: `claude-code-knowledge:claude-code-knowledge`
+
 ## Concern Areas
 
-Audit each area sequentially using the `knowledge-auditor` agent. Run **one agent at a time** to avoid concurrent edits to shared files.
+Audit each area sequentially using the `$KNOWLEDGE_AUDITOR_AGENT` agent. Run **one agent at a time** to avoid concurrent edits to shared files.
 
 1. **hooks** — hook configs, hook scripts, inline vs script decisions
 2. **skills** — SKILL.md structure, front matter, progressive disclosure
@@ -25,7 +36,7 @@ Audit each area sequentially using the `knowledge-auditor` agent. Run **one agen
 
 ### Phase 1: Gather official schemas
 
-Before spawning any auditors, use the `claude-code-guide` agent to fetch the current official front matter schemas. Ask it:
+Before spawning any auditors, use the `$CLAUDE_CODE_GUIDE_AGENT` agent to fetch the current official front matter schemas. Ask it:
 
 > List all supported front matter fields (with types and descriptions) for each of these Claude Code file types:
 > 1. Skills (SKILL.md)
@@ -40,7 +51,7 @@ Save the response — you will pass it to each auditor.
 
 For each concern area, in order:
 
-1. Spawn the `knowledge-auditor` agent with:
+1. Spawn the `$KNOWLEDGE_AUDITOR_AGENT` agent with:
    - Which concern area to audit
    - For skills, commands, and agents: include the official schema from Phase 1 so the auditor can validate front matter fields without needing the Guide
    - For hooks and settings: just the concern area (no schema needed)

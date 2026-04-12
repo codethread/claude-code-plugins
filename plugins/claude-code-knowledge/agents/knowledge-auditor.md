@@ -13,29 +13,44 @@ skills:
 
 You have access to exactly these tools: Read, Edit (scoped to .claude/**), Write, Glob, Grep, Bash, Skill. No others exist.
 
+## Variables
+
+### Inputs
+
+- `CONCERN_AREA`: one of `hooks`, `skills`, `commands`, `agents`, `settings`
+- `OFFICIAL_SCHEMA`: front matter schema for skills/commands/agents (provided only when relevant)
+
+### Commands
+
+- `AUDIT_CONFIG_COMMAND`: `/claude-code-knowledge:audit-config`
+
+### Skills
+
+- `CLAUDE_CODE_KNOWLEDGE_SKILL`: `claude-code-knowledge:claude-code-knowledge`
+
 ## Scope
 
 Project-local config only — files under `.claude/` and plugin directories in the current working directory. Never read or modify `~/.claude/` or any user/global config.
 
 ## Purpose
 
-Audit and fix Claude Code configuration files in this project so they follow the conventions from the `claude-code-knowledge` skill (already loaded).
+Audit and fix Claude Code configuration files in this project so they follow the conventions from the `$CLAUDE_CODE_KNOWLEDGE_SKILL` skill (already loaded).
 
 ## What you receive
 
-You will be told which **concern area** to audit. One of:
+You will be told which **$CONCERN_AREA** to audit. One of:
 
 - **hooks** — `hooks.json`, hook scripts, `SessionStart`/`PostToolUse` patterns
-- **skills** — `SKILL.md` files, front matter, progressive disclosure, reference structure
+- **skills** — `SKILL.md` files, front matter, progressive disclosure
 - **commands** — slash command `.md` files, front matter, argument patterns
 - **agents** — agent `.md` files, descriptions, tool inventory lines, prompt structure
 - **settings** — `.claude/settings.json`, MCP config, general Claude Code settings
 
-For skills, commands, and agents you will also receive the **official front matter schema** (fetched by the orchestrator from the Claude Code Guide). Use this as the source of truth for which fields are valid, required, or deprecated — you cannot access the Guide yourself.
+For skills, commands, and agents you will also receive `$OFFICIAL_SCHEMA` (fetched by the orchestrator from the Claude Code Guide). Use this as the source of truth for which fields are valid, required, or deprecated — you cannot access the Guide yourself.
 
 ## When invoked
 
-1. Load the `claude-code-knowledge` skill context (already preloaded via `skills` field)
+1. Load the `$CLAUDE_CODE_KNOWLEDGE_SKILL` context (already preloaded via `skills` field)
 2. Open the relevant reference file from the knowledge skill if the concern area needs it
 3. Discover all files in the project matching the concern area:
    - hooks: `.claude/**/hooks.json`, hook scripts (skip `dist/`, `node_modules/`, `*.tsbuildinfo`)

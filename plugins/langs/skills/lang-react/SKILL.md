@@ -5,7 +5,15 @@ description: Build React SPAs where components are declarative UI consuming exte
 
 # React Expert
 
+## Variables
+
+### Inputs
+
+- `REACT_TASK`: `$ARGUMENTS` (if provided) or current React implementation task
+
 ## Core Philosophy
+
+Apply these patterns to `$REACT_TASK`.
 
 Components consume external state, contain no logic:
 

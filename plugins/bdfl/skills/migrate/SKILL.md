@@ -8,6 +8,12 @@ allowed-tools: Bash, Write, Edit, Read, Glob, Grep
 
 Analyse an existing project's progress toward the BDFL architecture, identify the next milestone, and report the gap.
 
+## Variables
+
+### Inputs
+
+- `PROJECT_ROOT`: current working directory (project root under analysis)
+
 ## References
 
 Load and read both of these in full before proceeding:
@@ -18,7 +24,7 @@ Load and read both of these in full before proceeding:
 ## Instructions
 
 1. Read both references above in full
-2. Check for `.bdfl.yaml` in the project root
+2. Check for `.bdfl.yaml` in `$PROJECT_ROOT`
    - **If missing**: this is a first run — proceed to step 3
    - **If present**: read it, find the first phase that is not `done` or `skipped`, proceed to step 4
 3. **First run — generate `.bdfl.yaml`**: Analyse the project and determine which early phases are already satisfied. Walk phases **in order** — check each phase's done criteria from milestones.md against the current project state. Mark phases as `done` only while all preceding phases are also `done` or `skipped`. Once you hit the first phase that isn't satisfied, mark it and all remaining phases as `pending` (even if a later phase might appear to be met — it hasn't been verified in the context of a stable migration). Mark phases as `skipped` only when they genuinely do not apply (e.g. `monorepo` for a single-package project). Write `.bdfl.yaml` and proceed to step 4.
