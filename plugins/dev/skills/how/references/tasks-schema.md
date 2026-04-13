@@ -2,7 +2,7 @@
 
 ```yaml
 project: "project-name"
-prd: ".dev/prd.md"
+prd: ".dev/priority-filter/prd.md"
 description: "Brief feature description"
 
 requirements:

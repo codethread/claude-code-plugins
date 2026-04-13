@@ -1,6 +1,6 @@
 # PRD Schema
 
-## Output: prd.md
+## Output: `.dev/<feature>/prd.md`
 
 ```markdown
 # PRD: [Feature Name]

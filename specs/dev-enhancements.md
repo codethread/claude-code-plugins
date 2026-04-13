@@ -32,14 +32,14 @@ Environment variable set by each skill invocation (`what`, `how`, `build`) so ho
 
 ### Stage-aware write guard (PreToolUse hook)
 
-A PreToolUse hook that restricts file writes based on the current stage — e.g. preventing implementation file edits during the What phase, or `.dev/prd.md` edits during Build.
+A PreToolUse hook that restricts file writes based on the current stage — for example preventing implementation file edits during the What phase, or `.dev/<feature>/prd.md` edits during Build.
 
 ## 3. Wave 3 — Build Loop Runner
 
 ### `cc-devflow build` loop runner
 
-Replaces the user's manual `while true; do claude --print "dev/build"; done` with an automated runner that handles:
-- Looping `dev/build` until all tasks are done or a fatal/blocked status is hit
+Replaces the user's manual `while true; do claude --print "dev/build <feature>"; done` with an automated runner that handles:
+- Looping `dev/build <feature>` until all tasks are done or a fatal/blocked status is hit
 - Aggregating results across iterations
 
 ### stats.json
@@ -48,4 +48,4 @@ Structured telemetry for build sessions — task durations, retry counts, qualit
 
 ### Structured logging
 
-Machine-readable build logs alongside the human-readable `progress.md`.
+Machine-readable build logs alongside the human-readable `.dev/<feature>/progress.md`.

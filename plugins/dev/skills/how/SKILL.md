@@ -1,35 +1,56 @@
 ---
 description: |
-  Decompose prd.md into an ordered task list (tasks.yml).
+  Decompose a feature PRD into an ordered task list.
   Mechanical phase — pure agent.
   Triggers on: "dev/how", "decompose", "break this down", "create tasks"
-disable-model-invocation: true
+argument-hint: [feature-name-or-path]
 ---
 
 # Workflow
 
-Produce `.dev/tasks.yml` from `.dev/prd.md`. This is a pure agent workflow, but it is blocked until the prerequisites below are satisfied.
+Produce `.dev/<feature>/tasks.yml` from `.dev/<feature>/prd.md`. This is a pure agent workflow, but it is blocked until the prerequisites below are satisfied.
+
+## Variables
+
+### Inputs
+
+- `FEATURE`: `$ARGUMENTS` — optional feature name or path
+
+### Skills
+
+- `PLANNING_SKILL`: `dev/what`
+- `BUILD_SKILL`: `dev/build`
 
 ## Process
 
-### 1. Prerequisite: PRD Exists
+### 1. Resolve the Feature
 
-Read `.dev/prd.md`. If it doesn't exist, stop and tell the user to run `dev/what` first.
+Resolve the target feature directory under `.dev/`.
 
-### 2. Prerequisite: Open Questions Resolved
+- If the user supplied a feature name or path, first normalize it by stripping an optional `.dev/` prefix and trailing slash, then match it against `.dev/*/` directories that contain `prd.md`.
+- If no feature was supplied and exactly one `.dev/*/prd.md` exists, use that feature.
+- If no feature was supplied and multiple candidates exist, stop and require the user to name the feature explicitly.
 
-The PRD's open questions section must be empty. If it's not, stop and resolve them with the user before proceeding.
+If no matching `.dev/<feature>/prd.md` exists, stop and tell the user to run `$PLANNING_SKILL` for that feature first.
 
-### 3. Decompose into Tasks
+### 2. Prerequisite: PRD Exists
+
+Read `.dev/<feature>/prd.md`.
+
+### 3. Prerequisite: Open Questions Resolved
+
+The PRD's Open Questions section must be empty. If it isn't, stop and resolve them with the user before proceeding.
+
+### 4. Decompose into Tasks
 
 Break the PRD's user stories into implementation tasks. Each task must be:
 
 - **Self-contained**: has everything needed to implement (description, files, criteria)
-- **One context window**: completable in a single `dev/build` invocation
+- **One context window**: completable in a single `$BUILD_SKILL <feature>` invocation
 - **Verifiable**: acceptance criteria are specific and testable
 - **File-aware**: lists files that will be created or modified
 
-### 4. Size Tasks
+### 5. Size Tasks
 
 Rules of thumb — a task is too big if:
 
@@ -51,7 +72,7 @@ Rules of thumb — a task is too big if:
 - "Add authentication"
 - "Refactor the API layer"
 
-### 5. Order Tasks
+### 6. Order Tasks
 
 Dependencies first:
 
@@ -63,26 +84,26 @@ Dependencies first:
 
 If task B reads from a table that task A creates, A comes first.
 
-### 6. Define System Requirements
+### 7. Define System Requirements
 
-List everything that must be true before `dev/build` starts (e.g. database running, env vars set). Each requirement must include a `check` command that verifies it.
+List everything that must be true before `$BUILD_SKILL <feature>` starts (for example database running, env vars set). Each requirement must include a `check` command that verifies it.
 
-### 7. Define QA Criteria
+### 8. Define QA Criteria
 
 Pull criteria from the PRD's QA section. Split them into:
 
 - `agent`: checks the build agent runs after each task
 - `human`: checks requiring human judgement (deferred to end)
 
-### 8. Save `tasks.yml`
+### 9. Save `tasks.yml`
 
-Save the plan to `.dev/tasks.yml`. See `references/tasks-schema.md` for the format.
+Save the plan to `.dev/<feature>/tasks.yml`. See `references/tasks-schema.md` for the format.
 
-### 9. Commit Plan
+### 10. Commit Plan
 
-Stage and commit `.dev/tasks.yml` so the git tree is clean for `dev/build`:
+Stage and commit only this feature's plan so other `.dev/*/` directories are untouched:
 
-```
+```text
 chore: dev/how — [short feature name]
 ```
 
@@ -90,8 +111,9 @@ chore: dev/how — [short feature name]
 
 - Do not proceed unless both prerequisites are satisfied
 - Every task must have acceptance criteria — no exceptions
-- Always include "Typecheck passes" in each task's criteria
+- Always include `Typecheck passes` in each task's criteria
 - Task order must respect dependencies — never reference files that don't exist yet
-- The `prd` field must point to the PRD file used
-- If decomposition reveals the PRD is incomplete or contradictory, stop and send the user back to `dev/what` rather than guessing
-- **Leave the git tree clean** — commit `.dev/tasks.yml` before finishing
+- The `prd` field must point to `.dev/<feature>/prd.md`
+- If decomposition reveals the PRD is incomplete or contradictory, stop and send the user back to `$PLANNING_SKILL <feature>` rather than guessing
+- If multiple feature PRDs exist, do not guess — require explicit feature selection when ambiguity remains
+- Leave the git tree clean — commit this feature's `tasks.yml` before finishing

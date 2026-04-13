@@ -3,13 +3,22 @@ description: |
   Survey a codebase and produce a reverse-spec backlog in specs/systems.yml.
   Use when you want a queue of stable system domains to reverse-engineer over time.
   Triggers on: "dev/systems", "what systems should we spec", "plan reverse specs"
-disable-model-invocation: true
 argument-hint: [repo root, subtree, or area to survey]
 ---
 
 # What Systems Exist?
 
-Consumes a repo or subtree, produces `specs/systems.yml`. This is the reverse-engineering planning phase: identify stable system domains worth speccing, then let the human run `/dev:reverse` on each item over time.
+Consumes a repo or subtree, produces `specs/systems.yml`. This is the reverse-engineering planning phase: identify stable system domains worth speccing, then let the human run the reverse command on each item over time.
+
+## Variables
+
+### Inputs
+
+- `SURVEY_SCOPE`: `$ARGUMENTS` — optional repo root, subtree, or area to survey
+
+### Commands
+
+- `REVERSE_COMMAND`: `/dev:reverse`
 
 ## Process
 
@@ -69,13 +78,13 @@ If one area clearly contains multiple durable subsystems, split them now. If a c
 
 ### 5. Define Reverse Targets
 
-For each actionable item, write the exact target that `/dev:reverse` should consume later. Reuse the most natural form:
+For each actionable item, write the exact target that `$REVERSE_COMMAND` should consume later. Reuse the most natural form:
 
 - domain name
 - directory path
 - plain-language target
 
-Each actionable item must be independently runnable in a future `/dev:reverse` invocation.
+Each actionable item must be independently runnable in a future `$REVERSE_COMMAND` invocation.
 
 ### 6. Present the Queue
 
@@ -97,7 +106,7 @@ Guidelines:
 - Put already-documented areas in `covered:`
 - Keep IDs zero-padded and stable
 - Default new actionable items to `pending`
-- Use `target` values that `/dev:reverse` can consume directly
+- Use `target` values that `$REVERSE_COMMAND` can consume directly
 
 ### 8. Commit the Plan
 

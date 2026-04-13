@@ -10,7 +10,17 @@ argument-hint: [domain or area to spec]
 
 Writes persistent domain specifications from code reality. Specs describe stable system domains — not features, not chronological tasks. They survive implementation cycles and accumulate architectural knowledge over time.
 
-This skill is **general purpose** — it can be invoked standalone to spec any part of a codebase, or called by other skills (e.g. `dev/done`) as part of a larger flow.
+This skill is **general purpose** — it can be invoked standalone to spec any part of a codebase, or called by a command flow such as `/dev:done` as part of a larger workflow.
+
+## Variables
+
+### Inputs
+
+- `TARGET_DOMAIN`: `$ARGUMENTS` — optional domain or area to spec
+
+### Commands
+
+- `DONE_COMMAND`: `/dev:done`
 
 ## Core Principle
 
@@ -90,14 +100,14 @@ Stage and commit spec changes:
 docs: spec <domain> — [created|updated] [brief reason]
 ```
 
-## When Invoked by `dev/done`
+## When Invoked by `$DONE_COMMAND`
 
 When called as part of the done flow, you receive context about what was built (the squash merge diff). In this mode:
 
 1. Read the diff to understand what changed
 2. Identify which domain(s) are affected
 3. For each domain: read existing spec (if any), read the code, write/update the spec
-4. The PRD (`.dev/prd.md`) provides intent context — but write the spec from code reality, not PRD aspirations
+4. If a caller provides feature planning context (for example `.dev/<feature>/prd.md`), use it as intent context — but write the spec from code reality, not PRD aspirations
 
 ## Rules
 

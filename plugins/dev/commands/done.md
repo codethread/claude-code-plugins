@@ -1,50 +1,60 @@
 ---
-description: Verify all tasks complete, write specs, check alignment, squash merge feature branch into trunk, and remove the worktree
+description: Verify all tasks complete, write specs, check alignment, then delegate checkout/worktree cleanup and squash merge to worktree-manager
 argument-hint: <feature-name-or-path>
 allowed-tools: Bash(bash:*), Read, Glob, Agent, Skill
+disable-model-invocation: true
 ---
 
 # dev/done
 
-Coordinator that finishes a feature by orchestrating verification, spec writing, alignment review, and merge.
+Coordinator that finishes a feature by orchestrating verification, spec writing, alignment review, and checkout cleanup.
 
-## Arguments
+## Variables
 
-- `FEATURE`: $ARGUMENTS — feature name, partial path, or full worktree path (e.g. `claude-smoke`, `dev/claude-smoke`)
+### Inputs
+
+- `FEATURE`: `$ARGUMENTS` — feature name, feature path, partial worktree path, or branch hint (for example `claude-smoke`, `.dev/claude-smoke`, `dev/claude-smoke`)
+
+### Agents
+
+- `WORKTREE_MANAGER_AGENT`: `worktree-manager`
+- `SPEC_REVIEWER_AGENT`: `spec-reviewer`
+
+### Skills
+
+- `SPECS_SKILL`: `dev/specs`
 
 ## Instructions
 
-### 1. Resolve Worktree
+### 1. Resolve Finish Context via `$WORKTREE_MANAGER_AGENT`
 
-Run from the current repo root:
+Spawn `$WORKTREE_MANAGER_AGENT` in `assess` mode with:
 
-```bash
-git worktree list --porcelain
-```
+- **PURPOSE**: `finish`
+- **FEATURE_HINT**: `FEATURE`
+- **CHECKOUT_PATH**: current working directory
 
-Match `FEATURE` against the listed paths using case-insensitive substring matching. If no match or multiple ambiguous matches, report the full list and stop.
+Require the agent to return at least:
 
-Extract:
-- `WORKTREE_PATH` — absolute path to the matched worktree
-- `WORKTREE_BRANCH` — branch name (e.g. `dev/claude-smoke`)
+- `CHECKOUT_PATH`
+- `REPO_ROOT`
+- `CURRENT_BRANCH`
+- `TRUNK`
+- `CHECKOUT_KIND`
+- `FEATURE_DIR`
+- `TASKS_PATH`
+- `PRD_PATH`
+- `SAFE_FOR_PURPOSE`
 
-Do not match the main worktree (the one with no branch, or `(bare)`).
-
-Determine trunk:
-
-```bash
-git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@'
-```
-
-If that returns nothing, check `git branch --list main master` and use whichever exists.
+If the agent cannot resolve the feature or reports the finish context is unsafe, stop and report its reasoning.
 
 ### 2. Verify All Tasks Done
 
-Read `<WORKTREE_PATH>/.dev/tasks.yml`.
+Read `TASKS_PATH`.
 
 Check every entry in `tasks[].status`. If any task has a status other than `done`, stop with:
 
-> Cannot finish: N task(s) not done:
+> Cannot finish feature `<FEATURE_DIR>`: N task(s) not done:
 > - 001 "Task title" (in_progress)
 > - 003 "Task title" (blocked)
 
@@ -52,52 +62,57 @@ Extract the `project` field — this becomes the squash merge commit message.
 
 ### 3. Write Specs
 
-All steps in this phase run **inside the worktree** (`cd <WORKTREE_PATH>` before starting).
+All steps in this phase run inside `CHECKOUT_PATH`.
 
-Invoke the `dev/specs` skill to write or update persistent domain specs from what was built.
+Invoke the `$SPECS_SKILL` skill to write or update persistent domain specs from what was built.
 
 1. Review what changed on this branch:
 
 ```bash
-cd <WORKTREE_PATH> && git diff --stat <TRUNK>...HEAD
+cd <CHECKOUT_PATH> && git diff --stat <TRUNK>...HEAD
 ```
 
 The triple-dot (`...`) compares from the merge-base, so only branch-introduced changes are shown.
 
-2. Use the changed files and implementation to identify which domain(s) were affected
-3. For each domain, invoke `dev/specs` — it reads the code in the worktree and writes `specs/<domain>.md`
-4. The PRD at `<WORKTREE_PATH>/.dev/prd.md` provides intent context — but specs are written from code reality
+2. Use the changed files and implementation to identify which domain(s) were affected.
+3. For each domain, invoke `$SPECS_SKILL` — it reads the code in the checkout and writes `specs/<domain>.md`.
+4. `PRD_PATH` provides intent context, but specs are written from code reality.
 
-Commit spec changes in the worktree before proceeding.
+Commit spec changes in the feature checkout before proceeding.
 
 ### 4. Alignment Check
 
-Spawn the `spec-reviewer` agent in `post-build` mode. Pass it:
+Spawn the `$SPEC_REVIEWER_AGENT` agent in `post-build` mode. Pass it:
 
-- **Root path**: `<WORKTREE_PATH>`
-- **Domain specs**: list of specs created/updated in step 3
+- **Root path**: `<CHECKOUT_PATH>`
+- **Domain specs**: list of specs created or updated in step 3
+- **Mode**: `post-build`
+- **PRD path**: `PRD_PATH`
 
 The agent reads the PRD, specs, and code (following code locations from the specs), then reports either **ALIGNED** or **DIVERGED** with specific citations.
 
-If **aligned**, proceed to step 5.
+If aligned, proceed to step 5.
 
-If **diverged**, report the divergences and **stop**. Do not merge. The user decides how to handle the divergence.
+If diverged, report the divergences and stop. Do not merge. The user decides how to handle the divergence.
 
-### 5. Merge and Clean Up
+### 5. Finish the Feature via `$WORKTREE_MANAGER_AGENT`
 
-Spawn the `worktree-merger` agent. Pass it:
+Spawn `$WORKTREE_MANAGER_AGENT` in `finish-feature` mode. Pass it:
 
-- **WORKTREE_PATH**: `<WORKTREE_PATH>`
-- **WORKTREE_BRANCH**: `<WORKTREE_BRANCH>`
+- **CHECKOUT_PATH**: `<CHECKOUT_PATH>`
+- **FEATURE_DIR**: `<FEATURE_DIR>`
+- **COMMIT_MESSAGE**: the `project` field from `tasks.yml`
 - **TRUNK**: `<TRUNK>`
-- **COMMIT_MESSAGE**: the `project` field from tasks.yml
 
-The agent removes `.dev/`, squash merges into trunk, and cleans up the worktree and branch.
+The agent removes only `.dev/<FEATURE_DIR>/`, squashes the feature branch into trunk, and cleans up the linked worktree if one exists.
 
 ### 6. Report
 
 Summarise:
-- Feature name (from `project` field)
-- Specs created/updated (list domain names)
+
+- Feature name (`FEATURE_DIR` and `project`)
+- Specs created or updated (list domain names)
 - Commit hash on trunk
-- Branch and worktree removed
+- Whether a linked worktree was removed
+- Whether the feature branch was removed
+- `.dev/<FEATURE_DIR>/` removed

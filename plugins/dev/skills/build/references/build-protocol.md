@@ -32,7 +32,7 @@ After addressing material feedback, re-run `code-review` with the same prompt. M
 
 ## progress.md Format
 
-Append-only log at `.dev/progress.md`. Two sections:
+Append-only log at `.dev/<feature>/progress.md`. Two sections:
 
 ### Codebase Patterns (top of file, consolidated)
 

@@ -2,21 +2,38 @@
 description: Write persistent domain specs from existing code, lifting scattered documentation into a single source of truth
 argument-hint: <system-id-or-target>
 allowed-tools: Bash(bash:*), Read, Glob, Grep, Agent
+disable-model-invocation: true
 ---
 
 # dev/reverse
 
-Reverse-engineer persistent domain specs from existing code. Unlike `dev/done` (which specs what was just built), this documents code that already exists — possibly code that was never formally specced.
+Reverse-engineer persistent domain specs from existing code. Unlike the done flow (which specs what was just built), this documents code that already exists — possibly code that was never formally specced.
 
-## Arguments
+## Variables
 
-- `TARGET`: $ARGUMENTS — either a system ID/domain from `specs/systems.yml`, or a loose domain name, directory path, or plain-language description of the area to spec (e.g. `001`, `project-hooks`, `the dev plugin`, `auth system`, `plugins/karen`)
+### Inputs
+
+- `TARGET`: `$ARGUMENTS` — either a system ID/domain from `specs/systems.yml`, or a loose domain name, directory path, or plain-language description of the area to spec (e.g. `001`, `project-hooks`, `the dev plugin`, `auth system`, `plugins/karen`)
+
+### Commands
+
+- `DONE_COMMAND`: `/dev:done`
+- `REVERSE_COMMAND`: `/dev:reverse`
+
+### Agents
+
+- `SPEC_REVIEWER_AGENT`: `spec-reviewer`
+
+### Skills
+
+- `SYSTEMS_SKILL`: `dev/systems`
+- `SPECS_SKILL`: `dev/specs`
 
 ## Instructions
 
 ### 1. Resolve the Target
 
-If `specs/systems.yml` exists, read it before interpreting `TARGET`. Treat it as the reverse backlog created by `dev/systems`.
+If `specs/systems.yml` exists, read it before interpreting `TARGET`. Treat it as the reverse backlog created by `$SYSTEMS_SKILL`.
 
 Resolution order:
 
@@ -31,7 +48,7 @@ If `TARGET` resolves to a backlog item:
 - Treat `domain`, `spec`, `action`, and `code` as planning hints, not as constraints stronger than the code
 - Mark the item `in_progress` before substantial reverse work
 
-If no backlog item matches, continue in loose mode. `/dev:reverse` must still support ad hoc reverse-spec work in repos that do not use `dev/systems`.
+If no backlog item matches, continue in loose mode. `$REVERSE_COMMAND` must still support ad hoc reverse-spec work in repos that do not use `$SYSTEMS_SKILL`.
 
 ### 2. Scope the Target
 
@@ -67,9 +84,9 @@ Based on what Wave 1 found, spawn **multiple parallel Explore agents** — one p
 
 The number and scope of agents is determined by what Wave 1 discovered.
 
-### 6. Invoke `dev/specs`
+### 6. Invoke `$SPECS_SKILL`
 
-With the code and harvested documentation as context, invoke the `dev/specs` skill for each domain identified. The skill provides its own spec template and handles writing `specs/<domain>.md`, updating the index, and committing.
+With the code and harvested documentation as context, invoke the `$SPECS_SKILL` skill for each domain identified. The skill provides its own spec template and handles writing `specs/<domain>.md`, updating the index, and committing.
 
 If the target spans multiple domains, write one spec per domain. Ask the user before creating more than two specs in a single invocation.
 
@@ -94,7 +111,7 @@ The spec is now the single source of truth for this domain's internals. **Delete
 
 ### 8. Alignment Check
 
-Spawn the `spec-reviewer` agent in `reverse` mode. Pass it:
+Spawn the `$SPEC_REVIEWER_AGENT` agent in `reverse` mode. Pass it:
 
 - **Root path**: repo root (current working directory)
 - **Domain specs**: list of specs created/updated in step 5

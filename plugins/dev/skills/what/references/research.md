@@ -19,7 +19,7 @@
 
 Research can be **conclusive** for inspectable dependencies — if you read the TypeScript types and the implementation, you know the truth. For black-box dependencies (binaries, closed APIs), research is **preliminary only**. It tells you what to test, not what to trust. Always follow up with learning tests for anything you can't read the source of.
 
-## Output: .dev/research.md
+## Output: `.dev/<feature>/research.md`
 
 ```markdown
 # Research: [topic]

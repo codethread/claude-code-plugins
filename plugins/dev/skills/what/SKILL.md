@@ -1,59 +1,73 @@
 ---
 description: |
   Define what to build through structured research and experimentation.
-  Produces .dev/prd.md. Use at the start of any feature work.
+  Produces or revises .dev/<feature>/prd.md. Usually invoked by
+  the plan or iterate command.
   Triggers on: "what should we build", "let's plan", "new feature",
   "I want to build", "dev/what"
-argument-hint: [feature idea]
+argument-hint: [feature idea or existing feature]
 ---
 
 # What Are We Building?
 
 Human-heavy, interactive phase. No implementation happens here — only understanding.
 
-**Hard gate**: nothing proceeds to `dev/how` until `.dev/prd.md` is saved and approved.
+## Variables
+
+### Inputs
+
+- `FEATURE_CONTEXT`: `$ARGUMENTS` — feature idea or existing feature
+
+### Commands
+
+- `PLAN_COMMAND`: `/dev:plan`
+- `ITERATE_COMMAND`: `/dev:iterate`
+- `DONE_COMMAND`: `/dev:done`
+
+### Agents
+
+- `WORKTREE_MANAGER_AGENT`: `worktree-manager`
+
+### Skills
+
+- `DECOMPOSE_SKILL`: `dev/how`
+
+**Hard gate**: nothing proceeds to `$DECOMPOSE_SKILL` until `.dev/<feature>/prd.md` is saved and approved.
 
 ### Context Isolation
 
-Each phase runs in a fresh context window with no conversation history from previous phases. The **only** handoff between What and How is `.dev/prd.md` plus any artifacts it references. If a discovery, decision, or constraint isn't captured in an artifact file, it doesn't exist for the next phase. Write every insight into a file — never rely on the conversation to carry knowledge forward.
+Each phase runs in a fresh context window with no conversation history from previous phases. The only handoff between What and How is the feature artifact directory under `.dev/<feature>/`. If a discovery, decision, or constraint isn't captured in a file there, it doesn't exist for the next phase. Write every insight into a file — never rely on the conversation to carry knowledge forward.
 
-## Conversation Flow
+## Workflow
 
-### 1. Check for WIP
+### 1. Resolve the Feature Directory
 
-Before anything else, check if `.dev/` exists and contains files. If it does, check `.dev/tasks.yml` for any task with `status: fatal` — that indicates a planned recovery back to this phase.
+Derive or reuse a short, kebab-case feature slug (for example `priority-filter`). Use `.dev/<feature>/` as the working directory for all artifacts in this phase.
 
-- **Fatal task found**: this is an expected re-entry. Read the fatal task's `notes` to understand what went wrong, then proceed to step 4 (skip worktree creation — you're already in one). Use the existing `.dev/prd.md` as the starting point for revision.
-- **No fatal task**: **stop immediately** and tell the user:
+The caller decides whether this is a fresh plan or an iteration on an existing PRD. Do not own that orchestration here.
 
-> `.dev/` is not empty — there's work-in-progress from a previous run. Either finish the existing feature (`dev/how` or `dev/build`) or clear it (`rm -rf .dev/`) before starting a new one.
-
-List the contents so the user can see what's there. Do not proceed until `.dev/` is empty or absent.
+- If `.dev/<feature>/prd.md` already exists, treat it as input context to revise.
+- If the feature directory is new, create it as needed.
+- Other feature directories under `.dev/` do not matter unless the caller says otherwise.
 
 ### 2. Read Existing Specs
 
 Before planning anything, check if the project has persistent domain specs.
 
-1. If `specs/README.md` exists, read the index to understand what domains are already documented
-2. Identify which specs relate to the feature area — read those specs
-3. Note any goals, non-goals, invariants, or design decisions that constrain this feature
-4. Feed this context into the PRD — the feature should build on existing architectural knowledge, not contradict it
+1. If `specs/README.md` exists, read the index to understand what domains are already documented.
+2. Identify which specs relate to the feature area and read them.
+3. Note any goals, non-goals, invariants, or design decisions that constrain this feature.
+4. Feed this context into the PRD — the feature should build on existing architectural knowledge, not contradict it.
 
-If no `specs/` directory exists, skip this step. Specs will be created after the feature is built (via `dev/done`).
+If no `specs/` directory exists, skip this step. Specs will be created after the feature is built (via `$DONE_COMMAND`).
 
-### 3. Create Worktree
+### 3. Checkout Context
 
-Set up an isolated workspace for this feature.
+What and How are allowed to happen on trunk or any other branch. Do not require a worktree just to plan.
 
-1. Derive a short, kebab-case branch name from the feature idea (e.g. `dev/priority-filter`)
-2. Check for uncommitted changes — if present, **warn the user** but don't block
-3. Create the worktree using nushell:
+Checkout/worktree orchestration normally belongs to commands such as `$PLAN_COMMAND` or `$ITERATE_COMMAND`. If the caller already assessed checkout safety, trust that context and continue.
 
-```bash
-nu -c 'use ct/git/worktree *; wk add dev/<feature-name>'
-```
-
-This creates a sibling worktree, fetches origin, and handles existing branches automatically. All subsequent work (research, learning tests, prototyping, prd.md) happens in this worktree.
+If you are invoked directly and checkout safety is unclear, ask `$WORKTREE_MANAGER_AGENT` to assess the current checkout for planning before you write artifacts.
 
 ### 4. Understand the Feature
 
@@ -81,11 +95,11 @@ Be honest about uncertainty. Assume docs are wrong until proven otherwise.
 
 For every external dependency, determine how you can verify its behaviour:
 
-| Category                | Example                                           | Verification path                                                                                                                        |
-| ----------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| **In-repo code**        | Project modules, workspace packages               | Read the source directly — truth is in the code                                                                                          |
-| **Inspectable package** | npm module in `node_modules`, open-source library | Read exported types, source files, or vendored code. Can explore `node_modules/<pkg>/` or clone the upstream repo to read implementation |
-| **Black-box / binary**  | CLI tools, closed-source APIs, SaaS endpoints     | Cannot inspect — **must** verify through execution (learning tests)                                                                      |
+| Category | Example | Verification path |
+|---|---|---|
+| **In-repo code** | Project modules, workspace packages | Read the source directly — truth is in the code |
+| **Inspectable package** | npm module in `node_modules`, open-source library | Read exported types, source files, or vendored code |
+| **Black-box / binary** | CLI tools, closed-source APIs, SaaS endpoints | Cannot inspect — must verify through execution (learning tests) |
 
 This classification drives whether you research by reading (step 6) or by running (step 7). For black-box dependencies, reading docs alone is never sufficient — you must execute against the real thing.
 
@@ -95,7 +109,7 @@ When external dependencies are involved, investigate before planning.
 
 - Read official docs, source code, changelogs
 - Use subagents for API research when appropriate
-- Document findings in `.dev/research.md`
+- Document findings in `.dev/<feature>/research.md`
 
 **For inspectable dependencies** — go beyond docs. These are your highest-confidence sources:
 
@@ -103,7 +117,7 @@ When external dependencies are involved, investigate before planning.
 - **Open-source tools**: if behaviour is unclear, clone or browse the upstream repo. Read the code that implements the feature you depend on.
 - **Vendoring**: for complex or critical dependencies, consider vendoring the source into a temp directory so you can search and cross-reference without network lookups.
 
-Research alone is sufficient **only** for inspectable dependencies where you can read the implementation. For black-box dependencies, research informs your learning tests but does not replace them.
+Research alone is sufficient only for inspectable dependencies where you can read the implementation. For black-box dependencies, research informs your learning tests but does not replace them.
 
 See `references/research.md` for the research protocol.
 
@@ -113,9 +127,9 @@ When unknowns involve black-box tools, CLIs, or APIs — write small executable 
 
 **This is the most important technique in this phase.** Plans built on untested assumptions fail at build time. Learning tests fail cheaply.
 
-**Hard rule**: if the dependency is a binary CLI, closed-source API, or anything you cannot read the source of, you **must** write learning tests before proceeding to Refine. Do not add claims about external tool behaviour to the PRD that haven't been verified by execution. Docs lie. Flags get removed. APIs drift. Run the tool and observe what actually happens.
+**Hard rule**: if the dependency is a binary CLI, closed-source API, or anything you cannot read the source of, you must write learning tests before proceeding to Refine. Do not add claims about external tool behaviour to the PRD that haven't been verified by execution. Docs lie. Flags get removed. APIs drift. Run the tool and observe what actually happens.
 
-**Autonomy expectation**: don't wait for the user to suggest testing. As soon as research surfaces a dependency you can't inspect, immediately write and run learning tests. This is the agent's responsibility — be proactive, not passive. If you read docs that say a CLI flag exists, write a test that exercises it before recording it as a fact in the PRD.
+**Autonomy expectation**: don't wait for the user to suggest testing. As soon as research surfaces a dependency you can't inspect, immediately write and run learning tests. This is the agent's responsibility — be proactive, not passive.
 
 See `references/learning-tests.md` for the full pattern.
 
@@ -132,18 +146,18 @@ All prototype code is throwaway. It exists to close understanding gaps, not to s
 
 ### 9. Refine (always runs)
 
-Take everything gathered — research, learning test results, prototype learnings, conversation — and distill into artifacts. The PRD is the primary artifact; it may reference additional files for detail that would bloat the main document.
+Take everything gathered — research, learning test results, prototype learnings, conversation — and distill it into artifacts. The PRD is the primary artifact; it may reference additional files for detail that would bloat the main document.
 
-**Remember: the next phase gets only these files, not this conversation.** Every decision, constraint, discovery, and verified behaviour must be written down. If you discussed something important with the user but didn't write it into an artifact, it's lost.
+**Remember: the next phase gets only `.dev/<feature>/`, not this conversation.** Every decision, constraint, discovery, and verified behaviour must be written down.
 
 #### Artifact structure
 
-All artifacts are saved to the `.dev/` directory (create it if it doesn't exist):
+All artifacts are saved under `.dev/<feature>/` (create the directory if it doesn't exist):
 
-- `.dev/prd.md` — always produced. The self-contained specification. References other artifacts where needed.
-- `.dev/research.md` — optional. Detailed research findings referenced from PRD's Research Summary.
-- `.dev/lt-*.ts`, `.dev/lt-*.sh` — optional. Executable proof of verified behaviour, referenced from PRD.
-- Additional reference files in `.dev/` — optional. Interface sketches, diagrams, prototype screenshots, API response samples. Anything the PRD cites that's better as a separate file.
+- `.dev/<feature>/prd.md` — always produced. The self-contained specification. References other artifacts where needed.
+- `.dev/<feature>/research.md` — optional. Detailed research findings referenced from the PRD's Research Summary.
+- `.dev/<feature>/lt-*.ts`, `.dev/<feature>/lt-*.sh` — optional. Executable proof of verified behaviour, referenced from the PRD.
+- Additional reference files under `.dev/<feature>/` — optional. Interface sketches, diagrams, prototype screenshots, API response samples. Anything the PRD cites that's better as a separate file.
 
 The PRD must be understandable on its own. Reference files provide depth, not missing context.
 
@@ -165,9 +179,9 @@ See `references/prd-schema.md` for the output format.
 
 ### 10. Commit Artifacts
 
-Stage and commit the `.dev/` directory so the worktree is clean for `dev/how`:
+Stage and commit only this feature's planning artifacts so other `.dev/<other-feature>/` directories are untouched:
 
-```
+```text
 chore: dev/what — [short feature name]
 ```
 
@@ -178,8 +192,8 @@ Prototype code must already be deleted (see Rules).
 - Never skip Refine — even trivial features get a short PRD
 - Open questions must be resolved before saving — they don't carry forward
 - If research or prototyping reveals the feature is fundamentally different from what was imagined, restart the conversation rather than patching
-- Prototype code is always deleted before saving prd.md
-- Save all artifacts to `.dev/`: `prd.md`, optionally `research.md`, learning tests, and reference files
-- **Conversation is not an artifact** — if it was discussed but not written to a file, it doesn't survive to the next phase
-- **No unverified black-box claims in the PRD** — every behavioural claim about a binary, CLI, or closed API must be backed by a passing learning test. If you can't run it, you can't plan against it.
-- **Leave the git tree clean** — every phase must commit its artifacts before finishing
+- Prototype code is always deleted before saving `prd.md`
+- Save all artifacts under `.dev/<feature>/`
+- Conversation is not an artifact — if it was discussed but not written to a file, it doesn't survive to the next phase
+- No unverified black-box claims in the PRD — every behavioural claim about a binary, CLI, or closed API must be backed by a passing learning test
+- Leave the git tree clean — commit this feature's artifacts before finishing
