@@ -111,6 +111,7 @@ Skills use progressive disclosure — SKILL.md files are concise, with detailed 
 | `skills/what/references/learning-tests.md` | `dev/what` | Learning test protocol for black-box deps |
 | `skills/what/references/research.md` | `dev/what` | Research protocol and output format |
 | `skills/how/references/tasks-schema.md` | `dev/how` | `tasks.yml` YAML schema and field reference |
+| `skills/how/references/task-planning.md` | `dev/how` | Task sizing rules and ordering convention |
 | `skills/build/references/build-protocol.md` | `dev/build` | Code review integration and `progress.md` format |
 | `skills/systems/references/systems-schema.md` | `dev/systems` | `specs/systems.yml` backlog schema and status model |
 | `skills/specs/references/spec-schema.md` | `dev/specs` | Domain spec template and `specs/README.md` index format |

@@ -6,9 +6,9 @@ description: |
 argument-hint: [feature-name-or-path]
 ---
 
-# Workflow
+# How Do We Build It?
 
-Produce `.dev/<feature>/tasks.yml` from `.dev/<feature>/prd.md`. This is a pure agent workflow, but it is blocked until the prerequisites below are satisfied.
+Produce `.dev/<feature>/tasks.yml` from `.dev/<feature>/prd.md`. Mechanical decomposition — no research, no conversation, pure planning.
 
 ## Variables
 
@@ -21,27 +21,47 @@ Produce `.dev/<feature>/tasks.yml` from `.dev/<feature>/prd.md`. This is a pure 
 - `PLANNING_SKILL`: `dev/what`
 - `BUILD_SKILL`: `dev/build`
 
-## Process
+## Prerequisites
+
+- `.dev/<feature>/prd.md` exists — if not, stop and tell the user to run `$PLANNING_SKILL` first
+- PRD's Open Questions section is empty — if not, stop and resolve them with the user before proceeding
+
+## Knowledge
+
+### Feature Resolution
+
+Resolve the target feature directory under `.dev/`:
+
+- If the user supplied a name/path, normalize by stripping optional `.dev/` prefix and trailing slash, then match against `.dev/*/` directories containing `prd.md`
+- If no feature supplied and exactly one `.dev/*/prd.md` exists, use it
+- If no feature supplied and multiple candidates exist, stop and require explicit selection
+
+### Task Sizing
+
+See `references/task-planning.md` for sizing rules and right-sized vs too-big examples.
+
+### Task Ordering Convention
+
+See `references/task-planning.md` for the dependency-first ordering convention.
+
+### QA Criteria Split
+
+Pull criteria from the PRD's QA section. Split into:
+
+- `agent`: checks the build agent runs after each task
+- `human`: checks requiring human judgement (deferred to end)
+
+## Procedures
 
 ### 1. Resolve the Feature
 
-Resolve the target feature directory under `.dev/`.
+Apply the feature resolution rules from Knowledge.
 
-- If the user supplied a feature name or path, first normalize it by stripping an optional `.dev/` prefix and trailing slash, then match it against `.dev/*/` directories that contain `prd.md`.
-- If no feature was supplied and exactly one `.dev/*/prd.md` exists, use that feature.
-- If no feature was supplied and multiple candidates exist, stop and require the user to name the feature explicitly.
+### 2. Read the PRD
 
-If no matching `.dev/<feature>/prd.md` exists, stop and tell the user to run `$PLANNING_SKILL` for that feature first.
+Read `.dev/<feature>/prd.md` in full. This is the sole input — in a fresh context window, the PRD is what loads user stories, QA criteria, open questions, and all planning context. Verify the Open Questions section is empty before proceeding (see Prerequisites).
 
-### 2. Prerequisite: PRD Exists
-
-Read `.dev/<feature>/prd.md`.
-
-### 3. Prerequisite: Open Questions Resolved
-
-The PRD's Open Questions section must be empty. If it isn't, stop and resolve them with the user before proceeding.
-
-### 4. Decompose into Tasks
+### 3. Decompose into Tasks
 
 Break the PRD's user stories into implementation tasks. Each task must be:
 
@@ -50,56 +70,25 @@ Break the PRD's user stories into implementation tasks. Each task must be:
 - **Verifiable**: acceptance criteria are specific and testable
 - **File-aware**: lists files that will be created or modified
 
-### 5. Size Tasks
+Apply the sizing rules from `references/task-planning.md`.
 
-Rules of thumb — a task is too big if:
+### 4. Order Tasks
 
-- It touches more than 3-4 files
-- It has more than 5 acceptance criteria
-- It requires understanding the output of a previous task that hasn't been built yet
-- You can't describe what "done" looks like in 2-3 sentences
+Apply the ordering convention from `references/task-planning.md`. Respect file dependencies — never reference files that don't exist yet.
 
-**Right-sized examples:**
-
-- Add a database column and migration
-- Add a UI component to an existing page
-- Update a server action with new logic
-- Add a filter dropdown to a list
-
-**Too big:**
-
-- "Build the entire dashboard"
-- "Add authentication"
-- "Refactor the API layer"
-
-### 6. Order Tasks
-
-Dependencies first:
-
-1. Schema / data model changes
-2. Backend / business logic
-3. UI components
-4. Integration / aggregation
-5. Polish / edge cases
-
-If task B reads from a table that task A creates, A comes first.
-
-### 7. Define System Requirements
+### 5. Define System Requirements
 
 List everything that must be true before `$BUILD_SKILL <feature>` starts (for example database running, env vars set). Each requirement must include a `check` command that verifies it.
 
-### 8. Define QA Criteria
+### 6. Define QA Criteria
 
-Pull criteria from the PRD's QA section. Split them into:
+Apply the QA criteria split from Knowledge.
 
-- `agent`: checks the build agent runs after each task
-- `human`: checks requiring human judgement (deferred to end)
-
-### 9. Save `tasks.yml`
+### 7. Save `tasks.yml`
 
 Save the plan to `.dev/<feature>/tasks.yml`. See `references/tasks-schema.md` for the format.
 
-### 10. Commit Plan
+### 8. Commit Plan
 
 Stage and commit only this feature's plan so other `.dev/*/` directories are untouched:
 
@@ -107,7 +96,7 @@ Stage and commit only this feature's plan so other `.dev/*/` directories are unt
 chore: dev/how — [short feature name]
 ```
 
-## Rules
+## Constraints
 
 - Do not proceed unless both prerequisites are satisfied
 - Every task must have acceptance criteria — no exceptions
@@ -115,5 +104,17 @@ chore: dev/how — [short feature name]
 - Task order must respect dependencies — never reference files that don't exist yet
 - The `prd` field must point to `.dev/<feature>/prd.md`
 - If decomposition reveals the PRD is incomplete or contradictory, stop and send the user back to `$PLANNING_SKILL <feature>` rather than guessing
-- If multiple feature PRDs exist, do not guess — require explicit feature selection when ambiguity remains
+- If multiple feature PRDs exist, do not guess — require explicit feature selection
 - Leave the git tree clean — commit this feature's `tasks.yml` before finishing
+
+## Validation
+
+Verify all of the following before reporting success:
+
+- [ ] `.dev/<feature>/tasks.yml` exists and follows the schema in `references/tasks-schema.md`
+- [ ] Every task has acceptance criteria including "Typecheck passes"
+- [ ] Task dependencies are correctly ordered — no task references files created by a later task
+- [ ] System requirements each have a `check` command
+- [ ] QA criteria are split into agent and human categories
+- [ ] `prd` field points to `.dev/<feature>/prd.md`
+- [ ] `git status --porcelain` shows a clean tree (plan committed)

@@ -13,7 +13,17 @@
 2. **Note version numbers**: pin every finding to a specific version
 3. **Flag contradictions**: where docs say one thing but source code suggests another
 4. **Test claims**: never trust capability claims without verification (see `learning-tests.md`)
-5. **Exploit inspectability**: for npm packages, read `node_modules/<pkg>/` — types and source are ground truth. For open-source tools, clone or browse the upstream repo. Consider vendoring critical dependencies into a temp directory for deep exploration.
+5. **Exploit inspectability**: see the detailed techniques below
+
+### Inspectable Dependency Techniques
+
+Go beyond docs for inspectable dependencies — these are your highest-confidence sources:
+
+- **npm packages**: read `node_modules/<pkg>/` — exported types, source, `README.md`. The actual type signatures are ground truth, not the website docs.
+- **Open-source tools**: if behaviour is unclear, clone or browse the upstream repo. Read the code that implements the feature you depend on.
+- **Vendoring**: for complex or critical dependencies, consider vendoring the source into a temp directory so you can search and cross-reference without network lookups.
+
+Research alone is sufficient only for inspectable dependencies where you can read the implementation. For black-box dependencies, research informs your learning tests but does not replace them.
 
 ### Research vs Execution
 

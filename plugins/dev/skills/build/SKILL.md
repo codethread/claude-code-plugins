@@ -25,108 +25,130 @@ Implements exactly one task per invocation. The user runs this in a loop externa
 - `PLANNING_SKILL`: `dev/what`
 - `DECOMPOSE_SKILL`: `dev/how`
 
-## Protocol
+## Prerequisites
 
-### 1. Resolve the Feature
+- `.dev/<feature>/tasks.yml` exists — if not, stop and tell the user to run `$DECOMPOSE_SKILL` first
+- Current checkout judged safe for build by `$WORKTREE_MANAGER_AGENT`
 
-Resolve the target feature directory under `.dev/`.
+## Knowledge
 
-- If the user supplied a feature name or path, first normalize it by stripping an optional `.dev/` prefix and trailing slash, then match it against `.dev/*/` directories that contain `tasks.yml`.
-- If no feature was supplied and exactly one `.dev/*/tasks.yml` exists, use that feature.
-- If no feature was supplied and multiple candidates exist, stop and require the user to name the feature explicitly.
+### Feature Resolution
 
-If no matching `.dev/<feature>/tasks.yml` exists, stop and tell the user to run `$DECOMPOSE_SKILL <feature>` first.
+Resolve the target feature directory under `.dev/`:
 
-### 2. Assess Build Safety via `$WORKTREE_MANAGER_AGENT`
+- If the user supplied a name/path, normalize by stripping optional `.dev/` prefix and trailing slash, then match against `.dev/*/` directories containing `tasks.yml`
+- If no feature supplied and exactly one `.dev/*/tasks.yml` exists, use it
+- If no feature supplied and multiple candidates exist, stop and require explicit selection
 
-Before implementing anything, ask `$WORKTREE_MANAGER_AGENT` to assess the current checkout for **build** using the resolved feature.
+### Retry Limits
 
-Use its report as the source of truth for checkout safety:
+- **Quality checks**: maximum 3 fix attempts per check type (typecheck, lint, tests). If still failing after 3, mark task `blocked`.
+- **Code review**: maximum 3 review cycles. If still getting material feedback after 3, address what you can and note remaining items.
 
-- If it reports the checkout is safe for build, continue.
-- If it reports the checkout is noisy or unsafe for build, stop and relay the reasoning clearly.
-- If the user wants help creating or switching to an isolated branch/worktree, ask `$WORKTREE_MANAGER_AGENT` in `prepare-isolated-checkout` mode rather than embedding git/worktree logic here.
+### Code Review Invocation
 
-Do not build in a checkout that `$WORKTREE_MANAGER_AGENT` judged unsafe.
+See `references/build-protocol.md` for invocation pattern, feedback classification, and handling. Key point: `code-review` is a long-running CLI — use an extended timeout.
 
-### 3. Read State
+## Decisions
 
-Read `.dev/<feature>/tasks.yml` and `.dev/<feature>/progress.md` (if it exists).
+Entry state: RESOLVE_FEATURE
 
-If `.dev/<feature>/progress.md` exists, read the **Codebase Patterns** section at the top — these are consolidated learnings from previous iterations for this feature.
+### RESOLVE_FEATURE
 
-### 4. Check Requirements
+- guard: feature found → ASSESS_SAFETY
+- guard: no matching `tasks.yml` → STOP with error: run `$DECOMPOSE_SKILL` first
 
-Run each requirement's `check` command from `.dev/<feature>/tasks.yml`. If any fail, report the failures and stop — status: `blocked`.
+### ASSESS_SAFETY
 
-### 5. Pick Task
+- action: ask `$WORKTREE_MANAGER_AGENT` to assess current checkout for build
+- guard: safe for build → READ_STATE
+- guard: unsafe or noisy → STOP with error: relay reasoning from agent
+- note: if user wants isolation, ask `$WORKTREE_MANAGER_AGENT` in `prepare-isolated-checkout` mode
 
-First, check if any task has `status: blocked` or `status: fatal`. If so, stop immediately — report the blocking task and its notes. The user must resolve it before the loop continues.
+### READ_STATE
 
-Then select the first task with `status: pending`. If no pending tasks remain, report completion and stop.
+- action: read `.dev/<feature>/tasks.yml` and `.dev/<feature>/progress.md` (if exists)
+- note: if `progress.md` exists, read the Codebase Patterns section — consolidated learnings from previous iterations
+- always → CHECK_REQUIREMENTS
 
-Update the task's status to `in_progress` in `.dev/<feature>/tasks.yml`.
+### CHECK_REQUIREMENTS
 
-### 6. Implement
+- action: run each requirement's `check` command from `tasks.yml`
+- guard: all pass → PICK_TASK
+- guard: any fail → STOP with status `blocked`, report failures
 
-Implement the task according to its description, respecting:
+### PICK_TASK
 
-- Only touch files listed in the task's `files` section (create or modify)
-- Meet every acceptance criterion
-- Follow existing project conventions (read nearby code first)
+- guard: any task has status `blocked` or `fatal` → STOP with error: report blocking task and its notes
+- guard: a task with status `pending` exists → set it to `in_progress`, proceed to IMPLEMENT
+- guard: no pending tasks remain → STOP: report all tasks complete
 
-If you discover the task is impossible or the plan is wrong, do not hack around it. Set status to `fatal` in `.dev/<feature>/tasks.yml`, explain why in the task's `notes`, and stop. The user must go back to `$PLANNING_SKILL <feature>` or `$DECOMPOSE_SKILL <feature>` to fix the plan.
+### IMPLEMENT
 
-### 7. Quality Checks
+- action: implement the task (see Procedures)
+- guard: implementation succeeds → QUALITY_CHECKS
+- guard: task is impossible or plan is wrong → set status `fatal` in `tasks.yml`, explain in notes → STOP
 
-Run these in order. All must pass before proceeding.
+### QUALITY_CHECKS
+
+- action: run typecheck, lint, tests in order (see Procedures)
+- guard: all pass → CODE_REVIEW
+- guard: still failing after retry limit → set status `blocked`, explain in notes → STOP
+
+### CODE_REVIEW
+
+- action: run code-review (see Knowledge)
+- guard: approved or retry limit reached → UPDATE_STATE
+- note: if review returns feedback, address and re-run up to retry limit
+
+### UPDATE_STATE
+
+- action: set task `done`, populate notes, append to `progress.md`
+- always → COMMIT
+
+### COMMIT
+
+- action: stage all changes in single commit
+- always → SIGNAL
+
+### SIGNAL
+
+- terminal state: report which outcome occurred (task complete, all done, blocked, or fatal)
+
+## Procedures
+
+### IMPLEMENT
+
+1. Read nearby code first — follow existing project conventions
+2. Only touch files listed in the task's `files` section (create or modify)
+3. Meet every acceptance criterion
+4. If the task is impossible or the plan is wrong, do not hack around it — transition to fatal
+
+### QUALITY_CHECKS
+
+Run in order. All must pass before proceeding.
 
 1. **Typecheck**: run the project's typecheck command
 2. **Lint**: run the project's lint command
 3. **Tests**: run the project's test command
 
-If checks fail, fix the issues. Maximum 3 attempts per check type — if still failing after 3 attempts, set status to `blocked`, explain in notes, and stop.
+If a check fails, fix the issues and re-run. Apply retry limits from Knowledge.
 
-### 8. Code Review
-
-Run `code-review` with a prompt describing what was implemented and why:
-
-```bash
-code-review "Implemented [task title] for <feature>: [brief description of what was done and the intent behind it, referencing task ID from tasks.yml]"
-```
-
-`code-review` is a long-running CLI — use an extended timeout.
-
-If review returns actionable feedback, address it and re-run. Maximum 3 review cycles — if still getting material feedback, address what you can and note remaining items.
-
-See `references/build-protocol.md` for the full code review integration.
-
-### 9. Update State
+### UPDATE_STATE
 
 1. Set task status to `done` in `.dev/<feature>/tasks.yml`
 2. Populate the task's `notes` field with anything the next iteration should know
 3. Append to `.dev/<feature>/progress.md` (see `references/build-protocol.md` for format)
 
-### 10. Commit
+### COMMIT
 
-Stage all changes for this iteration — implementation files plus `.dev/<feature>/tasks.yml` and `.dev/<feature>/progress.md` — in a single commit:
+Stage all changes — implementation files plus `.dev/<feature>/tasks.yml` and `.dev/<feature>/progress.md` — in a single commit:
 
 ```text
 feat: [task-id] - [task title]
 ```
 
-The tree must be clean after this step.
-
-### 11. Signal Result
-
-End your response with a clear signal:
-
-- **Task complete**: state which feature/task was finished and what's next in the queue
-- **All tasks done**: all tasks for this feature have `status: done`
-- **Blocked**: environmental issue described, user must fix before re-running
-- **Fatal**: plan is wrong, must revisit `$PLANNING_SKILL <feature>` or `$DECOMPOSE_SKILL <feature>`
-
-## Rules
+## Constraints
 
 - Never implement more than one task per invocation
 - Never modify files outside the task's `files` list without updating `.dev/<feature>/tasks.yml` first
@@ -134,5 +156,18 @@ End your response with a clear signal:
 - If a task's acceptance criteria conflict with reality, mark `fatal` — don't improvise
 - Always read `.dev/<feature>/progress.md`'s Codebase Patterns section before implementing
 - Always append learnings after completing a task
-- If more than one buildable feature exists, do not guess — require explicit feature selection when ambiguity remains
+- If more than one buildable feature exists, do not guess — require explicit feature selection
+- Do not build in a checkout that `$WORKTREE_MANAGER_AGENT` judged unsafe
 - Leave the git tree clean — state files and implementation go in the same commit
+
+## Validation
+
+Verify all of the following before reporting success:
+
+- [ ] Exactly one task was implemented (not zero, not more than one)
+- [ ] All acceptance criteria for the task are met
+- [ ] Typecheck, lint, and tests all pass
+- [ ] Code review completed (approved or retry limit documented)
+- [ ] Task status is `done` in `.dev/<feature>/tasks.yml` with notes populated
+- [ ] `.dev/<feature>/progress.md` has an entry for this task
+- [ ] `git status --porcelain` shows a clean tree (single commit made)

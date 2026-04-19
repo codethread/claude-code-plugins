@@ -8,43 +8,72 @@ argument-hint: [repo root, subtree, or area to survey]
 
 # What Systems Exist?
 
-Consumes a repo or subtree, produces `specs/systems.yml`. This is the reverse-engineering planning phase: identify stable system domains worth speccing, then let the human run the reverse command on each item over time.
+Consumes a repo or subtree, produces `specs/systems.yml`. Planning phase for reverse-engineering: identify stable system domains worth speccing, then let the human run the reverse command on each item over time.
 
 ## Variables
 
 ### Inputs
 
-- `SURVEY_SCOPE`: `$ARGUMENTS` — optional repo root, subtree, or area to survey
+- `SURVEY_SCOPE`: `$ARGUMENTS` — optional repo root, subtree, or area to survey (defaults to `.`)
 
 ### Commands
 
 - `REVERSE_COMMAND`: `/dev:reverse`
 
-## Process
+## Prerequisites
+
+- Survey scope exists and is accessible
+- If `specs/README.md` exists, it has been read to understand existing coverage
+
+## Knowledge
+
+### Valid Survey Scopes
+
+- Repo root (`.`)
+- Subtree (`plugins/`, `src/auth/`)
+- Plain-language area (`the plugin layer`, `the build system`)
+
+### Domain Classification
+
+When evaluating discovered systems against existing specs:
+
+| Classification | Meaning |
+|---|---|
+| **covered** | Existing spec already matches the right domain boundary |
+| **update** | Spec exists but likely needs a refresh |
+| **candidate** | No spec yet, worth reverse-engineering |
+| **fold** | Too small; should be absorbed into a neighboring domain |
+| **skip** | Not worth a spec |
+
+### Domain Naming
+
+Good domain names represent stable architectural seams:
+
+- `auth-system` — enduring, covers auth as a concept
+- `plugin-marketplace` — a subsystem with stable interfaces
+- `project-hooks` — an architectural boundary
+
+Bad domain names are tied to features, chronology, or tasks:
+
+- `fix-readme-copy` — a task, not a domain
+- `spec-003` — chronological numbering fragments knowledge
+- `add-hooks-docs` — a one-off action
+
+### Backlog vs Index
+
+`specs/systems.yml` is a reverse backlog, not a second spec index. `specs/README.md` is the index of completed persistent knowledge; the backlog tracks _possible future_ specs with status.
+
+## Procedures
 
 ### 1. Scope the Survey
 
-Interpret the argument as the survey scope. Default to the repo root if none is provided.
-
-Valid scopes:
-
-- repo root (`.`)
-- subtree (`plugins/`, `src/auth/`)
-- plain-language area (`the plugin layer`, `the build system`)
+Interpret the argument as the survey scope using valid scope types from Knowledge. Default to repo root if none provided.
 
 Prefer stable architectural seams. Do not generate backlog items for one-off files, tiny utilities, or transient feature work.
 
 ### 2. Check Existing Specs
 
-Read `specs/README.md` if it exists. Determine which domains are already covered.
-
-For each discovered system, classify it:
-
-- **covered** — existing spec is already the right domain boundary
-- **update** — spec exists but likely needs a refresh
-- **candidate** — no spec yet, worth reverse-engineering
-- **fold** — too small; should be absorbed into a neighboring domain
-- **skip** — not worth a spec
+Read `specs/README.md` if it exists. Classify each discovered system using the domain classification scheme from Knowledge.
 
 ### 3. Run a Wide Survey
 
@@ -59,32 +88,15 @@ Wait for this survey before deciding the backlog shape.
 
 ### 4. Normalize into Stable Domains
 
-Convert the survey into candidate system domains. A backlog item should represent a stable boundary that could survive multiple rounds of work.
-
-Good:
-
-- `auth-system`
-- `plugin-marketplace`
-- `project-hooks`
-- `shared-lib`
-
-Bad:
-
-- `fix-readme-copy`
-- `spec-003`
-- `add-hooks-docs`
+Convert the survey into candidate system domains using the domain naming guidelines from Knowledge.
 
 If one area clearly contains multiple durable subsystems, split them now. If a candidate is too small to justify its own spec, mark it `fold` and name the neighboring domain it belongs to.
 
 ### 5. Define Reverse Targets
 
-For each actionable item, write the exact target that `$REVERSE_COMMAND` should consume later. Reuse the most natural form:
+For each actionable item, write the exact target that `$REVERSE_COMMAND` should consume later. Reuse the most natural form (domain name, directory path, or plain-language target).
 
-- domain name
-- directory path
-- plain-language target
-
-Each actionable item must be independently runnable in a future `$REVERSE_COMMAND` invocation.
+Each item must be independently runnable in a future `$REVERSE_COMMAND` invocation.
 
 ### 6. Present the Queue
 
@@ -110,17 +122,28 @@ Guidelines:
 
 ### 8. Commit the Plan
 
-Stage and commit the backlog so the tree is clean for future reverse work:
+Stage and commit the backlog:
 
 ```
 docs: dev/systems — [short scope]
 ```
 
-## Rules
+## Constraints
 
-- `specs/systems.yml` is a reverse backlog, not a second spec index
 - Favor fewer, durable domains over many narrow backlog items
 - Do not create backlog items for tiny or obvious code that does not need a spec
 - If a domain already exists in `specs/README.md`, prefer `update` over creating a duplicate
 - If the survey reveals too much uncertainty to define good boundaries, narrow the scope rather than guessing
 - Leave the git tree clean — commit `specs/systems.yml` before finishing
+
+## Validation
+
+Verify all of the following before reporting success:
+
+- [ ] `specs/systems.yml` exists and follows the schema in `references/systems-schema.md`
+- [ ] Every actionable item has a target consumable by `$REVERSE_COMMAND`
+- [ ] No items for trivial code that doesn't warrant a spec
+- [ ] Existing specs are in `covered:`, not duplicated in `systems:`
+- [ ] IDs are zero-padded and unique
+- [ ] User approved the queue before saving
+- [ ] `git status --porcelain` shows a clean tree (backlog committed)
