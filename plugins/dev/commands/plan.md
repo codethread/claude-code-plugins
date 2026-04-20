@@ -11,61 +11,20 @@ Coordinator for new-feature planning.
 
 ## Variables
 
-### Inputs
-
-- `FEATURE_IDEA`: `$ARGUMENTS` — a new feature idea to plan from scratch
-
-### Commands
-
+- `FEATURE_IDEA`: `$ARGUMENTS` — the feature idea to plan
 - `ITERATE_COMMAND`: `/dev:iterate`
-
-### Agents
-
 - `WORKTREE_MANAGER_AGENT`: `worktree-manager`
-
-### Skills
-
 - `PLANNING_SKILL`: `dev/what`
 
 ## Instructions
 
-### 1. Derive the Feature Slug
-
-Derive a short, kebab-case feature slug from `$FEATURE_IDEA`.
-
-### 2. Ensure This Is a Blank-Slate Plan
-
-Check whether `.dev/<feature>/` already exists and contains files.
-
-- If it does not exist, continue.
-- If it exists and already has a `prd.md`, stop and tell the user:
-
-> `.dev/<feature>/` already exists. Use `$ITERATE_COMMAND <feature>` to revise that feature, or choose a different feature name.
-
-- If it exists but is empty, continue.
-
-Other `.dev/<other-feature>/` directories do not block this command.
-
-### 3. Assess Checkout Safety
-
-Ask `$WORKTREE_MANAGER_AGENT` to assess the current checkout for `planning` using the derived feature slug.
-
-- If it reports `clean` or `light`, continue.
-- If it reports `noisy`, warn the user and continue only if the planning artifacts are unlikely to get mixed into unrelated work.
-- If it reports `unsafe`, stop and relay the reasoning.
-
-If the user explicitly wants early isolation, ask `$WORKTREE_MANAGER_AGENT` in `prepare-isolated-checkout` mode rather than embedding git/worktree logic here.
-
-### 4. Invoke the Planning Skill
-
-Invoke `$PLANNING_SKILL` with `$FEATURE_IDEA`.
-
-`$PLANNING_SKILL` should now focus only on understanding the feature, researching unknowns, refining artifacts, and producing `.dev/<feature>/prd.md`.
-
-### 5. Report
-
-Summarise:
-
-- feature slug
-- PRD path
-- whether checkout isolation was needed
+1. Derive a short kebab-case slug from `FEATURE_IDEA`.
+2. Treat this as a blank-slate plan. If `.dev/<feature>/prd.md` already exists, stop and direct the user to `$ITERATE_COMMAND <feature>`.
+3. Check whether `.dev/<feature>/` already exists. If it is empty or absent, continue; if it contains other files but no PRD, continue; other feature directories do not block this command.
+4. Ask `$WORKTREE_MANAGER_AGENT` to assess the current checkout for `planning`, using the derived feature slug as context.
+   - If the agent says `clean` or `light`, continue.
+   - If it says `noisy`, warn the user and continue only if the planning artifacts are unlikely to mix with unrelated work.
+   - If it says `unsafe`, stop and relay the reason.
+5. If the user explicitly wants early isolation, ask `$WORKTREE_MANAGER_AGENT` in `prepare-isolated-checkout` mode instead of embedding git or worktree logic here.
+6. Invoke `$PLANNING_SKILL` with `FEATURE_IDEA`. The skill handles the research, refinement, and `.dev/<feature>/prd.md` output.
+7. Report the feature slug, PRD path, and whether checkout isolation was needed.
