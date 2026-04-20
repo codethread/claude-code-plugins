@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.2 - 2026-04-20
+
+- Standardised Variables sections in `bdfl:init` and `bdfl:migrate` skills — renamed Arguments to Variables/Inputs, added explicit variable definitions
+
 ## v1.1.1 - 2026-04-02
 
 - Created persistent domain spec (`specs/bdfl.md`) from existing docs and code

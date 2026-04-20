@@ -10,31 +10,31 @@
   "plugins": [
     {
       "name": "doc-writer",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "source": "./plugins/doc-writer",
       "category": "development-tools"
     },
     {
       "name": "claude-code-knowledge",
-      "version": "1.5.0",
+      "version": "1.5.1",
       "source": "./plugins/claude-code-knowledge",
       "category": "development-tools"
     },
     {
       "name": "langs",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "source": "./plugins/langs",
       "category": "development-tools"
     },
     {
       "name": "bdfl",
-      "version": "1.1.1",
+      "version": "1.1.2",
       "source": "./plugins/bdfl",
       "category": "development-workflow"
     },
     {
       "name": "karen",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "source": "./plugins/karen",
       "category": "development-workflow"
     },

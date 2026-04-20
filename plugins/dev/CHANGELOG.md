@@ -1,11 +1,17 @@
 # Changelog
 
-## v1.5.0 - 2026-04-02
+## v1.5.0 - 2026-04-20
 
+- Added `/dev:plan` command: defines a feature, creates task list, and opens the first task
+- Added `/dev:iterate` command: loops build → review → commit for a feature
 - Added `dev/systems` skill: surveys a repo or subtree and writes a reverse-spec backlog to `specs/systems.yml`
 - Added `references/systems-schema.md`: queue format for planned reverse-spec work
+- Added `worktree-manager` agent: assesses repo noise, recommends isolation, can create/switch worktrees
+- Added `spec-reviewer` agent: reviews specs against code (post-build or reverse mode)
 - `dev:reverse` now supports dual-mode execution: queued backlog items from `specs/systems.yml` and existing freeform string/path targets
 - `dev:reverse` now updates backlog item status for queued reverse work (`in_progress`, `done`, `blocked`, `split`)
+- Improved `dev:build`, `dev:what`, `dev:specs`, `dev:how` skill workflows
+- Standardised Variables sections across all skills and commands
 
 ## v1.4.1 - 2026-04-02
 

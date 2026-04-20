@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.5.1 - 2026-04-20
+
+- Standardised Variables sections across agents, commands, and skills — explicit variable definitions replace inline prose
+- Removed plugin CLAUDE.md; architecture docs moved to `specs/claude-code-knowledge.md`
+
 ## v1.5.0 - 2026-04-02
 
 - Added `/claude-smoke` command: smoke tests hooks in the current project (discover, classify, generate, execute, report, cleanup)
